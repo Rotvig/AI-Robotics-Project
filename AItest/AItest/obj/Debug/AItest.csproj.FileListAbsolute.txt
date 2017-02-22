@@ -1,0 +1,8 @@
+c:\users\kimly\documents\visual studio 2015\Projects\AItest\AItest\bin\Debug\AItest.exe.config
+c:\users\kimly\documents\visual studio 2015\Projects\AItest\AItest\bin\Debug\AItest.exe
+c:\users\kimly\documents\visual studio 2015\Projects\AItest\AItest\bin\Debug\AItest.pdb
+c:\users\kimly\documents\visual studio 2015\Projects\AItest\AItest\bin\Debug\Lego.Ev3.Desktop.dll
+c:\users\kimly\documents\visual studio 2015\Projects\AItest\AItest\bin\Debug\Lego.Ev3.Desktop.xml
+c:\users\kimly\documents\visual studio 2015\Projects\AItest\AItest\obj\Debug\AItest.csprojResolveAssemblyReference.cache
+c:\users\kimly\documents\visual studio 2015\Projects\AItest\AItest\obj\Debug\AItest.exe
+c:\users\kimly\documents\visual studio 2015\Projects\AItest\AItest\obj\Debug\AItest.pdb

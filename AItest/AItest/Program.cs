@@ -12,6 +12,7 @@ namespace AItest
     {
         static Sensor Sonar;
         static Sensor Infrared;
+        static Motion Car;
 
         static void Main(string[] args)
         {
@@ -21,10 +22,11 @@ namespace AItest
             System.Threading.Thread.Sleep(100);
             Sonar = new Sensor(brick, true);
             Infrared = new Sensor(brick);
+            Car = new Motion(brick);
 
             //DO stuff
             //Move(Motion.Front, brick, 50, 5000).Wait();
-            RotationScan(brick).Wait();
+            Car.RotationScan(brick, Sonar, Infrared).Wait();
 
 
             Console.ReadKey();
@@ -43,69 +45,5 @@ namespace AItest
                 Environment.Exit(0);
             }
         }
-
-        private static async Task RotationScan(Brick _brick)
-        {
-            var SonarData = new List<uint>();
-            var InfraredData = new List<uint>();
-            uint rotationTime = 1900;
-
-            for (uint i = 0; i <= rotationTime; i += rotationTime/10)
-            {
-                await Move(Motion.Right, _brick, 50, rotationTime/10);
-                System.Threading.Thread.Sleep((int)rotationTime / 10);
-                SonarData.Add(Sonar.Read());
-                InfraredData.Add(Infrared.Read());
-            }
-
-            foreach (var val in SonarData)
-            {
-                Console.WriteLine(val);
-            }
-
-            Console.WriteLine("----------");
-
-            foreach (var val in InfraredData)
-            {
-                Console.WriteLine(val);
-            }
-        }
-
-
-        private static async Task Move(Motion motion, Brick _brick, int _power, uint _ms)
-        {
-            if (motion == Motion.Right)
-            {
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.A, Polarity.Forward);
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.D, Polarity.Backward);
-                await _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A | OutputPort.D, _power, _ms, false);
-            }
-            else if (motion == Motion.Left)
-            {
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.A, Polarity.Backward);
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.D, Polarity.Forward);
-                await _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A, _power, _ms, false);
-            }
-            else if (motion == Motion.Front)
-            {
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.A, Polarity.Forward);
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.D, Polarity.Forward);
-                await _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A | OutputPort.D, _power, _ms, false);
-            }
-            else if (motion == Motion.Back)
-            {
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.A, Polarity.Backward);
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.D, Polarity.Backward);
-                await _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A | OutputPort.D, _power, _ms, false);
-            }
-        }
-
-        enum Motion
-        {
-            Right,
-            Left,
-            Front,
-            Back
-        };
     }
 }

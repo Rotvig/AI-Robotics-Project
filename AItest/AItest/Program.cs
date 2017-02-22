@@ -32,9 +32,36 @@ namespace AItest
             }
         }
 
-        private static async Task MotorMove(Brick _brick, int _power, uint _ms)
+        private static async Task Move(Motion motion, Brick _brick, int _power, uint _ms)
         {
-            await _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A | OutputPort.D, _power, _ms, false);
+            if(motion == Motion.Right)
+            {
+                await _brick.DirectCommand.SetMotorPolarity(OutputPort.A | OutputPort.D, Polarity.Forward);
+                await _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.D, _power, _ms, false);
+            }
+            else if(motion == Motion.Left)
+            {
+                await _brick.DirectCommand.SetMotorPolarity(OutputPort.A | OutputPort.D, Polarity.Forward);
+                await _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A, _power, _ms, false);
+            }
+            else if(motion == Motion.Front)
+            {
+                await _brick.DirectCommand.SetMotorPolarity(OutputPort.A | OutputPort.D, Polarity.Forward);
+                await _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A | OutputPort.D, _power, _ms, false);
+            }
+            else if (motion == Motion.Back)
+            {
+                await _brick.DirectCommand.SetMotorPolarity(OutputPort.A | OutputPort.D, Polarity.Backward);
+                await _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A | OutputPort.D, _power, _ms, false);
+            }
         }
+
+        enum Motion
+        {
+            Right,
+            Left,
+            Front,
+            Back
+        };
     }
 }

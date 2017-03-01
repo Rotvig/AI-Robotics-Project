@@ -86,7 +86,6 @@ namespace AItest
                 await _brick.DirectCommand.SetMotorPolarity(OutputPort.D, Polarity.Forward);
                 await _brick.DirectCommand.StepMotorAtPowerAsync(OutputPort.A | OutputPort.D, 50, 180, false);
             }
-
         }
     }
 

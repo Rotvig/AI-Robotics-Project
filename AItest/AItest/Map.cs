@@ -226,10 +226,9 @@ namespace AItest
             var dyl = line.EndPoint.Y - line.StartPoint.Y;
 
             var cross = dxc * dyl - dyc * dxl;
-            var margin = 5 ^ -10;
+            var margin = 0.001;
 
-            if(cross <= margin || cross >= margin)
-            return cross == 0;
+            return cross >= margin && cross <= -margin;
         }
     }
 

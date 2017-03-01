@@ -16,6 +16,8 @@ namespace AItest
 
         static void Main(string[] args)
         {
+            Map myMap = new Map(10, 10);
+
             //Init
             //var brick = new Brick(new BluetoothCommunication("COM11"), true);
             var brick = new Brick(new UsbCommunication(), true);
@@ -34,6 +36,7 @@ namespace AItest
 
             Console.ReadKey();
             brick.Disconnect();
+            Console.ReadKey();
         }
 
         private static async Task Connect(Brick _brick)

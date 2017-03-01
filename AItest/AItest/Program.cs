@@ -18,9 +18,13 @@ namespace AItest
         {
             Map myMap = new Map(10, 10);
 
+            myMap.AddSquare(3, 3, 2, 2, 0);
+
+            myMap.GetAStarRoadMap(1);
+
             //Init
             //var brick = new Brick(new BluetoothCommunication("COM11"), true);
-            var brick = new Brick(new UsbCommunication(), true);
+            /*var brick = new Brick(new UsbCommunication(), true);
             Connect(brick).Wait();
             System.Threading.Thread.Sleep(100);
             Sonar = new Sensor(brick, true);
@@ -36,7 +40,7 @@ namespace AItest
 
             Console.ReadKey();
             brick.Disconnect();
-            Console.ReadKey();
+            Console.ReadKey();*/
         }
 
         private static async Task Connect(Brick _brick)

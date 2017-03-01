@@ -26,11 +26,11 @@ namespace AItest
             WorldLines.Add(new Line2D(new Point2D(0, WorldSizeY), new Point2D(0, 0)));
         }
 
-        public void AddSquare(int xPos, int yPos, int xSize, int ySize)
+        public void AddSquare(int xPos, int yPos, int xSize, int ySize, double orientationDeg)
         {
             if((xPos > 0 && xPos < WorldSizeX - xSize) && (yPos > 0 && yPos < WorldSizeY - ySize))
             {
-                WorldObjects.Add(new Square(xPos, yPos, xSize, ySize, 0));
+                WorldObjects.Add(new Square(xPos, yPos, xSize, ySize, orientationDeg));
 
                 foreach (var objLines in WorldObjects.Last().SquareEdgeLines)
                 {
@@ -160,11 +160,76 @@ namespace AItest
 
         public void testMap(Map myMap)
         {
-            myMap.AddSquare(3, 3, 2, 2);
+            myMap.AddSquare(3, 3, 2, 2, 0);
 
             myMap.GetDistance(new Point2D(1, 1), 0, 10);
             myMap.GetDistance(new Point2D(1, 1), 90, 10);
             myMap.GetDistance(new Point2D(4, 1), 90, 10);
+        }
+
+        public char[,] GetAStarRoadMap(int resolution)
+        {
+
+            var roadMap = new char[WorldSizeX * resolution, WorldSizeY * resolution];
+            for(var i = 0; i < WorldSizeX*resolution; i++)
+            {
+                for(var j = 0; j < WorldSizeY*resolution; j++)
+                {
+                    if(IsPointInSquare(new Point2D(i,j)))
+                    {
+                        roadMap[i, j] = 'X';
+                    }
+                    else
+                    {
+                        roadMap[i, j] = '-';
+                    }
+                    
+                }
+            }
+
+
+
+            return roadMap;
+        }
+
+        private bool IsPointInSquare(Point2D StartPoint)
+        {
+            foreach(var obj in WorldObjects)
+            {
+                double sumOfArea = 0;
+                foreach(var line in obj.SquareEdgeLines)
+                {
+                    if (CheckIfPointIsOnLine(line, StartPoint))
+                        return true;
+
+                    sumOfArea += CalculateTriangleArea(line, StartPoint);
+                }
+
+                if(sumOfArea <= obj.area)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private double CalculateTriangleArea(Line2D line, Point2D P)
+        {
+            var h = line.LineTo(P, false).Length;
+            return 0.5 * h * line.Length;
+        }
+
+        private bool CheckIfPointIsOnLine(Line2D line, Point2D P)
+        {
+            var dxc = P.X - line.StartPoint.X;
+            var dyc = P.Y - line.StartPoint.Y;
+            var dxl = line.EndPoint.X - line.StartPoint.X;
+            var dyl = line.EndPoint.Y - line.StartPoint.Y;
+
+            var cross = dxc * dyl - dyc * dxl;
+            var margin = 5 ^ -10;
+
+            if(cross <= margin || cross >= margin)
+            return cross == 0;
         }
     }
 
@@ -176,6 +241,7 @@ namespace AItest
         public double yPos;
         public double lineOrientationDeg;
         public List<Line2D> SquareEdgeLines = new List<Line2D>();
+        public double area;
 
         public Square(double xPos, double yPos, double xSize, double ySize, double lineOrientationDeg)
         {
@@ -184,6 +250,7 @@ namespace AItest
             this.xPos = xPos;
             this.yPos = yPos;
             this.lineOrientationDeg = lineOrientationDeg;
+            area = xSize * ySize;
 
             //Make 4 line segments of sqaure
             SquareEdgeLines.Add(CalcSquareLine(xPos, yPos, xSize, lineOrientationDeg));

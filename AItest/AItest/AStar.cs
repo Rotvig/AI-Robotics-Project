@@ -23,16 +23,16 @@ namespace AItest
 
             //put the starting node on the open list (you can leave its f at zero)
             Node startNode = new Node { x = fromX, y = fromY };
-            string key = startNode.x.ToString() + startNode.x.ToString();
+            string key = startNode.x.ToString() + startNode.y.ToString();
             open.Add(key, startNode);
 
             // generate startNode's 8 successors and set their parents to startNode
             List<Node> successor = new List<Node>()
                             {
-                             new Node {x = -1, y = 0, parent = startNode},
-                             new Node {x = 0, y = 1, parent = startNode },
-                             new Node {x = 1, y = 0, parent = startNode },
-                             new Node {x = 0, y = -1, parent = startNode }};
+                             new Node {x = -1, y = 0, parent = startNode}, // UP
+                             new Node {x = 0, y = 1, parent = startNode }, // RIGHT
+                             new Node {x = 1, y = 0, parent = startNode }, // DOWN
+                             new Node {x = 0, y = -1, parent = startNode }}; // LEFT
 
             while (true)
             {
@@ -51,10 +51,6 @@ namespace AItest
 
                 foreach (var suc in successor)
                 {
-                    //if successor is the goal, stop the search
-                    if (suc.x == toX && suc.y == toY)
-                        return suc;
-
                     int nbrX = smallest.Value.x + suc.x;
                     int nbrY = smallest.Value.y + suc.y;
                     string nbrKey = nbrX.ToString() + nbrY.ToString();
@@ -122,10 +118,10 @@ namespace AItest
         public void unitTest_AStar()
         {
             char[][] matrix = new char[][] { new char[] {'-', 'S', '-', '-', 'X'},
-                                         new char[] {'-', 'X', 'X', '-', '-'},
-                                         new char[] {'-', '-', '-', 'X', '-'},
-                                         new char[] {'X', '-', 'X', 'E', '-'},
-                                         new char[] {'-', '-', '-', '-', 'X'}};
+                                             new char[] {'-', 'X', '-', 'X', '-'},
+                                             new char[] {'-', '-', 'X', '-', 'X'},
+                                             new char[] {'X', '-', 'X', 'E', '-'},
+                                             new char[] {'-', '-', '-', '-', 'X'}};
 
             //looking for shortest path from 'S' at (0,1) to 'E' at (3,3)
             //obstacles marked by 'X'

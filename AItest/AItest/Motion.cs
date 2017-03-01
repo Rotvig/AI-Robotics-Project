@@ -71,6 +71,23 @@ namespace AItest
                 Console.WriteLine(val);
             }
         }
+
+        public async Task Turn90Deg(MotionEnum motion, Brick _brick)
+        {
+            if(motion == MotionEnum.Right)
+            {
+                await _brick.DirectCommand.SetMotorPolarity(OutputPort.A, Polarity.Forward);
+                await _brick.DirectCommand.SetMotorPolarity(OutputPort.D, Polarity.Backward);
+                await _brick.DirectCommand.StepMotorAtPowerAsync(OutputPort.A | OutputPort.D, 50, 180, false);
+            }
+            else if(motion == MotionEnum.Left)
+            {
+                await _brick.DirectCommand.SetMotorPolarity(OutputPort.A, Polarity.Backward);
+                await _brick.DirectCommand.SetMotorPolarity(OutputPort.D, Polarity.Forward);
+                await _brick.DirectCommand.StepMotorAtPowerAsync(OutputPort.A | OutputPort.D, 50, 180, false);
+            }
+
+        }
     }
 
     public enum MotionEnum

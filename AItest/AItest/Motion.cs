@@ -12,48 +12,52 @@ namespace AItest
     {
         Brick _brick;
 
+        Queue<Action> Commands = new Queue<Action>();
+
         public Motion(Brick brick)
         {
             _brick = brick;
+            _brick.BrickChanged += _brick_BrickChanged;
         }
 
-        public async Task Move(MotionEnum motion, Brick _brick, int _power, uint _ms)
+        public void Move(MotionEnum motion, int _power, uint _ms)
         {
             if (motion == MotionEnum.Right)
             {
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.A, Polarity.Forward);
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.D, Polarity.Backward);
-                await _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A | OutputPort.D, _power, _ms, false);
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.A, Polarity.Forward)));
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.D, Polarity.Backward)));
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A | OutputPort.D, _power, _ms, false)));
             }
             else if (motion == MotionEnum.Left)
             {
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.A, Polarity.Backward);
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.D, Polarity.Forward);
-                await _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A, _power, _ms, false);
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.A, Polarity.Backward)));
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.D, Polarity.Forward)));
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A, _power, _ms, false)));
             }
             else if (motion == MotionEnum.Front)
             {
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.A, Polarity.Forward);
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.D, Polarity.Forward);
-                await _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A | OutputPort.D, _power, _ms, false);
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.A, Polarity.Forward)));
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.D, Polarity.Forward)));
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A | OutputPort.D, _power, _ms, false)));
             }
             else if (motion == MotionEnum.Back)
             {
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.A, Polarity.Backward);
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.D, Polarity.Backward);
-                await _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A | OutputPort.D, _power, _ms, false);
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.A, Polarity.Backward)));
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.D, Polarity.Backward)));
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A | OutputPort.D, _power, _ms, false)));
             }
         }
 
         public async Task RotationScan(Brick _brick, Sensor sonar, Sensor infrared)
         {
+            throw new ArgumentException("NOT IMPLEMENTED !!!");
             var SonarData = new List<uint>();
             var InfraredData = new List<uint>();
             uint rotationTime = 1900;
 
             for (uint i = 0; i <= rotationTime; i += rotationTime / 10)
             {
-                await Move(MotionEnum.Right, _brick, 50, rotationTime / 10);
+                Move(MotionEnum.Right, 50, rotationTime / 10);
                 System.Threading.Thread.Sleep((int)rotationTime / 10);
                 SonarData.Add(sonar.Read());
                 InfraredData.Add(infrared.Read());
@@ -72,22 +76,39 @@ namespace AItest
             }
         }
 
-        public async Task Turn90Deg(MotionEnum motion, Brick _brick)
+        public void Turn90Deg(MotionEnum motion)
         {
             if (motion == MotionEnum.Right)
             {
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.A, Polarity.Forward);
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.D, Polarity.Backward);
-                await _brick.DirectCommand.StepMotorAtPowerAsync(OutputPort.A | OutputPort.D, 50, 180, false);
+                Commands.Enqueue(new Action(() => System.Threading.Thread.Sleep(200)));
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.A, Polarity.Forward)));
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.D, Polarity.Backward)));
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.StepMotorAtPowerAsync(OutputPort.A | OutputPort.D, 50, 180, false)));
             }
             else if (motion == MotionEnum.Left)
             {
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.A, Polarity.Backward);
-                await _brick.DirectCommand.SetMotorPolarity(OutputPort.D, Polarity.Forward);
-                await _brick.DirectCommand.StepMotorAtPowerAsync(OutputPort.A | OutputPort.D, 50, 180, false);
+                Commands.Enqueue(new Action(() => System.Threading.Thread.Sleep(200)));
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.A, Polarity.Backward)));
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.D, Polarity.Forward)));
+                Commands.Enqueue(new Action(() => _brick.DirectCommand.StepMotorAtPowerAsync(OutputPort.A | OutputPort.D, 50, 180, false)));
             }
             else
                 throw new ArgumentException("Only right or left");
+        }
+
+        public void ExecuteCommands()
+        {
+            _brick_BrickChanged(this, new BrickChangedEventArgs());
+        }
+
+        
+
+        void _brick_BrickChanged(object sender, BrickChangedEventArgs e)
+        {
+            if (Commands.Count <= 0)
+                return;
+            var com = Commands.Dequeue();
+            com();
         }
     }
 

@@ -1,0 +1,30 @@
+\chapter{Test}
+\label{chp:test}
+
+Testing is an important part of a project. It is used to check the behavior of the source code, and to make sure that the functionality is correct.
+
+In this project testing is divided into two parts. The testing of the Scheme functions and the testing of the C\# WPF code.
+
+\section{Scheme test}
+The test of the drawing engine in scheme  is implemented i the test.ss file. For each function i Scheme.ss, \emph{line, rectangle, circle, fill, bounding-box, text-at} and \emph{draw} multiple tests are made. To test functions in scheme.ss from test.ss the scheme.ss file is loaded into the test file. A function in scheme is tested by comparing the output of a function to the expected output value. To do this, \emph{equal?} is used. An example is shown in listing \ref{equal}.
+
+\begin{lstlisting}[caption={Comparison of actual output with the expected output with equal?}, label=equal]
+(and (equal? (candidate 0 0 8 8) '(0 0 1 1 2 2 3 3 4 4 5 5 6 6 7 7 8 8)))
+\end{lstlisting}
+
+This example is taken from the \emph{test-line} function. The line function takes 4 parameters, \emph{x, y, x2} and \emph{y2}. The test feeds the parameters 0, 0, 8 and 8, and compares the result to see if it is equal to what is expected. The expected value is in this example \emph{'0 0 1 1 2 2 3 3 4 4 5 5 6 6 7 7 8 8'} which is a line from the point (0,0) to (8,8). The \emph{TestRun} function is used to executes the test functions. Listing \ref{testrun} shows how \emph{TestRunLine} passes the line function as a parameter to \emph{test-line}. 
+
+\begin{lstlisting}[caption={TestRunLine}, label=testrun]
+(define TestRunLine (test-line line))
+\end{lstlisting}
+
+When \emph{TestRunLine} is executed it will return a \emph{\#t} for true or a \emph{\#f} for false depending on the result of the assertion.
+
+\section{C\# Unit Testing}
+The C\# WPF application has been tested by using xUnit.net and ReSharper xunit test runner. The tests are structured by \emph{Arrange, Act} and \emph{Assert}. The tests are placed in a separate test project called GraphikosTests. Every method is tested for all relevant scenarios.
+
+The framework Moq is used to mock out dependencies. This ensures unit testing instead of integration testing.
+
+Unit testing makes the maintenance of the code less error prone. This could result in a faster development time.
+
+To be able to test the bitmaps the drawn bitmap is converted into a byte array and compared with an expected bitmap, in the form of a byte array. If they do not match, the test fails. This testing method was chosen because bitmaps do not have any relevant properties to assert on.

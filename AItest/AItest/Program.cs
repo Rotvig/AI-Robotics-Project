@@ -17,12 +17,14 @@ namespace AItest
         static void Main(string[] args)
         {
             var pathFinding = new Astar();
-            Map myMap = new Map(10, 10);
+            Map myMap = new Map(20, 20);
 
-            myMap.AddSquare(3, 3, 2, 2, 0);
+            myMap.AddSquare(1, 1, 2, 3, 0);
+            myMap.AddSquare(12, 12, 5, 5, 45);
 
-            int fromX = 0, fromY = 1, toX = 0, toY = 2;
-            var roadMap = myMap.GetAStarRoadMap(1, fromX, fromY, toX, toY);
+            int fromX = 0, fromY = 0, toX = 19, toY = 19;
+            var roadMap = myMap.GetAStarRoadMap(fromX, fromY, toX, toY);
+            myMap.PrintRoadMap(roadMap);
 
             var endNode = pathFinding.AStar(roadMap, fromX, fromY, toX, toY);
             pathFinding.PrintPath(endNode, fromX, fromY, toX, toY);

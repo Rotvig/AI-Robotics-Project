@@ -129,28 +129,36 @@ namespace AItest
 
         private bool IntersectionIsOnLine(Point2D intersectPoint, Line2D objectLine)
         {
-            if (objectLine.StartPoint.X < objectLine.EndPoint.X)
+
+            var margin = 0.00001;
+
+            //Check if the two values are equal with small margin
+            if (Math.Abs(objectLine.StartPoint.X - objectLine.EndPoint.X) < margin)
             {
-                return intersectPoint.X > objectLine.StartPoint.X && intersectPoint.X < objectLine.EndPoint.X;
-            }
-            else if (objectLine.StartPoint.X > objectLine.EndPoint.X)
-            {
-                return intersectPoint.X < objectLine.StartPoint.X && intersectPoint.X > objectLine.EndPoint.X;
-            }
-            else if (objectLine.StartPoint.X == objectLine.EndPoint.X)
-            {
-                if (objectLine.StartPoint.Y < objectLine.EndPoint.Y)
+                if(Math.Abs(objectLine.StartPoint.Y - objectLine.EndPoint.Y) < margin)
                 {
-                    return intersectPoint.Y > objectLine.StartPoint.Y && intersectPoint.Y < objectLine.EndPoint.Y;
+                    throw new ArgumentException("Line have same start and end point");
+                }
+                else if (objectLine.StartPoint.Y < objectLine.EndPoint.Y)
+                {
+                    return intersectPoint.Y >= objectLine.StartPoint.Y && intersectPoint.Y <= objectLine.EndPoint.Y;
                 }
                 else if (objectLine.StartPoint.Y > objectLine.EndPoint.Y)
                 {
-                    return intersectPoint.Y < objectLine.StartPoint.Y && intersectPoint.Y > objectLine.EndPoint.Y;
+                    return intersectPoint.Y <= objectLine.StartPoint.Y && intersectPoint.Y >= objectLine.EndPoint.Y;
                 }
                 else
                 {
                     return false;
                 }
+            }
+            else if (objectLine.StartPoint.X < objectLine.EndPoint.X)
+            {
+                return intersectPoint.X >= objectLine.StartPoint.X && intersectPoint.X <= objectLine.EndPoint.X;
+            }
+            else if (objectLine.StartPoint.X > objectLine.EndPoint.X)
+            {
+                return intersectPoint.X <= objectLine.StartPoint.X && intersectPoint.X >= objectLine.EndPoint.X;
             }
             else
             {
@@ -167,30 +175,30 @@ namespace AItest
             myMap.GetDistance(new Point2D(4, 1), 90, 10);
         }
 
-        public char[,] GetAStarRoadMap(int resolution, int fromX, int fromY, int toX, int toY)
+        public char[,] GetAStarRoadMap(int fromX, int fromY, int toX, int toY)
         {
 
-            var roadMap = new char[WorldSizeX * resolution, WorldSizeY * resolution];
-            for(var i = 0; i < WorldSizeX*resolution; i++)
+            var roadMap = new char[WorldSizeX, WorldSizeY];
+            for(var xIndex = 0; xIndex < WorldSizeX; xIndex++)
             {
-                for(var j = 0; j < WorldSizeY*resolution; j++)
+                for(var yIndex = 0; yIndex < WorldSizeY; yIndex++)
                 {
                     //Position of robot
-                    if(i == fromX && j == fromY)
+                    if(xIndex == fromX && yIndex == fromY)
                     {
-                        roadMap[i, j] = 'S';
+                        roadMap[xIndex, yIndex] = 'S';
                     }
-                    else if (i == toX && j == toY)
+                    else if (xIndex == toX && yIndex == toY)
                     {
-                        roadMap[i, j] = 'E';
+                        roadMap[xIndex, yIndex] = 'E';
                     }
-                    else if (IsPointInSquare(new Point2D(i,j)))
+                    else if (IsPointInSquare(new Point2D(xIndex, yIndex)))
                     {
-                        roadMap[i, j] = 'X';
+                        roadMap[xIndex, yIndex] = 'X';
                     }
                     else
                     {
-                        roadMap[i, j] = '-';
+                        roadMap[xIndex, yIndex] = '-';
                     }
                 }
             }
@@ -198,20 +206,40 @@ namespace AItest
             return roadMap;
         }
 
+        public void PrintRoadMap(char[,] roadMap)
+        {
+            int rowLength = roadMap.GetLength(0);
+            int colLength = roadMap.GetLength(1);
+
+            for (int yIndex = colLength - 1; yIndex >= 0; yIndex--)
+            {
+                for (int xIndex = 0; xIndex < rowLength; xIndex++)
+                {
+                    Console.Write(string.Format("{0} ", roadMap[xIndex, yIndex]));
+                }
+                Console.Write(Environment.NewLine + Environment.NewLine);
+            }
+        }
+
         private bool IsPointInSquare(Point2D StartPoint)
         {
-            foreach(var obj in WorldObjects)
+            var margin = 0.00001;
+
+            foreach (var obj in WorldObjects)
             {
                 double sumOfArea = 0;
                 foreach(var line in obj.SquareEdgeLines)
                 {
                     if (CheckIfPointIsOnLine(line, StartPoint))
-                        return true;
+                    {
+                        //return true;
+                        return IntersectionIsOnLine(StartPoint, line);
+                    }
 
                     sumOfArea += CalculateTriangleArea(line, StartPoint);
                 }
 
-                if(sumOfArea <= obj.area)
+                if(Math.Abs(sumOfArea - obj.area) < margin)
                     return true;
             }
 
@@ -232,9 +260,9 @@ namespace AItest
             var dyl = line.EndPoint.Y - line.StartPoint.Y;
 
             var cross = dxc * dyl - dyc * dxl;
-            var margin = 0.001;
+            var margin = 0.00001;
 
-            return cross <= margin && cross >= -margin || cross == 0;
+            return cross <= margin && cross >= -margin;
         }
     }
 
@@ -257,22 +285,22 @@ namespace AItest
             this.lineOrientationDeg = lineOrientationDeg;
             area = xSize * ySize;
 
-            //Make 4 line segments of sqaure
-            SquareEdgeLines.Add(CalcSquareLine(xPos, yPos, xSize, lineOrientationDeg));
-            SquareEdgeLines.Add(CalcSquareLine(SquareEdgeLines[0].EndPoint.X, SquareEdgeLines[0].EndPoint.Y, ySize, lineOrientationDeg + 90));
-            SquareEdgeLines.Add(CalcSquareLine(SquareEdgeLines[1].EndPoint.X, SquareEdgeLines[1].EndPoint.Y, xSize, lineOrientationDeg + 180));
-            SquareEdgeLines.Add(CalcSquareLine(SquareEdgeLines[2].EndPoint.X, SquareEdgeLines[2].EndPoint.Y, ySize, lineOrientationDeg + 270));
-        }
-
-        private Line2D CalcSquareLine(double xPos, double yPos, double lineLength, double lineOrientationDeg)
-        {
-            //Make start point of observer line
+            //Make start point of sqaure
             Point2D StartPoint = new Point2D(xPos, yPos);
 
+            //Make 4 line segments of sqaure
+            SquareEdgeLines.Add(CalcSquareLine(StartPoint, xSize, lineOrientationDeg));
+            SquareEdgeLines.Add(CalcSquareLine(SquareEdgeLines[0].EndPoint, ySize, lineOrientationDeg + 90));
+            SquareEdgeLines.Add(CalcSquareLine(SquareEdgeLines[1].EndPoint, xSize, lineOrientationDeg + 180));
+            SquareEdgeLines.Add(CalcSquareLine(SquareEdgeLines[2].EndPoint, ySize, lineOrientationDeg + 270));
+        }
+
+        private Line2D CalcSquareLine(Point2D StartPoint, double lineLength, double lineOrientationDeg)
+        {
             //Make end point of observer line
             Point2D EndPoint = new Point2D(lineLength, new Angle(lineOrientationDeg, new Degrees()));
             //Move end point to correct position
-            Point2D EndPointMoved = new Point2D(EndPoint.X + xPos, EndPoint.Y + yPos);
+            Point2D EndPointMoved = new Point2D(EndPoint.X + StartPoint.X, EndPoint.Y + StartPoint.Y);
 
             //Make observar line from vector
             return new Line2D(StartPoint, EndPointMoved);

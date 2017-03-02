@@ -183,11 +183,8 @@ namespace AItest
                     {
                         roadMap[i, j] = '-';
                     }
-                    
                 }
             }
-
-
 
             return roadMap;
         }
@@ -228,7 +225,7 @@ namespace AItest
             var cross = dxc * dyl - dyc * dxl;
             var margin = 0.001;
 
-            return cross >= margin && cross <= -margin;
+            return cross <= margin && cross >= -margin || cross == 0;
         }
     }
 

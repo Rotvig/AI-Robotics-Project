@@ -9,13 +9,13 @@ namespace AItest
 {
     public class Astar
     {
-        public Node AStar(char[][] matrix, int fromX, int fromY, int toX, int toY)
+        public Node AStar(char[,] matrix, int fromX, int fromY, int toX, int toY)
         {
             //Find max Size of map
             int maxX = matrix.GetLength(0);
             if (maxX == 0)
                 return null;
-            int maxY = matrix[0].Length;
+            int maxY = matrix.Length;
 
             //the keys for open and closed are x.ToString() + y.ToString() of the Node 
             Dictionary<string, Node> open = new Dictionary<string, Node>();
@@ -58,7 +58,7 @@ namespace AItest
                     // if a node with the same position as successor is in the CLOSED list \ 
                     // which has a lower f than successor, skip this successor
                     if (nbrX < 0 || nbrY < 0 || nbrX >= maxX || nbrY >= maxY
-                        || matrix[nbrX][nbrY] == 'X' //obstacles marked by 'X'
+                        || matrix[nbrX, nbrY] == 'X' //obstacles marked by 'X'
                         || closed.ContainsKey(nbrKey))
                         continue;
 
@@ -117,17 +117,41 @@ namespace AItest
 
         public void unitTest_AStar()
         {
-            char[][] matrix = new char[][] { new char[] {'-', 'S', '-', '-', 'X'},
-                                             new char[] {'-', 'X', '-', 'X', '-'},
-                                             new char[] {'-', '-', 'X', '-', 'X'},
-                                             new char[] {'X', '-', 'X', 'E', '-'},
-                                             new char[] {'-', '-', '-', '-', 'X'}};
+            char[,] matrix = new char[,] { {'-', 'S', '-', '-', 'X'},
+                                           {'-', 'X', '-', 'X', '-'},
+                                           {'-', '-', 'X', '-', 'X'},
+                                           {'X', '-', 'X', 'E', '-'},
+                                           {'-', '-', '-', '-', 'X'}};
 
             //looking for shortest path from 'S' at (0,1) to 'E' at (3,3)
             //obstacles marked by 'X'
             int fromX = 0, fromY = 1, toX = 3, toY = 3;
             var endNode = new Astar().AStar(matrix, fromX, fromY, toX, toY);
 
+            //looping through the Parent nodes until we get to the start node
+            Stack<Node> path = new Stack<Node>();
+
+            while (endNode.x != fromX || endNode.y != fromY)
+            {
+                path.Push(endNode);
+                endNode = endNode.parent;
+            }
+
+            path.Push(endNode);
+
+            Console.WriteLine("The shortest path from  " +
+                              "(" + fromX + "," + fromY + ")  to " +
+                              "(" + toX + "," + toY + ")  is:  \n");
+
+            while (path.Count > 0)
+            {
+                Node node = path.Pop();
+                Console.WriteLine("(" + node.x + "," + node.y + ")");
+            }
+        }
+
+        public void PrintPath(Node endNode, int fromX, int fromY, int toX, int toY)
+        {
             //looping through the Parent nodes until we get to the start node
             Stack<Node> path = new Stack<Node>();
 

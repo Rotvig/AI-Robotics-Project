@@ -16,11 +16,16 @@ namespace AItest
 
         static void Main(string[] args)
         {
+            var pathFinding = new Astar();
             Map myMap = new Map(10, 10);
 
             myMap.AddSquare(3, 3, 2, 2, 0);
 
-            myMap.GetAStarRoadMap(1);
+            int fromX = 0, fromY = 1, toX = 0, toY = 2;
+            var roadMap = myMap.GetAStarRoadMap(1, fromX, fromY, toX, toY);
+
+            var endNode = pathFinding.AStar(roadMap, fromX, fromY, toX, toY);
+            pathFinding.PrintPath(endNode, fromX, fromY, toX, toY);
 
             //Init
             //var brick = new Brick(new BluetoothCommunication("COM11"), true);
@@ -38,9 +43,11 @@ namespace AItest
             System.Threading.Thread.Sleep(2000);
             Car.Move(MotionEnum.Front, brick, 100, 500).Wait();
 
-            Console.ReadKey();
+            
             brick.Disconnect();
             Console.ReadKey();*/
+
+            Console.ReadKey();
         }
 
         private static async Task Connect(Brick _brick)

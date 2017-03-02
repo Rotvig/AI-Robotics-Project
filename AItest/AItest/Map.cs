@@ -167,7 +167,7 @@ namespace AItest
             myMap.GetDistance(new Point2D(4, 1), 90, 10);
         }
 
-        public char[,] GetAStarRoadMap(int resolution)
+        public char[,] GetAStarRoadMap(int resolution, int fromX, int fromY, int toX, int toY)
         {
 
             var roadMap = new char[WorldSizeX * resolution, WorldSizeY * resolution];
@@ -175,7 +175,16 @@ namespace AItest
             {
                 for(var j = 0; j < WorldSizeY*resolution; j++)
                 {
-                    if(IsPointInSquare(new Point2D(i,j)))
+                    //Position of robot
+                    if(i == fromX && j == fromY)
+                    {
+                        roadMap[i, j] = 'S';
+                    }
+                    else if (i == toX && j == toY)
+                    {
+                        roadMap[i, j] = 'E';
+                    }
+                    else if (IsPointInSquare(new Point2D(i,j)))
                     {
                         roadMap[i, j] = 'X';
                     }

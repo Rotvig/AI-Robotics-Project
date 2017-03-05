@@ -1,2 +1,49 @@
 \chapter{Localization}
 \label{chp:local}
+
+The localization problem, also known as position estimation or position tracking, is the most basic perceptual problem in robotics.
+This is because some kind of knowledge about the location of the robot or other objects around the robot are required for almost all robotic tasks.
+The core principle of robot localization can be seen as a problem of coordinate transformation.
+The robot will always exist in some kind of "world map" with a global coordinate system, that is independent from the robot own pose - position and orientation.
+Being able to express an object of interest from the world map, in the robots own coordinate frame is essential for robot navigation.
+The robot pose is therefore needed to be able to do a correct coordinate transformation.
+Herein lies two problems.
+First the robot can't measure a perfect pose directly, but instead have to extract that information from noisy sensor data, and second a single measurement often isn't sufficient to do a pose estimate, and the robot instead have to integrate data over time to determined the pose.
+
+This leads to the sense move cycle seen on figure \ref{fig:sense_move_cycle}.
+Here the location og the robot is modelled as a probability distribution, because both sensing and moving is noisy actions that cannot guarantee a perfect result.
+Each time the robot do a sensor measurement information is gained in the probability distribution of the robot location, and each time the robot moves information is lost in the probability distribution of the robot location.
+
+\myFigure{Theory/Localization/sense_move_cycle}{This figure show the basic cycle of localization, with the two steps sense and move. When sensing information is gained about the robots location, and when moving information is lost about the robots location.}{fig:sense_move_cycle}{0.9}
+
+\section{Markov localization}
+
+The Markov localization algorithm is a multimodal probabilistic model with a discrete state space.
+This basically means a multi dimensional grid, where each tile have a probability of the robot being in that specific tile.
+Figure \ref{fig:markov_localization_code} show the basic steps in the Markov localization algorithm.
+Though a cycle of sensing and measuring the probability of the robot being in each tiles is updated in each iteration og the algorithm.
+
+\myFigure{Theory/Localization/markov_localization_code}{Basic implementation of Markov localization.}{fig:markov_localization_code}{0.7}
+
+Line 4 in figure \ref{fig:markov_localization_code} is the sensing step, which is based on Bayes' theorem.
+The algorithm is iterating though all tiles in the state space, and calculating the probability of being in that tile given a sensor measurement.
+Bayes' rule state that the posterior state estimate is the product of the prier state estimate times the measurement probability given the prier state estimate, normalized by the total measurement probability of the entire state space.
+
+\begin{equation}
+\label{eq:Bayes_theorem}
+P(X_{i}^{t} \mid Z^{t}) = \frac{P(Z^{t} \mid X_{i}^{t}) * P(X_{i}^{t})}{\sum_{j} P(Z^{t} \mid X_{j}^{t}) * P(X_{j}^{t})}
+\end{equation}
+
+Line 3 in figure \ref{fig:markov_localization_code} is the movement step, which is based on the theorem of total probability seen in equation \ref{eq:total_probability}.
+The algorithm is iterating though all tiles in the state space, and calculating the total sum of all possible way to end up in that tile based on the probability of the motion.
+
+\begin{equation}
+\label{eq:total_probability}
+P(X_{i}^{t}) = \sum_{j} P(X_{j}^{t-1}) * P(X_{i}^{t} \mid X_{j}^{t-1})
+\end{equation}
+
+\pagebreak
+
+Figure \ref{fig:markov_localization_example} show the Markov localization algorithm in action when preforming measurements and movements.
+
+\myFigure{Theory/Localization/markov_localization_example}{Example of Markov localization algorithm. Each picture depicts the robots position in a hallway, together with a probability distribution of where the robot believe it is and the probability of the measurement. a) Starts with a uniform distribution. b) and d) Acquire a more precise probability distribution by making a measurement. C) and e) Movement result in less accurate probability distribution.}{fig:markov_localization_example}{0.7}

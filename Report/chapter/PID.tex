@@ -4,7 +4,7 @@ The Proportional-, Integral- and Derivative(PID)-controller can be used for moti
  
 \myFigure{Theory/PID/PID_Circuit}{PID using error feedback.}{fig:PID_Circuit}{0.7}
 
-PID can be used for motion correction such as correcting the steering of a car. For example if the error is defined as the crosstrack error which means how far the car is off the intended course. The PID controller can then be feed with the error, and the different parts of the PID controller can then adjust the control signal which goes to the tires of the car. 
+PID can be used for motion correction such as correcting the steering of a car. For example if the error is defined as the crosstrack error which means how far the car is off the intended course. The PID controller can then be feed with the error, and the different parts of the PID controller can then adjust the control signal which affects the steering of the car. 
 
 
 \section{Proportional-, Integral- and Derivative(PID)-controller}
@@ -34,14 +34,14 @@ In figure \ref{fig:pid_calc} the calculation for the output u can be seen. This 
 
 \myFigure{Theory/PID/pid_calc}{PID with all parts.}{fig:pid_calc}{0.5}
 
-In figure \ref{fig:pid_calc} all three gains are shown {Kp, Ki, Kd} the error and time are also used to calculate the control signal u.
+In figure \ref{fig:pid_calc} all three gains are shown {Kp, Ki, Kd} and the error and time are also used to calculate the control signal u.
 
 \section{PID Tuning}
 
-There are many ways of tuning a PID controller. Two of them are Twiddle and Ziegler-Nichols.
-Twiddle is hill climbing algorithm. it works by trial and error. The problem with this is that it typically finds the local minima, and not the global one. 
+Their are many ways of tuning a PID controller. Two of them are Twiddle and Ziegler-Nichols.
+Twiddle is hill climbing algorithm. it works by trial and error. The problem with this is that it typically finds the local minima, and not the global minima. 
 
-Ziegler-Nichols works by initially Ki and Kd are set to zero. Then Kp is raised until oscillation. Then Kc is set to value of Kp and Tc is period of the oscillation. When Kc and Tc are found the table in \ref{fig:zig} can be used to get Kp, Ti and Td.
+Ziegler-Nichols works by initially Ki and Kd are set to zero. Then Kp is raised until oscillation appears. Then Kc is set to value of Kp and Tc is the period of the oscillation. When Kc and Tc are found the table in figure \ref{fig:zig} can be used to get Kp, Ti and Td.
 
 \myFigure{Theory/PID/zig}{Ziegler-Nichols frequency response method.}{fig:zig}{0.5}
 

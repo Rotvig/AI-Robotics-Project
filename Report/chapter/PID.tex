@@ -1,2 +1,41 @@
 \chapter{PID}
 \label{chp:pid}
+The Proportional-, Integral- and Derivative(PID)-controller can be used for motion and error correction. An example of a feedback loop with error correction is shown in figure \ref{fig:PID_Circuit}. 
+ 
+\myFigure{Theory/PID/PID_Circuit}{PID using error feedback.}{fig:PID_Circuit}{0.7}
+
+PID can be used for motion correction such as correcting the steering of a car. For example if the error is defined as the crosstrack error which means how far the car is off the intended course. The PID controller can then be feed with the error, and the different parts of the PID controller can then adjust the control signal which goes to the tires of the car. 
+
+
+\section{Proportional-, Integral- and Derivative(PID)-controller}
+There are three parts in the PID controller. First there is the Proportional part.
+The proportional part is calculated by: Kp*CurrentError. The result of this is shown in figure \ref{fig:prop}.
+\myFigure{Theory/PID/proportional}{Proportional part of PID.}{fig:prop}{0.5}
+
+As figure \ref{fig:prop} shows by only having the proportional part the curve will be marginally stable. This result in an oscillation.
+
+Too compensate for oscillation the derivative part is added. The derivative part can also be helpful against overshooting. This is seen in figure \ref{fig:derivative}.
+
+\myFigure{Theory/PID/derivative}{Derivative part of PID.}{fig:derivative}{0.5}
+
+In figure \ref{fig:derivative} the "PD controller" curve gets to the correct course faster than the "P controller" curve does. The derivative part is calculated by: Kd*(CurrentError - PreviousError).
+
+But is the PD controller enough ? No. An example would be if there is a systematic bias. This can result in an constant offset. The PD controller alone cannot compensate for this offset. 
+
+That is why the integral part is needed. 
+
+Figure \ref{fig:integral} shows that the integral will overtime compensate for this offset. 
+
+\myFigure{Theory/PID/integral}{Integral part of PID.}{fig:integral}{0.5}
+
+The integral part is calculated by: (Summation of errors)*Ki. 
+
+In figure \ref{fig:pid_calc} the calculation for the output u can be seen. This calculation are with all three part proportional, integral and derivative.
+
+\myFigure{Theory/PID/pid_calc}{PID with all parts.}{fig:pid_calc}{0.5}
+
+In figure \ref{fig:pid_calc} all three gains are shown {Kp, Ki, Kd} the error and time are also used to calculate the control signal u.
+
+\section{PID Tuning}
+
+

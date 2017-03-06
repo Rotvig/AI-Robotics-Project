@@ -38,4 +38,13 @@ In figure \ref{fig:pid_calc} all three gains are shown {Kp, Ki, Kd} the error an
 
 \section{PID Tuning}
 
+There are many ways of tuning a PID controller. Two of them are Twiddle and Ziegler-Nichols.
+Twiddle is hill climbing algorithm. it works by trial and error. The problem with this is that it typically finds the local minima, and not the global one. 
 
+Ziegler-Nichols works by initially Ki and Kd are set to zero. Then Kp is raised until oscillation. Then Kc is set to value of Kp and Tc is period of the oscillation. When Kc and Tc are found the table in \ref{fig:zig} can be used to get Kp, Ti and Td.
+
+\myFigure{Theory/PID/zig}{Ziegler-Nichols frequency response method.}{fig:zig}{0.5}
+
+The problem with Ziegler-Nichols is that it gives an aggressive gain and overshoot. 
+
+Tuning a PID controller will always depend on the application. Which makes it difficult to generalize the solution of tuning a PID controller.

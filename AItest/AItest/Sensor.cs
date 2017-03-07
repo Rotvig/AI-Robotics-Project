@@ -17,6 +17,7 @@ namespace AItest
 
         public Sensor(Brick brick, bool sonar = false)
         {
+
             _brick = brick;
             if(sonar)
             {

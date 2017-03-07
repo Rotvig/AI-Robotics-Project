@@ -1,2 +1,24 @@
 \chapter{Implementation}
 \label{chp:impl}
+
+\section{Particle Filter}
+\section{World Map}
+\section{A* search algorithm}
+
+The A* search algorithm has been used in this project to find a route to the goal. 
+
+The input to the algorithm is a matrix which consist of areas where  can go and not go. The matrix also contains the information of the robots' position, and a goal for the robot.
+
+\begin{lstlisting}[caption={An example of the matrix which the A* uses as input.}, label=a_star]
+char[,] matrix = new char[,] {{'-', 'S', '-', '-', 'X'},
+							  {'-', 'X', '-', 'X', '-'},
+							  {'-', '-', 'X', '-', 'X'},
+							  {'X', '-', 'X', 'E', '-'},
+							  {'-', '-', '-', '-', 'X'}};
+\end{lstlisting}
+
+In listing \ref{a_star} the 'X's marks places the robot can not move through. The 'S' is the position of the robot, and 'E' is the goal. The array itself is a multidimensional char array.
+
+
+\section{Motor Control}
+

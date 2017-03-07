@@ -64,17 +64,18 @@ namespace AItest
 
 
                     // if a node with the same position as successor is in the OPEN list \
-                    // which has a lower g than successor, skip this successor
+                    // which has a lower f than successor, skip this successor
                     if (open.ContainsKey(nbrKey))
                     {
                         Node curNbr = open[nbrKey];
                         // successor.g = q.g + distance between successor and q
-                        int from = Math.Abs(nbrX - fromX) + Math.Abs(nbrY - fromY);
-                        if (from < curNbr.g)
+                        int g = Math.Abs(nbrX - fromX) + Math.Abs(nbrY - fromY);
+                        // successor.h = distance from goal to successor
+                        var h = Math.Abs(nbrX - toX) + Math.Abs(nbrY - toY);
+                        var f = g + h;
+                        if (f < curNbr.f)
                         {
-                            curNbr.g = from;
-                            // successor.f = successor.g + successor.h
-                            curNbr.f = curNbr.g + curNbr.h;
+                            curNbr.f = f;
                             curNbr.parent = smallest.Value;
                         }
                     }
@@ -117,7 +118,7 @@ namespace AItest
         public void unitTest_AStar()
         {
             char[,] matrix = new char[,] { {'-', 'S', '-', '-', 'X'},
-                                           {'-', 'X', '-', 'X', '-'},
+                                           {'-', 'X', '-', '-', '-'},
                                            {'-', '-', 'X', '-', 'X'},
                                            {'X', '-', 'X', 'E', '-'},
                                            {'-', '-', '-', '-', 'X'}};

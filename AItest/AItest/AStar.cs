@@ -64,7 +64,7 @@ namespace AItest
 
 
                     // if a node with the same position as successor is in the OPEN list \
-                    // which has a lower f than successor, skip this successor
+                    // which has a lower g than successor, skip this successor
                     if (open.ContainsKey(nbrKey))
                     {
                         Node curNbr = open[nbrKey];
@@ -91,7 +91,6 @@ namespace AItest
                         curNbr.parent = smallest.Value;
                         open.Add(nbrKey, curNbr);
                     }
-
                 }
             }
 

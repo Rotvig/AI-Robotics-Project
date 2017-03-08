@@ -102,7 +102,7 @@ namespace AI_In_Robotics
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             var bitmap = new Bitmap(400, 400);
-            Image.Source = bitmap.DrawPixels(new List<Particle>
+            Image.Source = bitmap.Drawparticles(new List<Particle>
             {
                 new Particle
                 {

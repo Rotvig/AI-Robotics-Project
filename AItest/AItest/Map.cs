@@ -226,21 +226,49 @@ namespace AItest
 
         private char[,] AddRouteToMap(char[,] roadMap, Node endNode, int fromX, int fromY, int toX, int toY)
         {
-            Stack<Node> path = new Stack<Node>();
+            var path = new List<Node>();
             while (endNode.x != fromX || endNode.y != fromY)
             {
-                path.Push(endNode);
+                path.Add(endNode);
                 endNode = endNode.parent;
             }
 
-            path.Push(endNode);
+            path.Add(endNode);
 
-            foreach(var val in path)
+            for(var i = 0; i < path.Count; i++)
             {
+                var val = path[i];
                 if (roadMap[val.x, val.y] == 'S' || roadMap[val.x, val.y] == 'E')
                     continue;
 
-                roadMap[val.x, val.y] = 'R';
+
+                if(path[i - 1].y == val.y)
+                {
+                    if (path[i - 1].x < val.x )
+                    {
+                        //LEFT
+                        roadMap[val.x, val.y] = '<';
+                    }
+                    else
+                    {
+                        //RIGHT
+                        roadMap[val.x, val.y] = '>';
+                    }
+                }
+                else
+                {
+
+                    if (path[i - 1].y < val.y)
+                    {
+                        //DOWN
+                        roadMap[val.x, val.y] = 'v';
+                    }
+                    else
+                    {
+                        //UP
+                        roadMap[val.x, val.y] = '^';
+                    }
+                }
             }
 
             return roadMap;

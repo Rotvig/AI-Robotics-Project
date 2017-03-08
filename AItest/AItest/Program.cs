@@ -30,7 +30,7 @@ namespace AItest
             var endNode = pathFinding.AStar(roadMap, fromX, fromY, toX, toY);
             pathFinding.PrintPath(endNode, fromX, fromY, toX, toY);
 
-            myMap.PrintRoadMap(roadMap, endNode);
+            myMap.PrintRoadMap(roadMap, endNode, fromX, fromY, toX, toY);
 
             //Init
             //var brick = new Brick(new BluetoothCommunication("COM11"), true);

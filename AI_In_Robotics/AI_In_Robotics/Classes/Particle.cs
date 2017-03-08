@@ -10,10 +10,9 @@ namespace AI_In_Robotics.Classes
         public double theta { get; set; }
 
 
-        public Particle()
+        public Particle(double worldSizeX, double worldSizeY)
         {
-            pos = new Point2D(Rand.RandomDouble()*100, Rand.RandomDouble()*100);
-            //TODO 100 should be map sizes of x and y
+            pos = new Point2D(Rand.RandomDouble()* worldSizeX, Rand.RandomDouble()* worldSizeX);
             theta = Math.PI*Rand.RandomInt(0, 360)/180;
         }
 
@@ -24,7 +23,7 @@ namespace AI_In_Robotics.Classes
 
         public void ThetaNoise()
         {
-            theta = (theta + Rand.Gauss(0, 0.2))%(2*Math.PI); // TODO variance defaults to 1  3.0 / 180.0 * Math.PI
+            theta = (theta + Rand.Gauss(0, 0.2))%(2*Math.PI); // TODO variance set to 0.2 defaults is 1
         }
 
         public int CompareTo(object obj)
@@ -35,6 +34,12 @@ namespace AI_In_Robotics.Classes
             if (weight == obj1.weight)
                 return 0;
             return 1;
+        }
+
+
+        private Particle() //used for clones
+        {
+
         }
 
         public Particle Clone()

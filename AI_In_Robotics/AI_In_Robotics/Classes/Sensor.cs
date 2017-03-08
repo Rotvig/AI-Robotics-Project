@@ -5,8 +5,8 @@ namespace AI_In_Robotics.Classes
 {
     public class Sensor
     {
-        private int calibrationAddition;
-        private int calibrationMultiplyer;
+        private double calibrationAddition;
+        private double calibrationMultiplyer;
         private readonly Brick _brick;
         private readonly InputPort _port;
 
@@ -29,10 +29,10 @@ namespace AI_In_Robotics.Classes
             }
         }
 
-        public uint Read()
+        public double Read()
         {
             Thread.Sleep(20);
-            return (uint) _brick.Ports[_port].SIValue - (uint) calibrationAddition;
+            return (_brick.Ports[_port].SIValue * calibrationMultiplyer) - calibrationAddition;
         }
     }
 }

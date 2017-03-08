@@ -59,8 +59,8 @@ namespace AI_In_Robotics.Classes
         public async Task RotationScan(Brick _brick, Sensor sonar, Sensor infrared)
         {
             throw new ArgumentException("NOT IMPLEMENTED !!!");
-            var SonarData = new List<uint>();
-            var InfraredData = new List<uint>();
+            var SonarData = new List<double>();
+            var InfraredData = new List<double>();
             uint rotationTime = 1900;
 
             for (uint i = 0; i <= rotationTime; i += rotationTime/10)

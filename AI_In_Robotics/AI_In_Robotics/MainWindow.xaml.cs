@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using AI_In_Robotics.Classes;
-using AI_In_Robotics.Utils.ConsoleRedirection;
+using AI_In_Robotics.Utils;
 using Lego.Ev3.Core;
+using MathNet.Spatial.Euclidean;
 
 namespace AI_In_Robotics
 {
@@ -17,10 +20,12 @@ namespace AI_In_Robotics
         {
             InitializeComponent();
 
+            /* For outoutting console in window
             // Instantiate the writer
             var _writer = new TextBoxStreamWriter(textBox);
             // Redirect the out Console stream
             Console.SetOut(_writer);
+            */
             var pathFinding = new Astar();
             var myMap = new Map(20, 20);
 
@@ -90,6 +95,26 @@ namespace AI_In_Robotics
 
                 Environment.Exit(0);
             }
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var bitmap = new Bitmap(400, 400);
+            Image.Source = bitmap.DrawPixels(new List<Particle>
+            {
+                new Particle
+                {
+                    pos = new Point2D(5, 5)
+                },
+                new Particle
+                {
+                    pos = new Point2D(0, 0)
+                },
+                new Particle
+                {
+                    pos = new Point2D(50, 50)
+                }
+            });
         }
     }
 }

@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Windows;
+using System.Windows.Media;
 using MathNet.Spatial.Euclidean;
+using Color = Lego.Ev3.Core.Color;
 
 namespace AI_In_Robotics.Classes
 {
@@ -8,7 +11,8 @@ namespace AI_In_Robotics.Classes
         public Point2D pos { get; set; }
         public double weight { get; set; }
         public double theta { get; set; }
-
+        public double X => pos.X;
+        public double Y => pos.Y;
 
         public Particle()
         {

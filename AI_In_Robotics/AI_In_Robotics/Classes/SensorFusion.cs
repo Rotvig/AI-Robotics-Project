@@ -11,8 +11,8 @@ namespace AI_In_Robotics.Classes
 {
     class SensorFusion
     {
-        static Sensor Sonar;
-        static Sensor Infrared;
+        public Sensor Sonar;
+        public Sensor Infrared;
 
         //Values for Kalmann filter sensor fusion
         Matrix<double> _C;
@@ -21,12 +21,13 @@ namespace AI_In_Robotics.Classes
         Matrix<double> xEstimate;
 
         //Values for calibration
-        static uint CalibrationRutinesToBeDone = 4;
+        const int CalibrationRutinesToBeDone = 4;
         uint CalibrationRutineCount = 0;
-        static uint NumberOfCalibrationReading = 20;
+        const int NumberOfCalibrationReading = 20;
+        List<double> CalDsitances = new List<double>() {10, 15, 20, 25};
 
-        uint[,] SonarCalibateData = new uint[CalibrationRutinesToBeDone, NumberOfCalibrationReading];
-        uint[,] InfraredCalibateData = new uint[CalibrationRutinesToBeDone, NumberOfCalibrationReading];
+        List<List<double>> SonarCalibateData = new List<List<double>>();
+        List<List<double>> InfraredCalibateData = new List<List<double>>();
 
         public SensorFusion(Brick brick)
         {
@@ -62,12 +63,18 @@ namespace AI_In_Robotics.Classes
 
         public void CalibrateSensors()
         {
+            List<double> SonarCalibateDataSeries = new List<double>();
+            List<double> InfraredCalibateSeries = new List<double>();
+
             for (int CalibrationReading = 0; CalibrationReading < NumberOfCalibrationReading; CalibrationReading++)
             {
-                SonarCalibateData[CalibrationRutineCount, CalibrationReading] = Sonar.Read();
-                InfraredCalibateData[CalibrationRutineCount, CalibrationReading] = Infrared.Read();
+                SonarCalibateDataSeries.Add(Sonar.Read());
+                InfraredCalibateSeries.Add(Infrared.Read());
                 System.Threading.Thread.Sleep(100);
             }
+
+            SonarCalibateData.Add(SonarCalibateDataSeries);
+            InfraredCalibateData.Add(InfraredCalibateSeries);
 
             CalibrationRutineCount++;
             Console.WriteLine("Calibration cycle done");
@@ -80,7 +87,50 @@ namespace AI_In_Robotics.Classes
 
         private void CalibrateCalc()
         {
-            
+            List<double> SonarCalibateMeans = new List<double>();
+            List<double> SonarCalibateVarians = new List<double>();
+            List<double> SonarCalibateError = new List<double>();
+            List<double> InfraredCalibateMeans = new List<double>();
+            List<double> InfraredCalibateVarians = new List<double>();
+            List<double> InfraredCalibateError = new List<double>();
+
+            for (int CalibrationReading = 0; CalibrationReading < CalibrationRutinesToBeDone; CalibrationReading++)
+            {
+                SonarCalibateMeans.Add(Mean(SonarCalibateData[CalibrationReading], 0, NumberOfCalibrationReading));
+                SonarCalibateError.Add(CalDsitances[CalibrationReading] - SonarCalibateMeans[CalibrationReading]);
+                SonarCalibateVarians.Add(Variance(SonarCalibateData[CalibrationReading], SonarCalibateMeans[CalibrationReading], 0, NumberOfCalibrationReading));
+                InfraredCalibateMeans.Add(Mean(InfraredCalibateData[CalibrationReading], 0, NumberOfCalibrationReading));
+                InfraredCalibateError.Add(CalDsitances[CalibrationReading] - InfraredCalibateMeans[CalibrationReading]);
+                InfraredCalibateVarians.Add(Variance(InfraredCalibateData[CalibrationReading], InfraredCalibateMeans[CalibrationReading], 0, NumberOfCalibrationReading));
+            }
+        }
+
+
+        public double Mean(List<double> values, int start, int end)
+        {
+            double s = 0;
+
+            for (int i = start; i < end; i++)
+            {
+                s += values[i];
+            }
+
+            return s / (end - start);
+        }
+
+        public double Variance(List<double> values, double mean, int start, int end)
+        {
+            double variance = 0;
+
+            for (int i = start; i < end; i++)
+            {
+                variance += Math.Pow((values[i] - mean), 2);
+            }
+
+            int n = end - start;
+            if (start > 0) n -= 1;
+
+            return variance / (n);
         }
     }
 }

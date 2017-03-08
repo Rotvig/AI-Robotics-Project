@@ -18,26 +18,19 @@ namespace AI_In_Robotics
     public partial class MainWindow : Window
     {
         public Brick brick;
-<<<<<<< HEAD
-=======
         private SensorFusion Sensors;
->>>>>>> Sensor and sensor fustion stuff
 
         public MainWindow()
         {
             InitializeComponent();
 
-            /* For outoutting console in window
+            //For outoutting console in window
             // Instantiate the writer
-            var _writer = new TextBoxStreamWriter(textBox);
+            //var _writer = new TextBoxStreamWriter(textBox);
             // Redirect the out Console stream
-            Console.SetOut(_writer);
-<<<<<<< HEAD
-            */
-=======
+            //Console.SetOut(_writer);
 
             // Init project classes
->>>>>>> Sensor and sensor fustion stuff
             var pathFinding = new Astar();
             var myMap = new Map(20, 20);
 
@@ -51,44 +44,14 @@ namespace AI_In_Robotics
             pathFinding.PrintPath(endNode, fromX, fromY, toX, toY);
 
             myMap.PrintRoadMap(roadMap, endNode, fromX, fromY, toX, toY);
-
-            //Init
-<<<<<<< HEAD
-
-            //SensorFusion Sensoes = new SensorFusion(brick);
-
-            //Sensoes.Read();
-
-            //Sensoes.Read();
-
-            //Sensoes.Read();
-
-            //Sensoes.Read();
-
-            //Sensoes.Read();
-
-            //Sensoes.Read();
-
-            /*var brick = new Brick(new UsbCommunication(), true);
-
-            Connect(brick).Wait();
-=======
->>>>>>> Sensor and sensor fustion stuff
-
-            System.Threading.Thread.Sleep(100);
-
-            //Infrared = new Sensor(brick);
         }
 
         private async void Ready(object sender, RoutedEventArgs e)
         {
-<<<<<<< HEAD
-            brick = new Brick(new BluetoothCommunication("COM5"), true);
+            //brick = new Brick(new BluetoothCommunication("COM5"), true);
 
-=======
             brick = new Brick(new BluetoothCommunication("COM11"), true);
        
->>>>>>> Sensor and sensor fustion stuff
             await brick.ConnectAsync();
 
             await brick.DirectCommand.PlayToneAsync(100, 440, 500);

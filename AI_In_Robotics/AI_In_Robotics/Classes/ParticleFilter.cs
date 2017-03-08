@@ -41,23 +41,32 @@ namespace AI_In_Robotics.Classes
         {
             foreach (var part in ParticleSet)
             {
-                part.pos = new Point2D(part.pos.X + Math.Cos(part.theta)*dist,
-                    part.pos.Y + Math.Sin(part.theta)*dist);
+                part.pos = new Point2D(part.pos.X + Math.Cos(part.theta) * dist,
+                                        part.pos.Y + Math.Sin(part.theta) * dist);
                 part.PositionNoise();
+
+                // If outside world or inside landmark, destroy particle and make new random particle.
+                if (part.pos.X > World.WorldSizeX || part.pos.X < 0 || part.pos.Y > World.WorldSizeY ||
+                    part.pos.Y < 0 || World.IsPointInSquare(part.pos))
+                {
+                    var tmpPart = new Particle(World.WorldSizeX, World.WorldSizeY);
+                    part.pos = tmpPart.pos;
+                    part.theta = tmpPart.theta;
+                }
             }
         }
 
 
         public void TurnParticlesLeft(double angleDeg)
         {
-            var angleRad = (Math.PI*angleDeg/180);
+            var angleRad = (Math.PI * angleDeg / 180);
             foreach (var part in ParticleSet)
             {
-                part.theta = (part.theta + angleRad)%(2*Math.PI);
+                part.theta = (part.theta + angleRad) % (2 * Math.PI);
                 part.ThetaNoise();
                 if (part.theta < 0)
                 {
-                    part.theta += 2*Math.PI;
+                    part.theta += 2 * Math.PI;
                 }
             }
         }
@@ -65,14 +74,14 @@ namespace AI_In_Robotics.Classes
 
         public void TurnParticlesRight(double angleDeg)
         {
-            var angleRad = (Math.PI*angleDeg/180);
+            var angleRad = (Math.PI * angleDeg / 180);
             foreach (var part in ParticleSet)
             {
-                part.theta = (part.theta - angleRad)%(2*Math.PI);
+                part.theta = (part.theta - angleRad) % (2 * Math.PI);
                 part.ThetaNoise();
                 if (part.theta < 0)
                 {
-                    part.theta += 2*Math.PI;
+                    part.theta += 2 * Math.PI;
                 }
             }
         }
@@ -90,15 +99,15 @@ namespace AI_In_Robotics.Classes
             var tmpSet = new List<Particle>();
             var index = Rand.RandomInt(0, ParticleSet.Count);
             double beta = 0;
-            var max = 2*ParticleSet.Max(part => part.weight);
+            var max = 2 * ParticleSet.Max(part => part.weight);
 
             for (var i = 0; i < ParticleSet.Count; ++i)
             {
-                beta += Rand.RandomDouble()*max;
+                beta += Rand.RandomDouble() * max;
                 while (beta > ParticleSet[index].weight)
                 {
                     beta -= ParticleSet[index].weight;
-                    index = (index + 1)%ParticleSet.Count;
+                    index = (index + 1) % ParticleSet.Count;
                 }
                 tmpSet.Add(ParticleSet[index].Clone());
             }
@@ -122,7 +131,7 @@ namespace AI_In_Robotics.Classes
             var i = tmpSet.Count;
             foreach (var part in tmpSet)
             {
-                part.weight = part.weight*i;
+                part.weight = part.weight * i;
                 i--;
             }
             ParticleSet = tmpSet;
@@ -137,8 +146,8 @@ namespace AI_In_Robotics.Classes
             double maxMeasure = 176; // TODO maxMeasure = approx world diagonal
             double expectedDist = World.GetDistance(part.pos, part.theta, maxMeasure);
 
-            prob *= Math.Exp(-Math.Pow(expectedDist - measurement, 2)/Math.Pow(senseNoise, 2)/2)/
-                    Math.Sqrt(2*Math.PI*Math.Pow(senseNoise, 2));
+            prob *= Math.Exp(-Math.Pow(expectedDist - measurement, 2) / Math.Pow(senseNoise, 2) / 2) /
+                    Math.Sqrt(2 * Math.PI * Math.Pow(senseNoise, 2));
 
             return prob;
         }
@@ -162,7 +171,7 @@ namespace AI_In_Robotics.Classes
             }
             foreach (var part in ParticleSet)
             {
-                part.weight = part.weight/sumWeights;
+                part.weight = part.weight / sumWeights;
             }
         }
 

@@ -20,6 +20,14 @@ namespace AI_In_Robotics
         public Brick brick;
         private SensorFusion Sensors;
 
+        static int N = 1000;
+        static ParticleFilter filter;
+        static Map World;
+        static Bitmap OriginalBitmap;
+        static Bitmap BitmapClone;
+        private int TestCounter = 0;
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -50,40 +58,98 @@ namespace AI_In_Robotics
         {
             //brick = new Brick(new BluetoothCommunication("COM5"), true);
 
-            brick = new Brick(new BluetoothCommunication("COM11"), true);
+            //brick = new Brick(new BluetoothCommunication("COM11"), true);
        
-            await brick.ConnectAsync();
+            //await brick.ConnectAsync();
 
-            await brick.DirectCommand.PlayToneAsync(100, 440, 500);
+            //await brick.DirectCommand.PlayToneAsync(100, 440, 500);
 
-            Sensors = new SensorFusion(brick);
+            //Sensors = new SensorFusion(brick);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var bitmap = new Bitmap(400, 400);
-            Image.Source = bitmap.Drawparticles(new List<Particle>
-            {
-                new Particle
-                {
-                    pos = new Point2D(5, 5)
-                },
-                new Particle
-                {
-                    pos = new Point2D(0, 0)
-                },
-                new Particle
-                {
-                    pos = new Point2D(50, 50)
-                }
-            });
+            World = new Map(399, 399);
+            filter = new ParticleFilter(N, World);
+
+            World.AddSquare(1, 1, 2, 3, 0);
+            World.AddSquare(12, 12, 5, 5, 45);
+
+            int fromX = 0, fromY = 0, toX = 19, toY = 19;
+            var roadMap = World.GetAStarRoadMap(fromX, fromY, toX, toY);
+
+
+            OriginalBitmap = new Bitmap(400, 400);
+            Image.Source = OriginalBitmap.DrawObjects(roadMap);
+
+            BitmapClone = (Bitmap)OriginalBitmap.Clone();
+            Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
         }
 
         private void KeyEvent(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == System.Windows.Input.Key.Space)
             {
-                Sensors.CalibrateSensors();
+                //Sensors.CalibrateSensors();
+
+                TestCounter++;
+                if (TestCounter == 1)
+                {
+                    filter.Resample(250);
+                    filter.Resample(250);
+                    filter.TurnParticlesRight(90);
+                    filter.Resample(50);
+                    filter.Resample(50);
+                    filter.TurnParticlesRight(90);
+                    filter.Resample(150);
+                    filter.Resample(150);
+                    filter.TurnParticlesRight(90);
+                    filter.Resample(350);
+                    filter.Resample(350);
+                    filter.TurnParticlesRight(90);
+                    filter.Resample(250);
+                    filter.Resample(250);
+
+                    BitmapClone = (Bitmap)OriginalBitmap.Clone();
+                    Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
+                }
+                if (TestCounter == 2)
+                {
+                    filter.MoveParticles(25);
+                    filter.Resample(225);
+                    filter.Resample(225);
+
+                    BitmapClone = (Bitmap)OriginalBitmap.Clone();
+                    Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
+                }
+                if (TestCounter == 3)
+                {
+                    filter.MoveParticles(50);
+                    filter.Resample(175);
+                    filter.Resample(175);
+
+                    BitmapClone = (Bitmap)OriginalBitmap.Clone();
+                    Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
+                }
+                if (TestCounter == 4)
+                {
+                    filter.TurnParticlesRight(90);
+                    filter.Resample(50);
+                    filter.Resample(50);
+                    filter.TurnParticlesRight(90);
+                    filter.Resample(225);
+                    filter.Resample(225);
+                    filter.TurnParticlesRight(90);
+                    filter.Resample(350);
+                    filter.Resample(350);
+                    filter.TurnParticlesRight(90);
+                    filter.Resample(175);
+                    filter.Resample(175);
+
+                    BitmapClone = (Bitmap)OriginalBitmap.Clone();
+                    Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
+                }
+
             }
         }
     }

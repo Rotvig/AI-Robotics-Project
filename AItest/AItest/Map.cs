@@ -257,7 +257,6 @@ namespace AItest
                 }
                 else
                 {
-
                     if (path[i - 1].y < val.y)
                     {
                         //DOWN

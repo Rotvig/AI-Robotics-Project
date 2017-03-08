@@ -18,19 +18,21 @@ namespace AI_In_Robotics.Classes
                 calibrationAddition = Settings.sonarCalibrationAddition;
                 calibrationMultiplyer = Settings.sonarCalibrationMultiplyer;
                 _port = Settings.sonarPort;
+                //_brick.Ports[_port].SetMode(InfraredMode.Proximity);
             }
             else
             {
                 calibrationAddition = Settings.infraredCalibrationAddition;
                 calibrationMultiplyer = Settings.infraredCalibrationMultiplyer;
                 _port = Settings.infraredPort;
+                //_brick.Ports[_port].SetMode(UltrasonicMode.SiCentimeters);
             }
         }
 
         public uint Read()
         {
             Thread.Sleep(20);
-            return (uint) _brick.Ports[_port].RawValue;
+            return (uint) _brick.Ports[_port].SIValue;
         }
     }
 }

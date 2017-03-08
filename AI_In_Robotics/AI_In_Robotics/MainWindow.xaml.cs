@@ -18,6 +18,10 @@ namespace AI_In_Robotics
     public partial class MainWindow : Window
     {
         public Brick brick;
+<<<<<<< HEAD
+=======
+        private SensorFusion Sensors;
+>>>>>>> Sensor and sensor fustion stuff
 
         public MainWindow()
         {
@@ -28,7 +32,12 @@ namespace AI_In_Robotics
             var _writer = new TextBoxStreamWriter(textBox);
             // Redirect the out Console stream
             Console.SetOut(_writer);
+<<<<<<< HEAD
             */
+=======
+
+            // Init project classes
+>>>>>>> Sensor and sensor fustion stuff
             var pathFinding = new Astar();
             var myMap = new Map(20, 20);
 
@@ -38,13 +47,13 @@ namespace AI_In_Robotics
             int fromX = 0, fromY = 0, toX = 19, toY = 19;
             var roadMap = myMap.GetAStarRoadMap(fromX, fromY, toX, toY);
 
-
             var endNode = pathFinding.AStar(roadMap, fromX, fromY, toX, toY);
             pathFinding.PrintPath(endNode, fromX, fromY, toX, toY);
 
             myMap.PrintRoadMap(roadMap, endNode, fromX, fromY, toX, toY);
 
             //Init
+<<<<<<< HEAD
 
             //SensorFusion Sensoes = new SensorFusion(brick);
 
@@ -63,39 +72,36 @@ namespace AI_In_Robotics
             /*var brick = new Brick(new UsbCommunication(), true);
 
             Connect(brick).Wait();
+=======
+>>>>>>> Sensor and sensor fustion stuff
 
             System.Threading.Thread.Sleep(100);
 
-            Sonar = new Sensor(brick, true);
-
             //Infrared = new Sensor(brick);
-
-            Car = new Motion(brick);
-
-            //DO stuff
-
-            //Move(Motion.Front, brick, 50, 5000).Wait();
-
-            //Car.RotationScan(brick, Sonar, Infrared).Wait();
-
-            Car.Turn90Deg(MotionEnum.Left, brick).Wait();
-
-            System.Threading.Thread.Sleep(2000);
-
-            Car.Move(MotionEnum.Front, brick, 100, 500).Wait();
-
-            brick.Disconnect();
-
-            Console.ReadKey();*/
         }
 
         private async void Ready(object sender, RoutedEventArgs e)
         {
+<<<<<<< HEAD
             brick = new Brick(new BluetoothCommunication("COM5"), true);
 
+=======
+            brick = new Brick(new BluetoothCommunication("COM11"), true);
+       
+>>>>>>> Sensor and sensor fustion stuff
             await brick.ConnectAsync();
 
             await brick.DirectCommand.PlayToneAsync(100, 440, 500);
+
+            Sensors = new SensorFusion(brick);
+        }
+
+        private void calibrate(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Space)
+            {
+                Sensors.CalibrateSensors();
+            }
         }
 
 

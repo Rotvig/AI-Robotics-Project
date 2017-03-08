@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using AI_In_Robotics.Classes;
+using AI_In_Robotics.Utils.ConsoleRedirection;
 using Lego.Ev3.Core;
 
 namespace AI_In_Robotics
@@ -16,6 +17,10 @@ namespace AI_In_Robotics
         {
             InitializeComponent();
 
+            // Instantiate the writer
+            var _writer = new TextBoxStreamWriter(textBox);
+            // Redirect the out Console stream
+            Console.SetOut(_writer);
             var pathFinding = new Astar();
             var myMap = new Map(20, 20);
 

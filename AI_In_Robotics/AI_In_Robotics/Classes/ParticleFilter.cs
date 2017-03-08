@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MathNet.Spatial.Euclidean;
 
-namespace AItest
+namespace AI_In_Robotics.Classes
 {
     public class ParticleFilter
     {
-        int _N; // Number of particles
+        private readonly int _N; // Number of particles
         public List<Particle> ParticleSet = new List<Particle>();
 
-        static List<Point2D> Landmarks = new List<Point2D>(); //TODO Get landmarks from map?
+        private static readonly List<Point2D> Landmarks = new List<Point2D>(); //TODO Get landmarks from map?
 
         public ParticleFilter(int N)
         {
@@ -30,12 +28,12 @@ namespace AItest
         }
 
 
-        void GenerateParticleSet()
+        private void GenerateParticleSet()
         {
-            for (int i = 0; i < _N; ++i)
+            for (var i = 0; i < _N; ++i)
             {
                 var particle = new Particle();
-                particle.weight = 1 / (double)_N;
+                particle.weight = 1/(double) _N;
 
                 ParticleSet.Add(particle);
             }
@@ -44,10 +42,10 @@ namespace AItest
 
         public void MoveParticles(double dist)
         {
-            foreach(var part in ParticleSet)
+            foreach (var part in ParticleSet)
             {
-                part.pos = new Point2D(part.pos.X + Math.Cos(part.theta) * dist,
-                                        part.pos.Y + Math.Sin(part.theta) * dist);
+                part.pos = new Point2D(part.pos.X + Math.Cos(part.theta)*dist,
+                    part.pos.Y + Math.Sin(part.theta)*dist);
                 part.PositionNoise();
             }
         }
@@ -55,14 +53,14 @@ namespace AItest
 
         public void TurnParticlesLeft(double angleDeg)
         {
-            double angleRad = (Math.PI * angleDeg / 180);
-            foreach(var part in ParticleSet)
+            var angleRad = (Math.PI*angleDeg/180);
+            foreach (var part in ParticleSet)
             {
-                part.theta = (part.theta + angleRad) % (2*Math.PI);
+                part.theta = (part.theta + angleRad)%(2*Math.PI);
                 part.ThetaNoise();
                 if (part.theta < 0)
                 {
-                    part.theta += 2 * Math.PI;
+                    part.theta += 2*Math.PI;
                 }
             }
         }
@@ -70,14 +68,14 @@ namespace AItest
 
         public void TurnParticlesRight(double angleDeg)
         {
-            double angleRad = (Math.PI * angleDeg / 180);
+            var angleRad = (Math.PI*angleDeg/180);
             foreach (var part in ParticleSet)
             {
-                part.theta = (part.theta - angleRad) % (2 * Math.PI);
+                part.theta = (part.theta - angleRad)%(2*Math.PI);
                 part.ThetaNoise();
                 if (part.theta < 0)
                 {
-                    part.theta += 2 * Math.PI;
+                    part.theta += 2*Math.PI;
                 }
             }
         }
@@ -85,50 +83,49 @@ namespace AItest
 
         public void Resample(double measurement)
         {
-            double worldDiag = Math.Sqrt(Math.Pow(100, 2) + Math.Pow(100, 2)); //TODO world size instead of 100
+            var worldDiag = Math.Sqrt(Math.Pow(100, 2) + Math.Pow(100, 2)); //TODO world size instead of 100
             if (measurement > worldDiag)
             {
                 return;
             }
 
             SetWeights(measurement);
-            List<Particle> tmpSet = new List<Particle>();
-            int index = Rand.RandomInt(0, ParticleSet.Count);
+            var tmpSet = new List<Particle>();
+            var index = Rand.RandomInt(0, ParticleSet.Count);
             double beta = 0;
-            double max = 2 * ParticleSet.Max(part => part.weight);
-            
-            for( int i = 0; i<ParticleSet.Count; ++i)
+            var max = 2*ParticleSet.Max(part => part.weight);
+
+            for (var i = 0; i < ParticleSet.Count; ++i)
             {
-                beta += Rand.RandomDouble() * max;
-                while(beta > ParticleSet[index].weight)
+                beta += Rand.RandomDouble()*max;
+                while (beta > ParticleSet[index].weight)
                 {
                     beta -= ParticleSet[index].weight;
-                    index = (index + 1) % ParticleSet.Count;
+                    index = (index + 1)%ParticleSet.Count;
                 }
                 tmpSet.Add(ParticleSet[index].Clone());
             }
 
             ParticleSet = tmpSet;
             NormalizeWeights();
-
         }
 
 
         public void SetWeights(double measurement)
         {
-            double worldDiag = Math.Sqrt(Math.Pow(100, 2) + Math.Pow(100, 2)); //TODO world size instead of 100
-            
-            foreach(var part in ParticleSet)
+            var worldDiag = Math.Sqrt(Math.Pow(100, 2) + Math.Pow(100, 2)); //TODO world size instead of 100
+
+            foreach (var part in ParticleSet)
             {
-                double dist = CalculateShortestDistance(part);
+                var dist = CalculateShortestDistance(part);
                 part.weight = worldDiag - Math.Abs(measurement - dist);
             }
 
             var tmpSet = ParticleSet.OrderBy(part => part.weight).Reverse().ToList();
-            int i = tmpSet.Count;
-            foreach(var part in tmpSet)
+            var i = tmpSet.Count;
+            foreach (var part in tmpSet)
             {
-                part.weight = part.weight * i;
+                part.weight = part.weight*i;
                 i--;
             }
             ParticleSet = tmpSet;
@@ -139,10 +136,11 @@ namespace AItest
         public double MeasureProb(double measurement)
         {
             double prob = 1;
-            double senseNoise = 5.0; // TODO senseNoise??
+            var senseNoise = 5.0; // TODO senseNoise??
             double expectedDist = 0; // TODO get expected dist?
 
-            prob *= Math.Exp(-Math.Pow(expectedDist - measurement, 2) / Math.Pow(senseNoise, 2) / 2) / Math.Sqrt(2 * Math.PI * Math.Pow(senseNoise, 2));
+            prob *= Math.Exp(-Math.Pow(expectedDist - measurement, 2)/Math.Pow(senseNoise, 2)/2)/
+                    Math.Sqrt(2*Math.PI*Math.Pow(senseNoise, 2));
 
             return prob;
         }
@@ -157,17 +155,16 @@ namespace AItest
         }
 
 
-
         private void NormalizeWeights()
         {
             double sumWeights = 0;
-            foreach(var part in ParticleSet)
+            foreach (var part in ParticleSet)
             {
                 sumWeights += part.weight;
             }
-            foreach(var part in ParticleSet)
+            foreach (var part in ParticleSet)
             {
-                part.weight = part.weight / sumWeights;
+                part.weight = part.weight/sumWeights;
             }
         }
 
@@ -196,7 +193,5 @@ namespace AItest
             var shortestDistance = Math.Sqrt(Math.Pow(tmpX - part.pos.X, 2) + Math.Pow(tmpY - part.pos.Y, 2));
             return shortestDistance;
         }
-
-
     }
 }

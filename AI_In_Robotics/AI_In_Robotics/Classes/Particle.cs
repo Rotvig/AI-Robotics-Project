@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MathNet.Spatial.Euclidean;
-using MathNet.Spatial.Units;
 
-namespace AItest
+namespace AI_In_Robotics.Classes
 {
     public class Particle : IComparable
     {
@@ -17,18 +12,19 @@ namespace AItest
 
         public Particle()
         {
-            pos = new Point2D(Rand.RandomDouble() * 100, Rand.RandomDouble() * 100); //TODO 100 should be map sizes of x and y
-            theta = Math.PI * Rand.RandomInt(0, 360) / 180;
+            pos = new Point2D(Rand.RandomDouble()*100, Rand.RandomDouble()*100);
+            //TODO 100 should be map sizes of x and y
+            theta = Math.PI*Rand.RandomInt(0, 360)/180;
         }
 
         public void PositionNoise()
         {
-            this.pos = new Point2D(pos.X + Rand.Gauss(), pos.Y + Rand.Gauss()); //TODO variance defaults to 1
+            pos = new Point2D(pos.X + Rand.Gauss(), pos.Y + Rand.Gauss()); //TODO variance defaults to 1
         }
 
         public void ThetaNoise()
         {
-            this.theta = (theta + Rand.Gauss(0, 0.2)) % (2*Math.PI); // TODO variance defaults to 1  3.0 / 180.0 * Math.PI
+            theta = (theta + Rand.Gauss(0, 0.2))%(2*Math.PI); // TODO variance defaults to 1  3.0 / 180.0 * Math.PI
         }
 
         public int CompareTo(object obj)
@@ -38,17 +34,16 @@ namespace AItest
                 return -1;
             if (weight == obj1.weight)
                 return 0;
-            else
-                return 1;
+            return 1;
         }
 
         public Particle Clone()
         {
             return new Particle
             {
-                pos = this.pos,
-                weight = this.weight,
-                theta = this.theta
+                pos = pos,
+                weight = weight,
+                theta = theta
             };
         }
     }

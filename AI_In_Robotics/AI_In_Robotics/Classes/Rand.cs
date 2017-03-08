@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace AItest
+namespace AI_In_Robotics.Classes
 {
     public static class Rand
     {
@@ -39,10 +34,10 @@ namespace AItest
 
         public static double Gauss(double mu = 0, double sigma = 1)
         {
-            double u1 = 1.0 - RandomDouble(); //uniform(0,1] random doubles
-            double u2 = 1.0 - RandomDouble();
-            double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2); //random normal(0,1)
-            return mu + sigma * randStdNormal; //random normal(mean,stdDev^2)
+            var u1 = 1.0 - RandomDouble(); //uniform(0,1] random doubles
+            var u2 = 1.0 - RandomDouble();
+            var randStdNormal = Math.Sqrt(-2.0*Math.Log(u1))*Math.Sin(2.0*Math.PI*u2); //random normal(0,1)
+            return mu + sigma*randStdNormal; //random normal(mean,stdDev^2)
         }
     }
 }

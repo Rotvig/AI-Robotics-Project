@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AItest", "AItest\AItest.csproj", "{43E4AEDB-5FC9-4FCD-BC55-8BA6CEFF0DAD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AI_In_Robotics", "AI_In_Robotics\AI_In_Robotics.csproj", "{2D2CEA03-EA36-4268-B988-29E6D3D35C0C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{43E4AEDB-5FC9-4FCD-BC55-8BA6CEFF0DAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{43E4AEDB-5FC9-4FCD-BC55-8BA6CEFF0DAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43E4AEDB-5FC9-4FCD-BC55-8BA6CEFF0DAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43E4AEDB-5FC9-4FCD-BC55-8BA6CEFF0DAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D2CEA03-EA36-4268-B988-29E6D3D35C0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D2CEA03-EA36-4268-B988-29E6D3D35C0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D2CEA03-EA36-4268-B988-29E6D3D35C0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D2CEA03-EA36-4268-B988-29E6D3D35C0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

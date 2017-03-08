@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Lego.Ev3.Desktop;
-using Lego.Ev3.Core;
+﻿using Lego.Ev3.Core;
 
-namespace AItest
+namespace AI_In_Robotics.Classes
 {
     public static class Settings
     {
@@ -18,6 +12,5 @@ namespace AItest
         public const InputPort infraredPort = InputPort.One;
         public const int infraredCalibrationAddition = 1;
         public const int infraredCalibrationMultiplyer = 1;
-
     }
 }

@@ -1,25 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Lego.Ev3.Desktop;
+﻿using System.Threading;
 using Lego.Ev3.Core;
 
-namespace AItest
+namespace AI_In_Robotics.Classes
 {
     public class Sensor
     {
-        int calibrationAddition;
-        int calibrationMultiplyer;
-        Brick _brick;
-        InputPort _port;
+        private int calibrationAddition;
+        private int calibrationMultiplyer;
+        private readonly Brick _brick;
+        private readonly InputPort _port;
 
         public Sensor(Brick brick, bool sonar = false)
         {
-
             _brick = brick;
-            if(sonar)
+            if (sonar)
             {
                 calibrationAddition = Settings.sonarCalibrationAddition;
                 calibrationMultiplyer = Settings.sonarCalibrationMultiplyer;
@@ -35,8 +29,8 @@ namespace AItest
 
         public uint Read()
         {
-            System.Threading.Thread.Sleep(20);
-            return (uint)_brick.Ports[_port].RawValue;
+            Thread.Sleep(20);
+            return (uint) _brick.Ports[_port].RawValue;
         }
     }
 }

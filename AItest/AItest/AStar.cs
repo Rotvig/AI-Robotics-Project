@@ -12,10 +12,10 @@ namespace AItest
         public Node AStar(char[,] matrix, int fromX, int fromY, int toX, int toY)
         {
             //Find max Size of map
-            int maxX = matrix.GetLength(0);
+            int maxX = matrix.GetLength(0) ;
             if (maxX == 0)
                 return null;
-            int maxY = matrix.Length;
+            int maxY = matrix.GetLength(1);
 
             //the keys for open and closed are x.ToString() + y.ToString() of the Node 
             Dictionary<string, Node> open = new Dictionary<string, Node>();
@@ -69,13 +69,15 @@ namespace AItest
                     {
                         Node curNbr = open[nbrKey];
                         // successor.g = q.g + distance between successor and q
-                        int g = Math.Abs(nbrX - fromX) + Math.Abs(nbrY - fromY);
+                        var g = Math.Sqrt((nbrX - fromX) ^ 2 + (nbrY - fromY) ^ 2);
                         // successor.h = distance from goal to successor
-                        var h = Math.Abs(nbrX - toX) + Math.Abs(nbrY - toY);
+                        var h = Math.Sqrt((nbrX - toX) ^ 2 + (nbrY - toY) ^ 2);
                         var f = g + h;
                         if (f < curNbr.f)
                         {
                             curNbr.f = f;
+                            curNbr.g = g;
+                            curNbr.h = h;
                             curNbr.parent = smallest.Value;
                         }
                     }
@@ -84,9 +86,9 @@ namespace AItest
                         // otherwise, add the node to the open list
                         Node curNbr = new Node { x = nbrX, y = nbrY };
                         // successor.g = q.g + distance between successor and q
-                        curNbr.g = Math.Abs(nbrX - fromX) + Math.Abs(nbrY - fromY);
+                        curNbr.g = Math.Sqrt((nbrX - fromX)^2 +(nbrY - fromY)^2);
                         // successor.h = distance from goal to successor
-                        curNbr.h = Math.Abs(nbrX - toX) + Math.Abs(nbrY - toY);
+                        curNbr.h = Math.Sqrt((nbrX - toX) ^ 2 + (nbrY - toY) ^ 2);
                         // successor.f = successor.g + successor.h
                         curNbr.f = curNbr.g + curNbr.h;
                         curNbr.parent = smallest.Value;
@@ -177,7 +179,7 @@ namespace AItest
 
     public class Node
     {
-        public int g = 0, h = 0, f = 0;
+        public double g = 0, h = 0, f = 0;
         public int x, y;
         public Node parent;
     }

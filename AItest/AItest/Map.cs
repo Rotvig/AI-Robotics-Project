@@ -206,13 +206,13 @@ namespace AItest
             return roadMap;
         }
 
-        public void PrintRoadMap(char[,] roadMap, Node endNode = null)
+        public void PrintRoadMap(char[,] roadMap, Node endNode, int fromX, int fromY, int toX, int toY)
         {
             int rowLength = roadMap.GetLength(0);
             int colLength = roadMap.GetLength(1);
 
             if(endNode != null)
-                roadMap = AddRouteToMap(roadMap, endNode);
+                roadMap = AddRouteToMap(roadMap, endNode, fromX, fromY, toX, toY);
 
             for (int yIndex = colLength - 1; yIndex >= 0; yIndex--)
             {
@@ -224,16 +224,26 @@ namespace AItest
             }
         }
 
-        private char[,] AddRouteToMap(char[,] roadMap, Node endNode)
-        { 
-            while(true)
+        private char[,] AddRouteToMap(char[,] roadMap, Node endNode, int fromX, int fromY, int toX, int toY)
+        {
+            Stack<Node> path = new Stack<Node>();
+            while (endNode.x != fromX || endNode.y != fromY)
             {
-                var parent = endNode.parent;
-                if (parent == null)
-                    return roadMap;
-
-                roadMap[parent.x, parent.y] = 'R';
+                path.Push(endNode);
+                endNode = endNode.parent;
             }
+
+            path.Push(endNode);
+
+            foreach(var val in path)
+            {
+                if (roadMap[val.x, val.y] == 'S' || roadMap[val.x, val.y] == 'E')
+                    continue;
+
+                roadMap[val.x, val.y] = 'R';
+            }
+
+            return roadMap;
         }
 
         private bool IsPointInSquare(Point2D StartPoint)

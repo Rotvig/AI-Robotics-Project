@@ -8,8 +8,8 @@ namespace AI_In_Robotics.Classes
 {
     public class Map
     {
-        private readonly int WorldSizeX;
-        private readonly int WorldSizeY;
+        public readonly int WorldSizeX;
+        public readonly int WorldSizeY;
         private readonly List<Line2D> WorldLines = new List<Line2D>();
         private readonly List<Square> WorldObjects = new List<Square>();
 
@@ -260,7 +260,7 @@ namespace AI_In_Robotics.Classes
             return roadMap;
         }
 
-        private bool IsPointInSquare(Point2D StartPoint)
+        public bool IsPointInSquare(Point2D Point)
         {
             var margin = 0.00001;
 
@@ -269,13 +269,12 @@ namespace AI_In_Robotics.Classes
                 double sumOfArea = 0;
                 foreach (var line in obj.SquareEdgeLines)
                 {
-                    if (CheckIfPointIsOnLine(line, StartPoint))
+                    if (CheckIfPointIsOnLine(line, Point))
                     {
-                        //return true;
-                        return IntersectionIsOnLine(StartPoint, line);
+                        return IntersectionIsOnLine(Point, line);
                     }
 
-                    sumOfArea += CalculateTriangleArea(line, StartPoint);
+                    sumOfArea += CalculateTriangleArea(line, Point);
                 }
 
                 if (Math.Abs(sumOfArea - obj.area) < margin)

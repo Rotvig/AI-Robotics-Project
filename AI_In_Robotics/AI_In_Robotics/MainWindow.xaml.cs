@@ -8,6 +8,7 @@ using AI_In_Robotics.Classes;
 using AI_In_Robotics.Utils;
 using Lego.Ev3.Core;
 using MathNet.Spatial.Euclidean;
+using Lego.Ev3.Desktop;
 
 namespace AI_In_Robotics
 {
@@ -16,6 +17,8 @@ namespace AI_In_Robotics
     /// </summary>
     public partial class MainWindow : Window
     {
+        public Brick brick;   
+
         public MainWindow()
         {
             InitializeComponent();
@@ -42,9 +45,7 @@ namespace AI_In_Robotics
             myMap.PrintRoadMap(roadMap, endNode, fromX, fromY, toX, toY);
 
             //Init
-
-            //var brick = new Brick(new BluetoothCommunication("COM11"), true);
-
+            
             //SensorFusion Sensoes = new SensorFusion(brick);
 
             //Sensoes.Read();
@@ -59,42 +60,43 @@ namespace AI_In_Robotics
 
             //Sensoes.Read();
 
-            /*var brick = new Brick(new UsbCommunication(), true);
-            Connect(brick).Wait();
-            System.Threading.Thread.Sleep(100);
-            Sonar = new Sensor(brick, true);
-            //Infrared = new Sensor(brick);
-            Car = new Motion(brick);
-            //DO stuff
-            //Move(Motion.Front, brick, 50, 5000).Wait();
-            //Car.RotationScan(brick, Sonar, Infrared).Wait();
-            Car.Turn90Deg(MotionEnum.Left, brick).Wait();
-            System.Threading.Thread.Sleep(2000);
-            Car.Move(MotionEnum.Front, brick, 100, 500).Wait();
-            brick.Disconnect();
+            /*var brick = new Brick(new UsbCommunication(), true);
+
+            Connect(brick).Wait();
+
+            System.Threading.Thread.Sleep(100);
+
+            Sonar = new Sensor(brick, true);
+
+            //Infrared = new Sensor(brick);
+
+            Car = new Motion(brick);
+
+            //DO stuff
+
+            //Move(Motion.Front, brick, 50, 5000).Wait();
+
+            //Car.RotationScan(brick, Sonar, Infrared).Wait();
+
+            Car.Turn90Deg(MotionEnum.Left, brick).Wait();
+
+            System.Threading.Thread.Sleep(2000);
+
+            Car.Move(MotionEnum.Front, brick, 100, 500).Wait();
+
+            brick.Disconnect();
+
             Console.ReadKey();*/
         }
 
-        private static async Task Connect(Brick _brick)
-
+        private async void Ready(object sender, RoutedEventArgs e)
         {
-            try
+            brick = new Brick(new BluetoothCommunication("COM5"), true);
+       
+            await brick.ConnectAsync();
 
-            {
-                await _brick.ConnectAsync();
-
-                Thread.Sleep(100);
-
-                //await _brick.DirectCommand.PlayToneAsync(100, 440, 500);
-            }
-
-            catch (Exception)
-
-            {
-                Console.WriteLine("Could not connect");
-
-                Environment.Exit(0);
-            }
+            await brick.DirectCommand.PlayToneAsync(100, 440, 500);
+        }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -115,7 +117,6 @@ namespace AI_In_Robotics
                     pos = new Point2D(50, 50)
                 }
             });
-        }
     }
 }
 

@@ -10,18 +10,11 @@ namespace AI_In_Robotics.Classes
         private readonly int _N; // Number of particles
         public List<Particle> ParticleSet = new List<Particle>();
 
-        private static readonly List<Point2D> Landmarks = new List<Point2D>(); //TODO Get landmarks from map?
+        private Map World;
 
-        public ParticleFilter(int N)
+        public ParticleFilter(int N, Map myWorld)
         {
-            Landmarks.Add(new Point2D(35, 90));
-            Landmarks.Add(new Point2D(35, 10));
-            Landmarks.Add(new Point2D(50, 10));
-            Landmarks.Add(new Point2D(50, 10));
-            //Landmarks.Add(new Point2D(20, 20));
-            //Landmarks.Add(new Point2D(80, 80));
-            //Landmarks.Add(new Point2D(20, 80));
-            //Landmarks.Add(new Point2D(80, 20));
+            World = myWorld;
 
             _N = N;
             GenerateParticleSet();
@@ -32,10 +25,14 @@ namespace AI_In_Robotics.Classes
         {
             for (var i = 0; i < _N; ++i)
             {
-                var particle = new Particle();
-                particle.weight = 1/(double) _N;
+                Particle part;
+                do
+                {
+                    part = new Particle(World.WorldSizeX, World.WorldSizeY);
+                    part.weight = 1 / (double)_N;
+                } while (World.IsPointInSquare(part.pos));
 
-                ParticleSet.Add(particle);
+                ParticleSet.Add(part);
             }
         }
 
@@ -83,7 +80,7 @@ namespace AI_In_Robotics.Classes
 
         public void Resample(double measurement)
         {
-            var worldDiag = Math.Sqrt(Math.Pow(100, 2) + Math.Pow(100, 2)); //TODO world size instead of 100
+            var worldDiag = Math.Sqrt(Math.Pow(World.WorldSizeX, 2) + Math.Pow(World.WorldSizeY, 2));
             if (measurement > worldDiag)
             {
                 return;
@@ -113,7 +110,7 @@ namespace AI_In_Robotics.Classes
 
         public void SetWeights(double measurement)
         {
-            var worldDiag = Math.Sqrt(Math.Pow(100, 2) + Math.Pow(100, 2)); //TODO world size instead of 100
+            var worldDiag = Math.Sqrt(Math.Pow(World.WorldSizeX, 2) + Math.Pow(World.WorldSizeY, 2));
 
             foreach (var part in ParticleSet)
             {
@@ -133,11 +130,12 @@ namespace AI_In_Robotics.Classes
         }
 
 
-        public double MeasureProb(double measurement)
+        public double MeasureProb(double measurement, Particle part)
         {
             double prob = 1;
             var senseNoise = 5.0; // TODO senseNoise??
-            double expectedDist = 0; // TODO get expected dist?
+            double maxMeasure = 176; // TODO maxMeasure = approx world diagonal
+            double expectedDist = World.GetDistance(part.pos, part.theta, maxMeasure);
 
             prob *= Math.Exp(-Math.Pow(expectedDist - measurement, 2)/Math.Pow(senseNoise, 2)/2)/
                     Math.Sqrt(2*Math.PI*Math.Pow(senseNoise, 2));
@@ -172,20 +170,11 @@ namespace AI_In_Robotics.Classes
         {
             var tmpX = part.pos.X;
             var tmpY = part.pos.Y;
-            //TODO world size instead of 100 in tmpX > 100 and tmpY > 100
-            //TODO Landmarks from map?
-            while (!(tmpX > 100)
-                   && !(tmpX < 0.01)
-                   && !(tmpY > 100)
-                   && !(tmpY < 0.01)
-                   && !(tmpX == Landmarks[0].X)
-                   && !(tmpX == Landmarks[1].X)
-                   && !(tmpX == Landmarks[2].X)
-                   && !(tmpX == Landmarks[3].X)
-                   && !(tmpY == Landmarks[0].Y)
-                   && !(tmpY == Landmarks[1].Y)
-                   && !(tmpY == Landmarks[2].Y)
-                   && !(tmpY == Landmarks[3].Y))
+            while (!(tmpX > World.WorldSizeX)
+                   && !(tmpX < 0.001)
+                   && !(tmpY > World.WorldSizeY)
+                   && !(tmpY < 0.001)
+                   && !(World.IsPointInSquare(part.pos)))
             {
                 tmpX = tmpX + Math.Cos(part.theta);
                 tmpY = tmpY + Math.Sin(part.theta);

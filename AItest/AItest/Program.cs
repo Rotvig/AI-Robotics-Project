@@ -25,7 +25,7 @@ namespace AItest
 
             int fromX = 0, fromY = 0, toX = 19, toY = 19;
             var roadMap = myMap.GetAStarRoadMap(fromX, fromY, toX, toY);
-            
+
 
             var endNode = pathFinding.AStar(roadMap, fromX, fromY, toX, toY);
             pathFinding.PrintPath(endNode, fromX, fromY, toX, toY);
@@ -78,3 +78,84 @@ namespace AItest
         }
     }
 }
+
+
+//namespace AItest
+//{
+//    class Program
+//    {
+//        static int N = 10;
+//        static ParticleFilter filter = new ParticleFilter(N);
+
+
+//        static void Main(string[] args)
+//        {
+//            Console.WriteLine("Start of test\n" + Rand.Gauss(0, 5));
+
+//            Console.WriteLine("Start of test\n" + Rand.Gauss(0, 5));
+//            Console.WriteLine("Start of test\n" + Rand.Gauss(0, 5));
+//            Console.WriteLine("Start of test\n" + Rand.Gauss(0, 5));
+
+
+//            // Test particle filter
+//            //filter.PrintParticles();
+//            //Console.ReadKey();
+//            //filter.TurnParticlesRight(90);
+//            //Console.WriteLine("Start of test\n");
+//            //filter.PrintParticles();
+//            //Console.ReadKey();
+//            //filter.TurnParticlesRight(90);
+//            //filter.TurnParticlesRight(90);
+//            //filter.TurnParticlesRight(90);
+//            //filter.TurnParticlesRight(90);
+//            //filter.TurnParticlesRight(90);
+//            //filter.TurnParticlesRight(90);
+//            //filter.TurnParticlesRight(90);
+//            //filter.TurnParticlesRight(90);
+//            //filter.TurnParticlesRight(90);
+//            //filter.TurnParticlesRight(90);
+//            //filter.TurnParticlesRight(90);
+//            //filter.TurnParticlesRight(90);
+//            //filter.TurnParticlesRight(90);
+//            //filter.TurnParticlesRight(90);
+//            //Console.WriteLine("Start of test\n");
+//            //filter.PrintParticles();
+//            Console.ReadKey();
+
+//            //filter.Resample(70);
+//            //filter.TurnParticlesRight(90);
+//            //filter.Resample(42);
+//            //filter.Resample(42);
+//            //filter.TurnParticlesRight(90);
+//            //filter.Resample(10);
+//            //filter.Resample(10);
+//            //filter.TurnParticlesRight(90);
+//            //filter.Resample(42);
+//            //filter.Resample(42);
+//            //filter.TurnParticlesRight(90);
+//            //filter.Resample(70);
+//            //filter.Resample(70);
+
+//            //filter.MoveParticles(15);
+//            //filter.Resample(55);
+//            //filter.Resample(55);
+//            //filter.MoveParticles(15);
+//            //filter.Resample(40);
+//            //filter.Resample(40);
+
+//            //filter.TurnParticlesRight(90);
+//            //filter.Resample(42);
+//            //filter.Resample(42);
+//            //filter.TurnParticlesRight(90);
+//            //filter.Resample(40);
+//            //filter.Resample(40);
+//            //filter.TurnParticlesRight(90);
+//            //filter.Resample(42);
+//            //filter.Resample(42);
+
+//            //filter.PrintParticles();
+
+//            //Console.ReadKey();
+//        }
+//    }
+//}

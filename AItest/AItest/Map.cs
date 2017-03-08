@@ -206,10 +206,13 @@ namespace AItest
             return roadMap;
         }
 
-        public void PrintRoadMap(char[,] roadMap)
+        public void PrintRoadMap(char[,] roadMap, Node endNode = null)
         {
             int rowLength = roadMap.GetLength(0);
             int colLength = roadMap.GetLength(1);
+
+            if(endNode != null)
+                roadMap = AddRouteToMap(roadMap, endNode);
 
             for (int yIndex = colLength - 1; yIndex >= 0; yIndex--)
             {
@@ -218,6 +221,18 @@ namespace AItest
                     Console.Write(string.Format("{0} ", roadMap[xIndex, yIndex]));
                 }
                 Console.Write(Environment.NewLine + Environment.NewLine);
+            }
+        }
+
+        private char[,] AddRouteToMap(char[,] roadMap, Node endNode)
+        { 
+            while(true)
+            {
+                var parent = endNode.parent;
+                if (parent == null)
+                    return roadMap;
+
+                roadMap[parent.x, parent.y] = 'R';
             }
         }
 

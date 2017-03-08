@@ -17,7 +17,7 @@ namespace AItest
 
         static void Main(string[] args)
         {
-            /*var pathFinding = new Astar();
+            var pathFinding = new Astar();
             Map myMap = new Map(20, 20);
 
             myMap.AddSquare(1, 1, 2, 3, 0);
@@ -25,20 +25,22 @@ namespace AItest
 
             int fromX = 0, fromY = 0, toX = 19, toY = 19;
             var roadMap = myMap.GetAStarRoadMap(fromX, fromY, toX, toY);
-            myMap.PrintRoadMap(roadMap);
+            
 
             var endNode = pathFinding.AStar(roadMap, fromX, fromY, toX, toY);
-            pathFinding.PrintPath(endNode, fromX, fromY, toX, toY);*/
+            pathFinding.PrintPath(endNode, fromX, fromY, toX, toY);
+
+            myMap.PrintRoadMap(roadMap, endNode);
 
             //Init
-            var brick = new Brick(new BluetoothCommunication("COM11"), true);
-            SensorFusion Sensoes = new SensorFusion(brick);
-            Sensoes.Read();
-            Sensoes.Read();
-            Sensoes.Read();
-            Sensoes.Read();
-            Sensoes.Read();
-            Sensoes.Read();
+            //var brick = new Brick(new BluetoothCommunication("COM11"), true);
+            //SensorFusion Sensoes = new SensorFusion(brick);
+            //Sensoes.Read();
+            //Sensoes.Read();
+            //Sensoes.Read();
+            //Sensoes.Read();
+            //Sensoes.Read();
+            //Sensoes.Read();
             /*var brick = new Brick(new UsbCommunication(), true);
             Connect(brick).Wait();
             System.Threading.Thread.Sleep(100);

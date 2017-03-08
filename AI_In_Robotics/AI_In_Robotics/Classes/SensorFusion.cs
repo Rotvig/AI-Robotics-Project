@@ -20,6 +20,14 @@ namespace AI_In_Robotics.Classes
         Matrix<double> Pk;
         Matrix<double> xEstimate;
 
+        //Values for calibration
+        static uint CalibrationRutinesToBeDone = 4;
+        uint CalibrationRutineCount = 0;
+        static uint NumberOfCalibrationReading = 20;
+
+        uint[,] SonarCalibateData = new uint[CalibrationRutinesToBeDone, NumberOfCalibrationReading];
+        uint[,] InfraredCalibateData = new uint[CalibrationRutinesToBeDone, NumberOfCalibrationReading];
+
         public SensorFusion(Brick brick)
         {
             //Inizilize the two sensores
@@ -37,10 +45,10 @@ namespace AI_In_Robotics.Classes
 
         public double Read()
         {
-            //double SonarSensor = Sonar.Read();
-            //double InfraredSensor = Infrared.Read();
-            double SonarSensor = 1;
-            double InfraredSensor = 2;
+            double SonarSensor = Sonar.Read();
+            double InfraredSensor = Infrared.Read();
+            //double SonarSensor = 1;
+            //double InfraredSensor = 2;
             Matrix<double> Zk = new DenseMatrix(2, 1, new double[] { SonarSensor, InfraredSensor });
 
             Matrix<double> Gk = Pk.Multiply(_C.Transpose()).Multiply(_C.Multiply(Pk).Multiply(_C.Transpose()).Add(_R).Inverse());
@@ -54,22 +62,25 @@ namespace AI_In_Robotics.Classes
 
         public void CalibrateSensors()
         {
-            var NumberOfCalibrationReading = 20;
-
-            var SonarData = new List<uint>();
-            var InfraredData = new List<uint>();
-
-            Console.WriteLine("Place robot 5 cm from wall");
-            Console.ReadKey();
-
-            for (int i = 0; i < NumberOfCalibrationReading; i++)
+            for (int CalibrationReading = 0; CalibrationReading < NumberOfCalibrationReading; CalibrationReading++)
             {
-                SonarData.Add(Sonar.Read());
-                InfraredData.Add(Infrared.Read());
-                System.Threading.Thread.Sleep(500);
+                SonarCalibateData[CalibrationRutineCount, CalibrationReading] = Sonar.Read();
+                InfraredCalibateData[CalibrationRutineCount, CalibrationReading] = Infrared.Read();
+                System.Threading.Thread.Sleep(100);
             }
 
-            Console.ReadKey();
+            CalibrationRutineCount++;
+            Console.WriteLine("Calibration cycle done");
+
+            if (CalibrationRutineCount >= CalibrationRutinesToBeDone)
+            {
+                CalibrateCalc();
+            }
+        }
+
+        private void CalibrateCalc()
+        {
+            
         }
     }
 }

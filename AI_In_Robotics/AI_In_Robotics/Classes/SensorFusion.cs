@@ -21,10 +21,10 @@ namespace AI_In_Robotics.Classes
         Matrix<double> xEstimate;
 
         //Values for calibration
-        const int CalibrationRutinesToBeDone = 4;
+        const int CalibrationRutinesToBeDone = 10;
         uint CalibrationRutineCount = 0;
-        const int NumberOfCalibrationReading = 20;
-        List<double> CalDsitances = new List<double>() {10, 15, 20, 25};
+        const int NumberOfCalibrationReading = 30;
+        List<double> CalDsitances = new List<double>() {10, 15, 20, 25, 30, 35, 40, 45, 50, 55};
 
         List<List<double>> SonarCalibateData = new List<List<double>>();
         List<List<double>> InfraredCalibateData = new List<List<double>>();
@@ -103,6 +103,11 @@ namespace AI_In_Robotics.Classes
                 InfraredCalibateError.Add(CalDsitances[CalibrationReading] - InfraredCalibateMeans[CalibrationReading]);
                 InfraredCalibateVarians.Add(Variance(InfraredCalibateData[CalibrationReading], InfraredCalibateMeans[CalibrationReading], 0, NumberOfCalibrationReading));
             }
+
+            var SonarErrorMean = Mean(SonarCalibateError, 0, CalibrationRutinesToBeDone);
+            var SonarErrorVarians = Variance(SonarCalibateError, SonarErrorMean, 0, CalibrationRutinesToBeDone);
+            var InfraredErrorMean = Mean(InfraredCalibateError, 0, CalibrationRutinesToBeDone);
+            var InfraredErrorVarians = Variance(InfraredCalibateError, InfraredErrorMean, 0, CalibrationRutinesToBeDone);
         }
 
 

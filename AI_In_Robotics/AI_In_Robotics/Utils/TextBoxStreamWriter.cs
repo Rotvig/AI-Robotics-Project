@@ -8,8 +8,6 @@ using System.Windows.Controls;
 
 namespace AI_In_Robotics.Utils
 {
-    namespace ConsoleRedirection
-    {
         public class TextBoxStreamWriter : TextWriter
         {
             TextBox _output = null;
@@ -30,5 +28,4 @@ namespace AI_In_Robotics.Utils
                 get { return System.Text.Encoding.UTF8; }
             }
         }
-    }
 }

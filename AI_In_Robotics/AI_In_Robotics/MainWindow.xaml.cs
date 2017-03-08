@@ -26,9 +26,9 @@ namespace AI_In_Robotics
 
             //For outoutting console in window
             // Instantiate the writer
-            //var _writer = new TextBoxStreamWriter(textBox);
+            var _writer = new TextBoxStreamWriter(textBox);
             // Redirect the out Console stream
-            //Console.SetOut(_writer);
+            Console.SetOut(_writer);
 
             // Init project classes
             var pathFinding = new Astar();
@@ -59,15 +59,6 @@ namespace AI_In_Robotics
             Sensors = new SensorFusion(brick);
         }
 
-        private void calibrate(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            if (e.Key == System.Windows.Input.Key.Space)
-            {
-                Sensors.CalibrateSensors();
-            }
-        }
-
-
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             var bitmap = new Bitmap(400, 400);
@@ -86,6 +77,14 @@ namespace AI_In_Robotics
                     pos = new Point2D(50, 50)
                 }
             });
+        }
+
+        private void KeyEvent(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Space)
+            {
+                Sensors.CalibrateSensors();
+            }
         }
     }
 }

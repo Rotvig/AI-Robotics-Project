@@ -32,7 +32,7 @@ namespace AI_In_Robotics.Classes
         public uint Read()
         {
             Thread.Sleep(20);
-            return (uint) _brick.Ports[_port].SIValue;
+            return (uint) _brick.Ports[_port].SIValue - (uint) calibrationAddition;
         }
     }
 }

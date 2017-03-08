@@ -14,6 +14,8 @@ namespace AI_In_Robotics
     /// </summary>
     public partial class MainWindow : Window
     {
+        public Brick brick;   
+
         public MainWindow()
         {
             InitializeComponent();
@@ -38,8 +40,8 @@ namespace AI_In_Robotics
             myMap.PrintRoadMap(roadMap, endNode, fromX, fromY, toX, toY);
 
             //Init
-            var brick = new Brick(new BluetoothCommunication("COM11"), true);
-            SensorFusion Sensoes = new SensorFusion(brick);
+            
+            //SensorFusion Sensoes = new SensorFusion(brick);
 
             //Sensoes.Read();
 
@@ -82,26 +84,13 @@ namespace AI_In_Robotics
             Console.ReadKey();*/
         }
 
-        private static async Task Connect(Brick _brick)
-
+        private async void Ready(object sender, RoutedEventArgs e)
         {
-            try
+            brick = new Brick(new BluetoothCommunication("COM5"), true);
+       
+            await brick.ConnectAsync();
 
-            {
-                await _brick.ConnectAsync();
-
-                Thread.Sleep(100);
-
-                //await _brick.DirectCommand.PlayToneAsync(100, 440, 500);
-            }
-
-            catch (Exception)
-
-            {
-                Console.WriteLine("Could not connect");
-
-                Environment.Exit(0);
-            }
+            await brick.DirectCommand.PlayToneAsync(100, 440, 500);
         }
     }
 }

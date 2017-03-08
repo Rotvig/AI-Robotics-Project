@@ -20,6 +20,11 @@ namespace AI_In_Robotics.Classes
             theta = Math.PI*Rand.RandomInt(0, 360)/180;
         }
 
+        public Particle() 
+        {
+
+        }
+
         public void PositionNoise()
         {
             pos = new Point2D(pos.X + Rand.Gauss(), pos.Y + Rand.Gauss()); //TODO variance defaults to 1
@@ -41,10 +46,6 @@ namespace AI_In_Robotics.Classes
         }
 
 
-        private Particle() //used for clones
-        {
-
-        }
 
         public Particle Clone()
         {

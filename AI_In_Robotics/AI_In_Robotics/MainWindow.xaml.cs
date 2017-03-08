@@ -5,6 +5,7 @@ using System.Windows;
 using AI_In_Robotics.Classes;
 using AI_In_Robotics.Utils.ConsoleRedirection;
 using Lego.Ev3.Core;
+using Lego.Ev3.Desktop;
 
 namespace AI_In_Robotics
 {
@@ -37,10 +38,8 @@ namespace AI_In_Robotics
             myMap.PrintRoadMap(roadMap, endNode, fromX, fromY, toX, toY);
 
             //Init
-
-            //var brick = new Brick(new BluetoothCommunication("COM11"), true);
-
-            //SensorFusion Sensoes = new SensorFusion(brick);
+            var brick = new Brick(new BluetoothCommunication("COM11"), true);
+            SensorFusion Sensoes = new SensorFusion(brick);
 
             //Sensoes.Read();
 
@@ -54,19 +53,32 @@ namespace AI_In_Robotics
 
             //Sensoes.Read();
 
-            /*var brick = new Brick(new UsbCommunication(), true);
-            Connect(brick).Wait();
-            System.Threading.Thread.Sleep(100);
-            Sonar = new Sensor(brick, true);
-            //Infrared = new Sensor(brick);
-            Car = new Motion(brick);
-            //DO stuff
-            //Move(Motion.Front, brick, 50, 5000).Wait();
-            //Car.RotationScan(brick, Sonar, Infrared).Wait();
-            Car.Turn90Deg(MotionEnum.Left, brick).Wait();
-            System.Threading.Thread.Sleep(2000);
-            Car.Move(MotionEnum.Front, brick, 100, 500).Wait();
-            brick.Disconnect();
+            /*var brick = new Brick(new UsbCommunication(), true);
+
+            Connect(brick).Wait();
+
+            System.Threading.Thread.Sleep(100);
+
+            Sonar = new Sensor(brick, true);
+
+            //Infrared = new Sensor(brick);
+
+            Car = new Motion(brick);
+
+            //DO stuff
+
+            //Move(Motion.Front, brick, 50, 5000).Wait();
+
+            //Car.RotationScan(brick, Sonar, Infrared).Wait();
+
+            Car.Turn90Deg(MotionEnum.Left, brick).Wait();
+
+            System.Threading.Thread.Sleep(2000);
+
+            Car.Move(MotionEnum.Front, brick, 100, 500).Wait();
+
+            brick.Disconnect();
+
             Console.ReadKey();*/
         }
 

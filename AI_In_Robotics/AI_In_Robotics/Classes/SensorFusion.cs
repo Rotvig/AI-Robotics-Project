@@ -59,7 +59,7 @@ namespace AI_In_Robotics.Classes
             var SonarData = new List<uint>();
             var InfraredData = new List<uint>();
 
-            Console.WriteLine("Place robot 5 cm from wall")
+            Console.WriteLine("Place robot 5 cm from wall");
             Console.ReadKey();
 
             for (int i = 0; i < NumberOfCalibrationReading; i++)

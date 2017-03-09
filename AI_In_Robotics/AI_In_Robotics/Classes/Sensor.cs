@@ -32,7 +32,7 @@ namespace AI_In_Robotics.Classes
         public double Read()
         {
             Thread.Sleep(20);
-            return (_brick.Ports[_port].SIValue * calibrationMultiplyer) - calibrationAddition;
+            return (_brick.Ports[_port].SIValue * calibrationMultiplyer) + calibrationAddition;
         }
     }
 }

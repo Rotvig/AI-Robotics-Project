@@ -12,7 +12,7 @@ namespace AI_In_Robotics.Classes
     {
         private readonly Brick _brick;
         private const uint MotorMoveTimeMs = 250;
-        private const uint RotaionDegStep = 360 / 12;
+        private const uint RotaionDegStep = 360 / 4;
 
         private readonly Queue<Action> Commands = new Queue<Action>();
 
@@ -144,20 +144,23 @@ namespace AI_In_Robotics.Classes
 
         public void RotationScan(SensorFusion sensors, ParticleFilter Pfilter, Bitmap map)
         {
+            Bitmap bitmapClone = (Bitmap)map.Clone();
 
-            for (uint rotationDegCount = 0; rotationDegCount <= 360; rotationDegCount += RotaionDegStep)
+            for (uint rotationDegCount = 0; rotationDegCount < 360; rotationDegCount += RotaionDegStep)
             {
                 var value = sensors.Read();
                 Console.WriteLine(value);
                 Pfilter.Resample(value);
 
-                Bitmap bitmapClone = (Bitmap)map.Clone();
-                ((MainWindow)System.Windows.Application.Current.MainWindow).Image.Source = bitmapClone.Drawparticles(Pfilter.ParticleSet);
-
                 PIDTurn(RotaionDegStep);
                 Pfilter.TurnParticlesLeft(RotaionDegStep);
 
+                ((MainWindow)System.Windows.Application.Current.MainWindow).Image.Source = bitmapClone.Drawparticles(Pfilter.ParticleSet);
             }
+
+            PIDMove(10);
+            Pfilter.MoveParticles(10);
+            ((MainWindow)System.Windows.Application.Current.MainWindow).Image.Source = bitmapClone.Drawparticles(Pfilter.ParticleSet);
         }
 
         public void Turn90Deg(MotionEnum motion)

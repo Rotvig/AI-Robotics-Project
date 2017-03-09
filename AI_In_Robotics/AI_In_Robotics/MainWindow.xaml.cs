@@ -78,7 +78,7 @@ namespace AI_In_Robotics
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            World = new Map(123, 152);
+            World = new Map(152, 123);
             filter = new ParticleFilter(N, World);
 
             //World.AddSquare(1, 1, 2, 3, 0);
@@ -88,7 +88,7 @@ namespace AI_In_Robotics
             var roadMap = World.GetAStarRoadMap(fromX, fromY, toX, toY);
 
 
-            OriginalBitmap = new Bitmap(124, 153);
+            OriginalBitmap = new Bitmap(153, 124);
             Image.Source = OriginalBitmap.DrawObjects(roadMap);
 
             BitmapClone = (Bitmap)OriginalBitmap.Clone();

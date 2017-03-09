@@ -50,9 +50,15 @@ namespace AI_In_Robotics.Classes
                 if (part.pos.X > World.WorldSizeX || part.pos.X < 0 || part.pos.Y > World.WorldSizeY ||
                     part.pos.Y < 0 || World.IsPointInSquare(part.pos))
                 {
-                    var tmpPart = new Particle(World.WorldSizeX, World.WorldSizeY);
+                    Particle tmpPart;
+                    do
+                    {
+                        tmpPart = new Particle(World.WorldSizeX, World.WorldSizeY);
+                    } while (World.IsPointInSquare(tmpPart.pos));
+
                     part.pos = tmpPart.pos;
                     part.theta = tmpPart.theta;
+                    part.weight = 1 / (double)_N;
                 }
             }
         }

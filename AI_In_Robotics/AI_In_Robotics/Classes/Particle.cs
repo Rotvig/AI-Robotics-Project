@@ -16,8 +16,14 @@ namespace AI_In_Robotics.Classes
 
         public Particle(double worldSizeX, double worldSizeY)
         {
-            pos = new Point2D(Rand.RandomDouble()* worldSizeX, Rand.RandomDouble()* worldSizeX);
+            pos = new Point2D(Rand.RandomDouble()* worldSizeX, Rand.RandomDouble()* worldSizeY);
             theta = Math.PI*Rand.RandomInt(0, 360)/180;
+        }
+
+        public Particle(double worldSizeX, double worldSizeY, bool rand)
+        {
+            pos = new Point2D(worldSizeX, worldSizeY);
+            theta = Math.PI * Rand.RandomInt(0, 360) / 180;
         }
 
         public Particle() 

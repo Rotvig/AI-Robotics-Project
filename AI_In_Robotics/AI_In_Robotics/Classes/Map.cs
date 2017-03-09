@@ -234,12 +234,12 @@ namespace AI_In_Robotics.Classes
                     if (path[i - 1].x < val.x)
                     {
                         //LEFT
-                        roadMap[val.x, val.y] = '<';
+                        roadMap[val.x, val.y] = '←';
                     }
                     else
                     {
                         //RIGHT
-                        roadMap[val.x, val.y] = '>';
+                        roadMap[val.x, val.y] = '→';
                     }
                 }
                 else
@@ -247,12 +247,12 @@ namespace AI_In_Robotics.Classes
                     if (path[i - 1].y < val.y)
                     {
                         //DOWN
-                        roadMap[val.x, val.y] = 'v';
+                        roadMap[val.x, val.y] = '↓';
                     }
                     else
                     {
                         //UP
-                        roadMap[val.x, val.y] = '^';
+                        roadMap[val.x, val.y] = '↑';
                     }
                 }
             }

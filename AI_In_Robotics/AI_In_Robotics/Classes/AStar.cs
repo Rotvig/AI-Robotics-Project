@@ -10,13 +10,15 @@ namespace AI_In_Robotics.Classes
 {
     public class Astar
     {
-        public Node AStar(char[,] matrix, int fromX, int fromY, int toX, int toY)
+        public Node AStar(char[,] matrix, int fromX, int fromY, int toX, int toY, int fieldsToApply = 0)
         {
             //Find max Size of map
             var maxX = matrix.GetLength(0);
             if (maxX == 0)
                 return null;
             var maxY = matrix.GetLength(1);
+
+            var enLargedObjectMatrix = EnLargeObjects(matrix, fieldsToApply);
 
             //the keys for open and closed are x.ToString() + y.ToString() of the Node 
             var open = new Dictionary<string, Node>();
@@ -33,8 +35,8 @@ namespace AI_In_Robotics.Classes
                 new Node {x = -1, y = 0, parent = startNode}, // UP
                 new Node {x = 0, y = 1, parent = startNode}, // RIGHT
                 new Node {x = 1, y = 0, parent = startNode}, // DOWN
-                new Node {x = 0, y = -1, parent = startNode}
-            }; // LEFT
+                new Node {x = 0, y = -1, parent = startNode} // LEFT
+            }; 
 
             while (true)
             {
@@ -55,12 +57,12 @@ namespace AI_In_Robotics.Classes
                 {
                     var nbrX = smallest.Value.x + suc.x;
                     var nbrY = smallest.Value.y + suc.y;
-                    string nbrKey = nbrX.ToString() + nbrY;
+                    var nbrKey = nbrX.ToString() + nbrY;
 
                     // if a node with the same position as successor is in the CLOSED list \ 
                     // which has a lower f than successor, skip this successor
                     if (nbrX < 0 || nbrY < 0 || nbrX >= maxX || nbrY >= maxY
-                        || matrix[nbrX, nbrY] == 'X' //obstacles marked by 'X'
+                        || enLargedObjectMatrix[nbrX, nbrY] == 'X' //obstacles marked by 'X'
                         || closed.ContainsKey(nbrKey))
                         continue;
 
@@ -70,27 +72,27 @@ namespace AI_In_Robotics.Classes
                     if (open.ContainsKey(nbrKey))
                     {
                         var curNbr = open[nbrKey];
-                        // successor.g = q.g + distance between successor and q
-                        var g = Math.Sqrt((nbrX - fromX) ^ 2 + (nbrY - fromY) ^ 2);
-                        // successor.h = distance from goal to successor
-                        var h = Math.Sqrt((nbrX - toX) ^ 2 + (nbrY - toY) ^ 2);
+                        //Distance from start to node
+                        var g = Math.Abs(Math.Sqrt((nbrX - fromX) ^ 2 + (nbrY - fromY) ^ 2));
+                        // successor.h = heuristic from goal to successor
+                        var h = Calculateheuristic(curNbr, fromX, fromY);
                         var f = g + h;
-                        if (f < curNbr.f)
-                        {
-                            curNbr.f = f;
-                            curNbr.g = g;
-                            curNbr.h = h;
-                            curNbr.parent = smallest.Value;
-                        }
+
+                        if (!(f < curNbr.f)) continue;
+
+                        curNbr.f = f;
+                        curNbr.g = g;
+                        curNbr.h = h;
+                        curNbr.parent = smallest.Value;
                     }
                     else
                     {
                         // otherwise, add the node to the open list
                         var curNbr = new Node {x = nbrX, y = nbrY};
-                        // successor.g = q.g + distance between successor and q
-                        curNbr.g = Math.Sqrt((nbrX - fromX) ^ 2 + (nbrY - fromY) ^ 2);
-                        // successor.h = distance from goal to successor
-                        curNbr.h = Math.Sqrt((nbrX - toX) ^ 2 + (nbrY - toY) ^ 2);
+                        //Distance from start to node
+                        curNbr.g = Math.Abs(Math.Sqrt((nbrX - fromX) ^ 2 + (nbrY - fromY) ^ 2));
+                        // successor.h = heuristic from goal to successor
+                        curNbr.h = Calculateheuristic(curNbr, fromX, fromY);
                         // successor.f = successor.g + successor.h
                         curNbr.f = curNbr.g + curNbr.h;
                         curNbr.parent = smallest.Value;
@@ -100,6 +102,71 @@ namespace AI_In_Robotics.Classes
             }
 
             return null;
+        }
+
+        private int Calculateheuristic(Node node, int toX, int toY, int D = 1)
+        {
+            var dx = Math.Abs(node.x - toX);
+            var dy = Math.Abs(node.y - toY);
+            return D*(dx + dy);
+        }
+
+        public static char[,] EnLargeObjects(char[,] matrix, int fieldsToApply = 0)
+        {
+
+            var maxX = matrix.GetLength(0);
+            if (maxX == 0)
+                return null;
+            var maxY = matrix.GetLength(1);
+
+            var enLargedMap = (char[,])matrix.Clone();
+            for (var xIndex = 0; xIndex < maxX; xIndex++)
+            {
+                for (var yIndex = 0; yIndex < maxY; yIndex++)
+                {
+                    if (matrix[xIndex, yIndex] != 'X') continue;
+
+                    if (CheckIfItsInsideMap(xIndex + fieldsToApply, yIndex, maxX, maxY) && matrix[xIndex + fieldsToApply, yIndex] != 'X')
+                    {
+                        enLargedMap[xIndex + fieldsToApply, yIndex] = 'X';
+                    }
+                    if(CheckIfItsInsideMap(xIndex, yIndex + fieldsToApply, maxX, maxY) && matrix[xIndex, yIndex + fieldsToApply] != 'X' )
+                    {
+                        enLargedMap[xIndex, yIndex + fieldsToApply] = 'X';
+                    }
+                    if (CheckIfItsInsideMap(xIndex - fieldsToApply, yIndex, maxX, maxY) && matrix[xIndex - fieldsToApply, yIndex] != 'X')
+                    {
+                        enLargedMap[xIndex - fieldsToApply, yIndex] = 'X';
+                    }
+                    if (CheckIfItsInsideMap(xIndex, yIndex - fieldsToApply, maxX, maxY) && matrix[xIndex, yIndex - fieldsToApply] != 'X')
+                    {
+                        enLargedMap[xIndex, yIndex - fieldsToApply] = 'X';
+                    }
+
+                    if (CheckIfItsInsideMap(xIndex + fieldsToApply, yIndex + fieldsToApply, maxX, maxY) && matrix[xIndex + fieldsToApply, yIndex + fieldsToApply] != 'X')
+                    {
+                        enLargedMap[xIndex + fieldsToApply, yIndex + fieldsToApply] = 'X';
+                    }
+                    if (CheckIfItsInsideMap(xIndex - fieldsToApply, yIndex - fieldsToApply, maxX, maxY) && matrix[xIndex - fieldsToApply, yIndex - fieldsToApply] != 'X')
+                    {
+                        enLargedMap[xIndex - fieldsToApply, yIndex - fieldsToApply] = 'X';
+                    }
+                    if (CheckIfItsInsideMap(xIndex - fieldsToApply, yIndex + fieldsToApply, maxX, maxY) && matrix[xIndex - fieldsToApply, yIndex + fieldsToApply] != 'X')
+                    {
+                        enLargedMap[xIndex - fieldsToApply, yIndex + fieldsToApply] = 'X';
+                    }
+                    if (CheckIfItsInsideMap(xIndex + fieldsToApply, yIndex - fieldsToApply, maxX, maxY) && matrix[xIndex + fieldsToApply, yIndex - fieldsToApply] != 'X')
+                    {
+                        enLargedMap[xIndex + fieldsToApply, yIndex - fieldsToApply] = 'X';
+                    }
+                }
+            }
+            return enLargedMap;
+        }
+
+        private static bool CheckIfItsInsideMap(int xIndex, int yIndex, int maxX, int maxY)
+        {
+            return (xIndex >= 0 && xIndex < maxX) && (yIndex >= 0 && yIndex < maxY);
         }
 
         private KeyValuePair<string, Node> FindSmallestOpenNode(Dictionary<string, Node> open)

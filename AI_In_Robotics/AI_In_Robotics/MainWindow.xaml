@@ -15,8 +15,8 @@
             </Image>
         </Border>
 
-        <Border  Height="400" Width="400" Margin="410,67,69.2,3.4" BorderBrush="Black" BorderThickness="1">
-            <TextBox x:Name="textBox" TextWrapping="Wrap" Text="TextBox"/>
+        <Border  Height="400" Width="400" Margin="436,69,42,0" BorderBrush="Black" BorderThickness="1">
+            <TextBox x:Name="textBox" TextWrapping="Wrap" />
         </Border>
     </Grid>
 </Window>

@@ -48,18 +48,14 @@ namespace AI_In_Robotics
         {
             //brick = new Brick(new BluetoothCommunication("COM5"), true);
 
-            //brick = new Brick(new BluetoothCommunication("COM11"), true);
+            brick = new Brick(new BluetoothCommunication("COM11"), true);
        
-            //await brick.ConnectAsync();
+            await brick.ConnectAsync();
 
-            //await brick.DirectCommand.PlayToneAsync(100, 440, 500);
+            await brick.DirectCommand.PlayToneAsync(100, 440, 500);
 
-<<<<<<< HEAD
-            //Sensors = new SensorFusion(brick);
-=======
             Sensors = new SensorFusion(brick);
             motionControle = new Motion(brick);
->>>>>>> Added motor test to main
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -85,8 +81,11 @@ namespace AI_In_Robotics
         {
             if (e.Key == System.Windows.Input.Key.Space)
             {
-                //Sensors.CalibrateSensors();
+                Sensors.CalibrateSensors();
+            }
 
+            if (e.Key == System.Windows.Input.Key.P)
+            {
                 TestCounter++;
                 if (TestCounter == 1)
                 {
@@ -144,7 +143,6 @@ namespace AI_In_Robotics
                     BitmapClone = (Bitmap)OriginalBitmap.Clone();
                     Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
                 }
-
             }
 
             if (e.Key == System.Windows.Input.Key.M)

@@ -5,7 +5,7 @@ using System.Linq;
 //Information:
 // http://stackoverflow.com/questions/2138642/how-to-implement-an-a-algorithm
 // http://web.mit.edu/eranki/www/tutorials/search/
-
+//http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
 namespace AI_In_Robotics.Classes
 {
     public class Astar

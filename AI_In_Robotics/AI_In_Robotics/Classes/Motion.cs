@@ -9,6 +9,7 @@ namespace AI_In_Robotics.Classes
     public class Motion
     {
         private readonly Brick _brick;
+        private const uint MotorMoveTimeMs = 250;
 
         private readonly Queue<Action> Commands = new Queue<Action>();
 
@@ -30,68 +31,112 @@ namespace AI_In_Robotics.Classes
         public void motionTest()
         {
             //Console.WriteLine(getGyro());
-            movePControle(40, 0);
-            //movePControle(10, 90);
-            //movePControle(10, -90);
-            //movePControle(10, -90);
+            PIDMove(20);
+            PIDTurn(90);
         }
 
-        private void movePControle(double moveDistanceCm, double turnAngle)
+        private void PIDMove(double moveDistanceCm)
         {
             //System.IO.StreamWriter file = new System.IO.StreamWriter("D:MotorPIDtest.txt");
-            var moveCiclesCount = 0;
-            var kp = 1;
-            var gyroOffset = getGyro() + turnAngle;
-            var Tp = 20;
+            double moveCiclesCount = 0;
+            double kp = 0.8;
+            double Ki = 0.12;
+            double Kd = 0.06;
+            double gyroOffset = getGyro();
+            double Tp = 25;
+            double integral = 0;
+            double lastError = 0;
+            double derivative = 0;
 
-            while(moveCiclesCount < moveDistanceCm/3.2)
+            while (moveCiclesCount < moveDistanceCm/1.8)
             {
-                var gyroValue = getGyro();
-                //file.WriteLine("gyro value");
-                //file.WriteLine(getGyro());
-                var error = gyroValue - gyroOffset;
-                var turn = kp * error;
-                //file.WriteLine("Error");
-                //file.WriteLine(error);
-                var powerRight = Tp - turn;
-                var powerLeft = Tp + turn;
-                //file.WriteLine("Right power");
-                //file.WriteLine(powerRight);
-                //file.WriteLine("Left power");
-                //file.WriteLine(powerLeft);
+                double gyroValue = getGyro();
+                double error = gyroValue - gyroOffset;
+                integral = integral + error;
+                derivative = error - lastError;
+                double turn = kp * error + Ki * integral + Kd * derivative;
+                double powerRight = Tp - turn;
+                double powerLeft = Tp + turn;
 
-                if (powerRight >= 0)
-                {
-                    _brick.DirectCommand.SetMotorPolarityAsync(Settings.rightMotorPort, Polarity.Forward);
-                    Thread.Sleep(2);
-                }
-                else
-                {
-                    _brick.DirectCommand.SetMotorPolarityAsync(Settings.rightMotorPort, Polarity.Backward);
-                    Thread.Sleep(2);
-                    powerRight = powerRight * -1;
-                }
+                moveMoters(powerRight, powerLeft);
 
-                if (powerLeft >= 0)
-                {
-                    _brick.DirectCommand.SetMotorPolarityAsync(Settings.leftMotorPort, Polarity.Forward);
-                    Thread.Sleep(2);
-                }
-                else
-                {
-                    _brick.DirectCommand.SetMotorPolarityAsync(Settings.leftMotorPort, Polarity.Backward);
-                    Thread.Sleep(2);
-                    powerLeft = powerLeft * -1;
-                }
-
-                _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(Settings.rightMotorPort, (int)powerRight, 500, true);
-                Thread.Sleep(2);
-                _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(Settings.leftMotorPort, (int)powerLeft, 500, true);
-                Thread.Sleep(2);
-                Thread.Sleep(500);
-
+                lastError = error;
                 moveCiclesCount++;
             }
+        }
+
+        private void PIDTurn(double rotateDeg)
+        {
+            //System.IO.StreamWriter file = new System.IO.StreamWriter("D:MotorPIDtest.txt");
+            double moveCiclesCount = 0;
+            double kp = 0.8;
+            double Ki = 0.12;
+            double Kd = 0.1;
+            double gyroOffset = getGyro() + rotateDeg;
+            double Tp = 0;
+            double integral = 0;
+            double error = rotateDeg;
+            double lastError = 0;
+            double derivative = 0;
+
+            while ((moveCiclesCount < 10) || (Math.Abs(error) > 3))
+            {
+                double gyroValue = getGyro();
+                error = gyroValue - gyroOffset;
+                integral = integral + error;
+                derivative = error - lastError;
+                double turn = kp * error + Ki * integral + Kd * derivative;
+                double powerRight = Tp - turn;
+                double powerLeft = Tp + turn;
+
+                moveMoters(powerRight, powerLeft);
+
+                lastError = error;
+                moveCiclesCount++;
+            }
+        }
+
+        private void moveMoters(double powerRight, double powerLeft)
+        {
+            if (powerRight >= 0)
+            {
+                _brick.DirectCommand.SetMotorPolarityAsync(Settings.rightMotorPort, Polarity.Forward);
+                Thread.Sleep(2);
+            }
+            else
+            {
+                _brick.DirectCommand.SetMotorPolarityAsync(Settings.rightMotorPort, Polarity.Backward);
+                Thread.Sleep(2);
+                powerRight = powerRight * -1;
+            }
+
+            if (powerRight > 100)
+            {
+                powerRight = 100;
+            }
+
+            if (powerLeft >= 0)
+            {
+                _brick.DirectCommand.SetMotorPolarityAsync(Settings.leftMotorPort, Polarity.Forward);
+                Thread.Sleep(2);
+            }
+            else
+            {
+                _brick.DirectCommand.SetMotorPolarityAsync(Settings.leftMotorPort, Polarity.Backward);
+                Thread.Sleep(2);
+                powerLeft = powerLeft * -1;
+            }
+
+            if (powerLeft > 100)
+            {
+                powerLeft = 100;
+            }
+
+            _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(Settings.rightMotorPort, (int)powerRight, MotorMoveTimeMs, true);
+            Thread.Sleep(2);
+            _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(Settings.leftMotorPort, (int)powerLeft, MotorMoveTimeMs, true);
+            Thread.Sleep(2);
+            Thread.Sleep((int)MotorMoveTimeMs);
         }
 
         public void Move(MotionEnum motion, int _power, uint _ms)

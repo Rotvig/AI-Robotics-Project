@@ -29,6 +29,7 @@ namespace AI_In_Robotics.Classes
                 do
                 {
                     part = new Particle(World.WorldSizeX, World.WorldSizeY);
+                    //part = new Particle(36, 88, true);
                     part.weight = 1 / (double)_N;
                 } while (World.IsPointInSquare(part.pos));
 
@@ -59,7 +60,7 @@ namespace AI_In_Robotics.Classes
 
         public void TurnParticlesLeft(double angleDeg)
         {
-            var angleRad = (Math.PI * angleDeg / 180);
+            var angleRad = DegToRad(angleDeg);
             foreach (var part in ParticleSet)
             {
                 part.theta = (part.theta + angleRad) % (2 * Math.PI);
@@ -74,7 +75,7 @@ namespace AI_In_Robotics.Classes
 
         public void TurnParticlesRight(double angleDeg)
         {
-            var angleRad = (Math.PI * angleDeg / 180);
+            var angleRad = DegToRad(angleDeg);
             foreach (var part in ParticleSet)
             {
                 part.theta = (part.theta - angleRad) % (2 * Math.PI);
@@ -92,39 +93,41 @@ namespace AI_In_Robotics.Classes
             var worldDiag = Math.Sqrt(Math.Pow(World.WorldSizeX, 2) + Math.Pow(World.WorldSizeY, 2));
             if (measurement > worldDiag)
             {
-                return;
+                throw new ArgumentException("Measurement larger than world diagonal!?!?");
             }
-
-            SetWeights(measurement);
-            var tmpSet = new List<Particle>();
-            var index = Rand.RandomInt(0, ParticleSet.Count);
-            double beta = 0;
-            var max = 2 * ParticleSet.Max(part => part.weight);
-
-            for (var i = 0; i < ParticleSet.Count; ++i)
+            else
             {
-                beta += Rand.RandomDouble() * max;
-                while (beta > ParticleSet[index].weight)
-                {
-                    beta -= ParticleSet[index].weight;
-                    index = (index + 1) % ParticleSet.Count;
-                }
-                tmpSet.Add(ParticleSet[index].Clone());
-            }
+                SetWeights(measurement, worldDiag);
+                var tmpSet = new List<Particle>();
+                var index = Rand.RandomInt(0, ParticleSet.Count);
+                double beta = 0;
+                var max = 2 * ParticleSet.Max(part => part.weight);
 
-            ParticleSet = tmpSet;
-            NormalizeWeights();
+                for (var i = 0; i < ParticleSet.Count; ++i)
+                {
+                    beta += Rand.RandomDouble() * max;
+                    while (beta > ParticleSet[index].weight)
+                    {
+                        beta -= ParticleSet[index].weight;
+                        index = (index + 1) % ParticleSet.Count;
+                    }
+                    tmpSet.Add(ParticleSet[index].Clone());
+                }
+
+                ParticleSet = tmpSet;
+                NormalizeWeights();
+            }
         }
 
 
-        public void SetWeights(double measurement)
+        public void SetWeights(double measurement, double worldDiag)
         {
-            var worldDiag = Math.Sqrt(Math.Pow(World.WorldSizeX, 2) + Math.Pow(World.WorldSizeY, 2));
-
             foreach (var part in ParticleSet)
             {
-                var dist = CalculateShortestDistance(part);
-                part.weight = worldDiag - Math.Abs(measurement - dist);
+                //var dist = CalculateShortestDistance(part);
+                //part.weight = worldDiag - Math.Abs(measurement - dist);
+
+                part.weight = MeasureProb(measurement, part);
             }
 
             var tmpSet = ParticleSet.OrderBy(part => part.weight).Reverse().ToList();
@@ -144,7 +147,7 @@ namespace AI_In_Robotics.Classes
             double prob = 1;
             var senseNoise = 5.0; // TODO senseNoise??
             double maxMeasure = 176; // TODO maxMeasure = approx world diagonal
-            double expectedDist = World.GetDistance(part.pos, part.theta, maxMeasure);
+            double expectedDist = World.GetDistance(part.pos, RadToDeg(part.theta), maxMeasure);
 
             prob *= Math.Exp(-Math.Pow(expectedDist - measurement, 2) / Math.Pow(senseNoise, 2) / 2) /
                     Math.Sqrt(2 * Math.PI * Math.Pow(senseNoise, 2));
@@ -175,21 +178,31 @@ namespace AI_In_Robotics.Classes
             }
         }
 
-        private double CalculateShortestDistance(Particle part)
+        //private double CalculateShortestDistance(Particle part)
+        //{
+        //    var tmpX = part.pos.X;
+        //    var tmpY = part.pos.Y;
+        //    while (!(tmpX > World.WorldSizeX)
+        //           && !(tmpX < 0.001)
+        //           && !(tmpY > World.WorldSizeY)
+        //           && !(tmpY < 0.001)
+        //           && !(World.IsPointInSquare(part.pos)))
+        //    {
+        //        tmpX = tmpX + Math.Cos(part.theta);
+        //        tmpY = tmpY + Math.Sin(part.theta);
+        //    }
+        //    var shortestDistance = Math.Sqrt(Math.Pow(tmpX - part.pos.X, 2) + Math.Pow(tmpY - part.pos.Y, 2));
+        //    return shortestDistance;
+        //}
+
+        private double RadToDeg(double rad)
         {
-            var tmpX = part.pos.X;
-            var tmpY = part.pos.Y;
-            while (!(tmpX > World.WorldSizeX)
-                   && !(tmpX < 0.001)
-                   && !(tmpY > World.WorldSizeY)
-                   && !(tmpY < 0.001)
-                   && !(World.IsPointInSquare(part.pos)))
-            {
-                tmpX = tmpX + Math.Cos(part.theta);
-                tmpY = tmpY + Math.Sin(part.theta);
-            }
-            var shortestDistance = Math.Sqrt(Math.Pow(tmpX - part.pos.X, 2) + Math.Pow(tmpY - part.pos.Y, 2));
-            return shortestDistance;
+            return rad * 180 / Math.PI;
+        }
+
+        private double DegToRad(double deg)
+        {
+            return Math.PI * deg / 180;
         }
     }
 }

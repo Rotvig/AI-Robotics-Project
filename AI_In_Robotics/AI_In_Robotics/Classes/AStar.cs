@@ -147,7 +147,7 @@ namespace AI_In_Robotics.Classes
                     {
                         enLargedMap[xIndex, yIndex - fieldsToApply] = 'X';
                     }
-
+                    /*
                     if (CheckIfItsInsideMap(xIndex + fieldsToApply, yIndex + fieldsToApply, maxX, maxY) && matrix[xIndex + fieldsToApply, yIndex + fieldsToApply] != 'X')
                     {
                         enLargedMap[xIndex + fieldsToApply, yIndex + fieldsToApply] = 'X';
@@ -164,6 +164,7 @@ namespace AI_In_Robotics.Classes
                     {
                         enLargedMap[xIndex + fieldsToApply, yIndex - fieldsToApply] = 'X';
                     }
+                    */
                 }
             }
             return enLargedMap;

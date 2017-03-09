@@ -35,27 +35,33 @@ namespace AI_In_Robotics
 
             //For outoutting console in window
             // Instantiate the writer
-            //var _writer = new TextBoxStreamWriter(textBox);
+            var _writer = new TextBoxStreamWriter(textBox);
             // Redirect the out Console stream
-            //Console.SetOut(_writer);
+            Console.SetOut(_writer);
 
             // Init project classes
-            var pathFinding = new Astar();
-            var myMap = new Map(20, 20);
+            AStartTest();
+        }
+
+        private void AStartTest()
+        {
+            var pathFinding = new Astar();            var myMap = new Map(20, 20);            myMap.AddSquare(1, 1, 2, 3, 0);            myMap.AddSquare(12, 12, 5, 5, 45);
+            int fromX = 0, fromY = 19, toX = 19, toY = 19;            var roadMap = myMap.GetAStarRoadMap(fromX, fromY, toX, toY);            var endNode = pathFinding.AStar(roadMap, fromX, fromY, toX, toY);
+            pathFinding.PrintPath(endNode, fromX, fromY, toX, toY);            myMap.PrintRoadMap(roadMap, endNode, fromX, fromY, toX, toY);
         }
 
         private async void Ready(object sender, RoutedEventArgs e)
         {
             //brick = new Brick(new BluetoothCommunication("COM5"), true);
 
-            brick = new Brick(new BluetoothCommunication("COM11"), true);
+            //brick = new Brick(new BluetoothCommunication("COM11"), true);
        
-            await brick.ConnectAsync();
+            //await brick.ConnectAsync();
 
-            await brick.DirectCommand.PlayToneAsync(100, 440, 500);
+            //await brick.DirectCommand.PlayToneAsync(100, 440, 500);
 
-            Sensors = new SensorFusion(brick);
-            motionControle = new Motion(brick);
+            //Sensors = new SensorFusion(brick);
+            //motionControle = new Motion(brick);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

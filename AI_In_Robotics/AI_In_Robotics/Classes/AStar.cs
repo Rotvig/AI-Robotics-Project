@@ -114,12 +114,17 @@ namespace AI_In_Robotics.Classes
         public static char[,] EnLargeObjects(char[,] matrix, int fieldsToApply = 0)
         {
 
+
             var maxX = matrix.GetLength(0);
             if (maxX == 0)
                 return null;
             var maxY = matrix.GetLength(1);
 
             var enLargedMap = (char[,])matrix.Clone();
+
+            if (fieldsToApply == 0)
+                return enLargedMap;
+
             for (var xIndex = 0; xIndex < maxX; xIndex++)
             {
                 for (var yIndex = 0; yIndex < maxY; yIndex++)

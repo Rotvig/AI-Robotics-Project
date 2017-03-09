@@ -38,7 +38,7 @@ namespace AI_In_Robotics.Classes
 
         public void ThetaNoise()
         {
-            theta = (theta + Rand.Gauss(0, 0.2))%(2*Math.PI); // TODO variance set to 0.2 defaults is 1
+            theta = (theta + Rand.Gauss(0, 0.1))%(2*Math.PI); // TODO variance set to 0.2 defaults is 1
         }
 
         public int CompareTo(object obj)

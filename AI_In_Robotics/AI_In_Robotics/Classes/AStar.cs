@@ -10,7 +10,7 @@ namespace AI_In_Robotics.Classes
 {
     public class Astar
     {
-        public Node AStar(char[,] matrix, int fromX, int fromY, int toX, int toY, int fieldsToApply = 0)
+        public Node AStar(char[,] matrix, int startX, int startY, int goalX, int goalY, int fieldsToApply = 0)
         {
             //Find max Size of map
             var maxX = matrix.GetLength(0);
@@ -25,8 +25,8 @@ namespace AI_In_Robotics.Classes
             var closed = new Dictionary<string, Node>();
 
             //put the starting node on the open list (you can leave its f at zero)
-            var startNode = new Node {x = fromX, y = fromY};
-            string key = startNode.x.ToString() + startNode.y;
+            var startNode = new Node {x = startX, y = startY};
+            var key = startNode.x.ToString() + startNode.y;
             open.Add(key, startNode);
 
             // generate startNode's 8 successors and set their parents to startNode
@@ -47,7 +47,7 @@ namespace AI_In_Robotics.Classes
                 // pop smallest off the open list
                 var smallest = FindSmallestOpenNode(open);
 
-                if (smallest.Value.x == toX && smallest.Value.y == toY)
+                if (smallest.Value.x == goalX && smallest.Value.y == goalY)
                     return smallest.Value;
 
                 open.Remove(smallest.Key);
@@ -73,9 +73,9 @@ namespace AI_In_Robotics.Classes
                     {
                         var curNbr = open[nbrKey];
                         //Distance from start to node
-                        var g = Math.Abs(Math.Sqrt((nbrX - fromX) ^ 2 + (nbrY - fromY) ^ 2));
+                        var g = Math.Abs(Math.Sqrt((nbrX - goalX) ^ 2 + (nbrY - goalY) ^ 2));
                         // successor.h = heuristic from goal to successor
-                        var h = Calculateheuristic(curNbr, fromX, fromY);
+                        var h = Calculateheuristic(curNbr, startX, startY);
                         var f = g + h;
 
                         if (!(f < curNbr.f)) continue;
@@ -90,9 +90,9 @@ namespace AI_In_Robotics.Classes
                         // otherwise, add the node to the open list
                         var curNbr = new Node {x = nbrX, y = nbrY};
                         //Distance from start to node
-                        curNbr.g = Math.Abs(Math.Sqrt((nbrX - fromX) ^ 2 + (nbrY - fromY) ^ 2));
+                        curNbr.g = Math.Abs(Math.Sqrt((nbrX - goalX) ^ 2 + (nbrY - goalY) ^ 2));
                         // successor.h = heuristic from goal to successor
-                        curNbr.h = Calculateheuristic(curNbr, fromX, fromY);
+                        curNbr.h = Calculateheuristic(curNbr, startX, startY);
                         // successor.f = successor.g + successor.h
                         curNbr.f = curNbr.g + curNbr.h;
                         curNbr.parent = smallest.Value;
@@ -104,10 +104,10 @@ namespace AI_In_Robotics.Classes
             return null;
         }
 
-        private int Calculateheuristic(Node node, int toX, int toY, int D = 1)
+        private int Calculateheuristic(Node node, int x, int y, int D = 1)
         {
-            var dx = Math.Abs(node.x - toX);
-            var dy = Math.Abs(node.y - toY);
+            var dx = Math.Abs(node.x - x);
+            var dy = Math.Abs(node.y - y);
             return D*(dx + dy);
         }
 
@@ -171,19 +171,8 @@ namespace AI_In_Robotics.Classes
 
         private KeyValuePair<string, Node> FindSmallestOpenNode(Dictionary<string, Node> open)
         {
-            //find the node with the least f on the open list, call it "smallest"
-            var smallest = open.First();
-
-            foreach (var node in open)
-            {
-                if (node.Value.f < smallest.Value.f)
-                    smallest = node;
-                else if (node.Value.f == smallest.Value.f
-                         && node.Value.h < smallest.Value.h)
-                    smallest = node;
-            }
-
-            return smallest;
+            //find the node with the least f on the open list
+            return open.OrderBy(x => x.Value.f).First();
         }
 
         public void unitTest_AStar()

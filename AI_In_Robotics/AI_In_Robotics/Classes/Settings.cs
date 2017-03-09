@@ -12,5 +12,11 @@ namespace AI_In_Robotics.Classes
         public const InputPort infraredPort = InputPort.One;
         public const double infraredCalibrationAddition = 0;
         public const double infraredCalibrationMultiplyer = 1;
+        //Gyro
+        public const InputPort gyroPort = InputPort.Two;
+        //MotorRight
+        public const OutputPort rightMotorPort = OutputPort.D;
+        //MotorLeft
+        public const OutputPort leftMotorPort = OutputPort.A;
     }
 }

@@ -21,10 +21,10 @@ namespace AI_In_Robotics.Classes
         Matrix<double> xEstimate;
 
         //Values for calibration
-        const int CalibrationRutinesToBeDone = 10;
+        const int CalibrationRutinesToBeDone = 16;
         uint CalibrationRutineCount = 0;
         const int NumberOfCalibrationReading = 30;
-        List<double> CalDsitances = new List<double>() {10, 15, 20, 25, 30, 35, 40, 45, 50, 55};
+        List<double> CalDsitances = new List<double>() {10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85};
 
         List<List<double>> SonarCalibateData = new List<List<double>>();
         List<List<double>> InfraredCalibateData = new List<List<double>>();

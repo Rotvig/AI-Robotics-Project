@@ -6,11 +6,11 @@ namespace AI_In_Robotics.Classes
     {
         //Sonar
         public const InputPort sonarPort = InputPort.Four;
-        public const double sonarCalibrationAddition = 0;
+        public const double sonarCalibrationAddition = -8.2;
         public const double sonarCalibrationMultiplyer = 1;
         //Infrared
         public const InputPort infraredPort = InputPort.One;
-        public const double infraredCalibrationAddition = 0;
+        public const double infraredCalibrationAddition = 10;
         public const double infraredCalibrationMultiplyer = 1;
         //Gyro
         public const InputPort gyroPort = InputPort.Two;

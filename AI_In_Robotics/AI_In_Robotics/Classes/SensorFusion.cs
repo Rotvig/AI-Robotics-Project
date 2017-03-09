@@ -9,7 +9,7 @@ using MathNet.Numerics.LinearAlgebra.Double;
 
 namespace AI_In_Robotics.Classes
 {
-    class SensorFusion
+    public class SensorFusion
     {
         public Sensor Sonar;
         public Sensor Infrared;
@@ -58,7 +58,9 @@ namespace AI_In_Robotics.Classes
 
             Pk = Pk.Multiply(DenseMatrix.CreateIdentity(1).Subtract(Gk.Multiply(_C)));
 
-            return xEstimate[0, 0];
+            //return xEstimate[0, 0];
+
+            return SonarSensor;
         }
 
         public void CalibrateSensors()

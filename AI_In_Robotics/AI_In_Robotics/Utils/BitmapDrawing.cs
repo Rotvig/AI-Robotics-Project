@@ -19,6 +19,15 @@ namespace AI_In_Robotics.Utils
             return bitmap.BitmapToBitmapSource();
         }
 
+        public static BitmapSource DrawparticlesFoo(Bitmap bitmap, IReadOnlyCollection<Particle> listOfCoordinates)
+        {
+            foreach (var particle in listOfCoordinates)
+            {
+                bitmap.SetPixel(Convert.ToInt32(particle.X), Convert.ToInt32(particle.Y), Color.Red);
+            }
+            return bitmap.BitmapToBitmapSource();
+        }
+
         public static BitmapSource DrawObjects(this Bitmap bitmap, char[,] roadMap)
         {
             for (var xIndex = 0; xIndex < roadMap.GetLength(0); xIndex++)

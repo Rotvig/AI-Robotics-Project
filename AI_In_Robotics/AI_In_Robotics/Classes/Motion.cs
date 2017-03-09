@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Lego.Ev3.Core;
+using System.Drawing;
+using AI_In_Robotics.Utils;
 
 namespace AI_In_Robotics.Classes
 {
@@ -10,6 +12,7 @@ namespace AI_In_Robotics.Classes
     {
         private readonly Brick _brick;
         private const uint MotorMoveTimeMs = 250;
+        private const uint RotaionDegStep = 360 / 12;
 
         private readonly Queue<Action> Commands = new Queue<Action>();
 
@@ -139,69 +142,21 @@ namespace AI_In_Robotics.Classes
             Thread.Sleep((int)MotorMoveTimeMs);
         }
 
-        public void Move(MotionEnum motion, int _power, uint _ms)
+        public void RotationScan(SensorFusion sensors, ParticleFilter Pfilter, Bitmap map)
         {
-            if (motion == MotionEnum.Right)
-            {
-                Commands.Enqueue(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.A, Polarity.Forward));
-                Commands.Enqueue(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.D, Polarity.Backward));
-                Commands.Enqueue(
-                    () =>
-                        _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A | OutputPort.D, _power, _ms,
-                            false));
-            }
-            else if (motion == MotionEnum.Left)
-            {
-                Commands.Enqueue(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.A, Polarity.Backward));
-                Commands.Enqueue(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.D, Polarity.Forward));
-                Commands.Enqueue(
-                    () => _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A, _power, _ms, false));
-            }
-            else if (motion == MotionEnum.Front)
-            {
-                Commands.Enqueue(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.A, Polarity.Forward));
-                Commands.Enqueue(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.D, Polarity.Forward));
-                Commands.Enqueue(
-                    () =>
-                        _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A | OutputPort.D, _power, _ms,
-                            false));
-            }
-            else if (motion == MotionEnum.Back)
-            {
-                Commands.Enqueue(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.A, Polarity.Backward));
-                Commands.Enqueue(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.D, Polarity.Backward));
-                Commands.Enqueue(
-                    () =>
-                        _brick.DirectCommand.TurnMotorAtPowerForTimeAsync(OutputPort.A | OutputPort.D, _power, _ms,
-                            false));
-            }
-        }
 
-        public async Task RotationScan(Brick _brick, Sensor sonar, Sensor infrared)
-        {
-            throw new ArgumentException("NOT IMPLEMENTED !!!");
-            var SonarData = new List<double>();
-            var InfraredData = new List<double>();
-            uint rotationTime = 1900;
-
-            for (uint i = 0; i <= rotationTime; i += rotationTime/10)
+            for (uint rotationDegCount = 0; rotationDegCount <= 360; rotationDegCount += RotaionDegStep)
             {
-                Move(MotionEnum.Right, 50, rotationTime/10);
-                Thread.Sleep((int) rotationTime/10);
-                SonarData.Add(sonar.Read());
-                InfraredData.Add(infrared.Read());
-            }
+                var value = sensors.Read();
+                Console.WriteLine(value);
+                Pfilter.Resample(value);
 
-            foreach (var val in SonarData)
-            {
-                Console.WriteLine(val);
-            }
+                Bitmap bitmapClone = (Bitmap)map.Clone();
+                ((MainWindow)System.Windows.Application.Current.MainWindow).Image.Source = bitmapClone.Drawparticles(Pfilter.ParticleSet);
 
-            Console.WriteLine("----------");
+                PIDTurn(RotaionDegStep);
+                Pfilter.TurnParticlesLeft(RotaionDegStep);
 
-            foreach (var val in InfraredData)
-            {
-                Console.WriteLine(val);
             }
         }
 

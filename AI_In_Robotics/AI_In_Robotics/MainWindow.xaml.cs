@@ -35,9 +35,9 @@ namespace AI_In_Robotics
 
             //For outoutting console in window
             // Instantiate the writer
-            var _writer = new TextBoxStreamWriter(textBox);
+            //var _writer = new TextBoxStreamWriter(textBox);
             // Redirect the out Console stream
-            Console.SetOut(_writer);
+            //Console.SetOut(_writer);
 
             // Init project classes
             AStartTest();
@@ -45,11 +45,19 @@ namespace AI_In_Robotics
 
         private void AStartTest()
         {
-            var pathFinding = new Astar();            var myMap = new Map(20, 20);            myMap.AddSquare(1, 1, 2, 3, 0);            myMap.AddSquare(12, 12, 5, 5, 45);
-            int fromX = 0, fromY = 19, toX = 19, toY = 19;            var roadMap = myMap.GetAStarRoadMap(fromX, fromY, toX, toY);            var endNode = pathFinding.AStar(roadMap, fromX, fromY, toX, toY, 1);
+            var pathFinding = new Astar();
+            var myMap = new Map(20, 20);
+            myMap.AddSquare(1, 1, 2, 3, 0);
+            myMap.AddSquare(12, 12, 5, 5, 45);
 
-            var bigMap = Astar.EnLargeObjects(roadMap, 1);
-            //pathFinding.PrintPath(endNode, fromX, fromY, toX, toY);            //myMap.PrintRoadMap(roadMap, endNode, fromX, fromY, toX, toY);
+            int fromX = 0, fromY = 19, toX = 19, toY = 19;
+            var roadMap = myMap.GetAStarRoadMap(fromX, fromY, toX, toY);
+            var endNode = pathFinding.AStar(roadMap, fromX, fromY, toX, toY, 1);
+
+            var bigMap = Astar.EnLargeObjects(roadMap, 1);
+
+            //pathFinding.PrintPath(endNode, fromX, fromY, toX, toY);
+            //myMap.PrintRoadMap(roadMap, endNode, fromX, fromY, toX, toY);
             myMap.PrintRoadMap(bigMap, endNode, fromX, fromY, toX, toY);
 
         }
@@ -58,29 +66,29 @@ namespace AI_In_Robotics
         {
             //brick = new Brick(new BluetoothCommunication("COM5"), true);
 
-            //brick = new Brick(new BluetoothCommunication("COM11"), true);
+            brick = new Brick(new BluetoothCommunication("COM11"), true);
        
-            //await brick.ConnectAsync();
+            await brick.ConnectAsync();
 
-            //await brick.DirectCommand.PlayToneAsync(100, 440, 500);
+            await brick.DirectCommand.PlayToneAsync(100, 440, 500);
 
-            //Sensors = new SensorFusion(brick);
-            //motionControle = new Motion(brick);
+            Sensors = new SensorFusion(brick);
+            motionControle = new Motion(brick);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            World = new Map(399, 399);
+            World = new Map(123, 152);
             filter = new ParticleFilter(N, World);
 
-            World.AddSquare(1, 1, 2, 3, 0);
-            World.AddSquare(12, 12, 5, 5, 45);
+            //World.AddSquare(1, 1, 2, 3, 0);
+            //World.AddSquare(12, 12, 5, 5, 45);
 
             int fromX = 0, fromY = 0, toX = 19, toY = 19;
             var roadMap = World.GetAStarRoadMap(fromX, fromY, toX, toY);
 
 
-            OriginalBitmap = new Bitmap(400, 400);
+            OriginalBitmap = new Bitmap(124, 153);
             Image.Source = OriginalBitmap.DrawObjects(roadMap);
 
             BitmapClone = (Bitmap)OriginalBitmap.Clone();
@@ -158,6 +166,11 @@ namespace AI_In_Robotics
             if (e.Key == System.Windows.Input.Key.M)
             {
                 motionControle.motionTest();
+            }
+
+            if (e.Key == System.Windows.Input.Key.S)
+            {
+                motionControle.RotationScan(Sensors, filter, OriginalBitmap);
             }
         }
     }

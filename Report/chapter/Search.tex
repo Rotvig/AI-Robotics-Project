@@ -1,2 +1,20 @@
 \chapter{Search}
 \label{chp:search}
+Motion planning is about planning the motion of the robot to a certain target. Motion planning is all about finding the optimal or minimum cost path. This is illustrated in figure \ref{fig:search_mp}. A cost could be how long time it takes to reach a target by a certain path.
+
+\myFigure{Theory/Search/motion_planning}{Motion Planning.}{fig:search_mp}{0.7}
+
+Figure \ref{fig:search} illustrates an matrix with a start position 'S' and a goal position 'G'. All the grid cells which are filled out are closed cells. The goal is to find the shortest path to the goal from the start position. One way this can be done is be calculating the g(n) value for each cell. The g(n) value represents how many expansions it took to move to cell n.
+
+\myFigure{Theory/Search/g_val}{Search.}{fig:search}{0.4}
+
+This is just one example of a search algorithm. The problem with this algorithm is that with large matrices it become very inefficient. But with the knowledge of g(n) you can make it more efficient. A* is one example of this.  
+\section{A*}
+
+A* is a search algorithm. It is variant of the search algorithm that is more efficient than expanding every cell or node.
+
+\myFigure{Theory/Search/a_star}{A*.}{fig:a_star}{0.8}
+
+In figure \ref{fig:a_star} a matrix like before is shown on the left, but with other obstacles, and a matrix with the heuristic values. The heuristic value h(n) is calculated by the distance from the node n to the goal.
+
+A* utilizes this information by combining the heuristics cost and the expansion which is called f(n) = g(n) + h(n). This gives an advantage. With the knowledge of the heuristic function the computer can save calculation time because it does not need to search all nodes. This is represented by the green lines in figure \ref{fig:a_star}.

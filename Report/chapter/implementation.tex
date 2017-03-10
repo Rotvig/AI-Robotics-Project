@@ -7,7 +7,7 @@
 
 The A* search algorithm has been used in this project to find a route to the goal. 
 
-The input to the algorithm is a matrix which consist of areas where  can go and not go. The matrix also contains the information of the robots' position, and a goal for the robot.
+The input to the algorithm is a matrix which consist of areas where the robot  can go and not go. The matrix also contains the information of the robots' position, and a goal for the robot.
 
 \begin{lstlisting}[caption={An example of the matrix which the A* uses as input.}, label=a_star]
 char[,] matrix = new char[,] {{'-', 'S', '-', '-', 'X'},
@@ -37,7 +37,7 @@ return D*(dx + dy);
 
 A dictionary is used for the open and closed lists. The open and closed dictionary consist of unvisited or visited coordinates, hence open and closed coordinates. Where the key is a string containing the coordinate x + y. For example the key for x = 1, y = 1 would be "11". The reason for this is that later on in the search the coordinate can then be checked if it is in the closed dictionary, without searching thorugh a list - this saves us computation time. If the coordinate is in the closed dictionary then the node will be ignored.
 
-
+The output of the A* algorithm is the endnode which contain a reference to its parent. To find the next step in the route you need to traverse the parents until you finally hit the next step.
 
 \section{Motor Control}
 

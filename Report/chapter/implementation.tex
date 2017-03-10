@@ -21,7 +21,21 @@ In listing \ref{a_star} the 'X's marks places the robot can not move through. Th
 
 The nodes in the algorithm consist not only of coordinate x and y. The nodes also needs to contain a reference to its parent node (where it came from). This is used to backtrace the route. The node also needs to contain the information g(n) which is the cost of the path from the start node to node n. The node also contain h(n) which is a heuristic that estimates the cost of the cheapest path from n to the goal 'E'. The last property of the node is f(n) and f(n) = g(n) + h(n).
 
-In the implementation a dictionary is used for the open and closed lists. Where the key is a string containing the coordinate x and y. For example the key for x = 1, y = 1 would be "11". The reason for this is that later on in the search the coordinate can then be checked if it is in the closed dictionary. If the coordinate is in the closed dictionary then the node will be ignored.
+The g(n) is calculated by finding the euclidean distance between the start position and current position. This is shown in listing \ref{g_n}.
+
+\begin{lstlisting}[caption={Calculation of g(n).}, label=g_n]
+Math.Abs(Math.Sqrt((nbrX - startX) ^ 2 + (nbrY - startY) ^ 2))
+\end{lstlisting}
+
+The h(n) which is the heuristics and it is calculated as shown in listing \ref{h_n}. 
+
+\begin{lstlisting}[caption={Calculation of h(n).}, label=h_n]
+var dx = Math.Abs(node.x - x);
+var dy = Math.Abs(node.y - y);
+return D*(dx + dy);
+\end{lstlisting}
+
+A dictionary is used for the open and closed lists. The open and closed dictionary consist of unvisited or visited coordinates, hence open and closed coordinates. Where the key is a string containing the coordinate x + y. For example the key for x = 1, y = 1 would be "11". The reason for this is that later on in the search the coordinate can then be checked if it is in the closed dictionary, without searching thorugh a list - this saves us computation time. If the coordinate is in the closed dictionary then the node will be ignored.
 
 
 

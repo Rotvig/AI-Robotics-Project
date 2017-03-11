@@ -34,8 +34,11 @@ namespace AI_In_Robotics.Classes
         public void motionTest()
         {
             //Console.WriteLine(getGyro());
-            PIDMove(20);
-            //PIDTurn(90);
+            //PIDMove(10);
+            PIDTurn(90);
+            PIDTurn(90);
+            PIDTurn(90);
+            PIDTurn(90);
         }
 
         public void PIDMove(double moveDistanceCm)
@@ -80,9 +83,9 @@ namespace AI_In_Robotics.Classes
         {
             //System.IO.StreamWriter file = new System.IO.StreamWriter("D:MotorPIDtest.txt");
             double moveCiclesCount = 0;
-            double kp = 0.4;
-            double Ki = 0.125;
-            double Kd = 0.083;
+            double kp = 0.5;
+            double Ki = 0.05;
+            double Kd = 0.1;
             double gyroOffset = getGyro() + rotateDeg;
             double Tp = 0;
             double integral = 0;

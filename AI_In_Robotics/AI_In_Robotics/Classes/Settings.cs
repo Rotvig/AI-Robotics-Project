@@ -15,7 +15,7 @@ namespace AI_In_Robotics.Classes
         public const double infraredCalibrationMultiplyer = 0.998;
         public const double infraredVariance = 0.52;
         //Gyro
-        public const InputPort gyroPort = InputPort.Two;
+        public const InputPort gyroPort = InputPort.Three;
         //MotorRight
         public const OutputPort rightMotorPort = OutputPort.D;
         //MotorLeft

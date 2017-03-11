@@ -64,10 +64,9 @@ namespace AI_In_Robotics
 
         private async void Ready(object sender, RoutedEventArgs e)
         {
-            //brick = new Brick(new BluetoothCommunication("COM5"), true);
+            //brick = new Brick(new BluetoothCommunication("COM11"), true); // Jeppe
+            brick = new Brick(new BluetoothCommunication("COM5"), true); // Kim
 
-            brick = new Brick(new BluetoothCommunication("COM11"), true);
-       
             await brick.ConnectAsync();
 
             await brick.DirectCommand.PlayToneAsync(100, 440, 500);

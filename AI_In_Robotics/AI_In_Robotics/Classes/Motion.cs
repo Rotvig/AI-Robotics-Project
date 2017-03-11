@@ -13,7 +13,7 @@ namespace AI_In_Robotics.Classes
         private readonly Brick _brick;
         private const uint MotorMoveTimeMs = 250;
         private const double MoveDistancePerCicle = 2.05;
-        private const uint RotaionDegStep = 360 / 4;
+        private const uint RotaionDegStep = 360 / 12;
         private readonly Queue<Action> Commands = new Queue<Action>();
 
         public Motion(Brick brick)
@@ -38,7 +38,7 @@ namespace AI_In_Robotics.Classes
             //PIDTurn(90);
         }
 
-        private void PIDMove(double moveDistanceCm)
+        public void PIDMove(double moveDistanceCm)
         {
             //System.IO.StreamWriter file = new System.IO.StreamWriter("D:MotorPIDtest.txt");
             double moveCiclesCount = 0;
@@ -46,7 +46,15 @@ namespace AI_In_Robotics.Classes
             double Ki = 0.12;
             double Kd = 0.06;
             double gyroOffset = getGyro();
-            double Tp = 25;
+            double Tp = 0;
+            if (moveDistanceCm > 0)
+            {
+                Tp = 25;
+            }
+            else
+            {
+                Tp = -25;
+            }
             double integral = 0;
             double lastError = 0;
             double derivative = 0;
@@ -68,7 +76,7 @@ namespace AI_In_Robotics.Classes
             }
         }
 
-        private void PIDTurn(double rotateDeg)
+        public void PIDTurn(double rotateDeg)
         {
             //System.IO.StreamWriter file = new System.IO.StreamWriter("D:MotorPIDtest.txt");
             double moveCiclesCount = 0;
@@ -82,7 +90,7 @@ namespace AI_In_Robotics.Classes
             double lastError = 0;
             double derivative = 0;
 
-            while ((moveCiclesCount < 15) || (Math.Abs(error) > 1))
+            while ((moveCiclesCount < 20) || (Math.Abs(error) > 1))
             {
                 double gyroValue = getGyro();
                 error = gyroValue - gyroOffset;

@@ -12,8 +12,8 @@ namespace AI_In_Robotics.Classes
     {
         private readonly Brick _brick;
         private const uint MotorMoveTimeMs = 250;
+        private const double MoveDistancePerCicle = 2.05;
         private const uint RotaionDegStep = 360 / 4;
-
         private readonly Queue<Action> Commands = new Queue<Action>();
 
         public Motion(Brick brick)
@@ -35,7 +35,7 @@ namespace AI_In_Robotics.Classes
         {
             //Console.WriteLine(getGyro());
             PIDMove(20);
-            PIDTurn(90);
+            //PIDTurn(90);
         }
 
         private void PIDMove(double moveDistanceCm)
@@ -51,7 +51,7 @@ namespace AI_In_Robotics.Classes
             double lastError = 0;
             double derivative = 0;
 
-            while (moveCiclesCount < moveDistanceCm/1.8)
+            while (moveCiclesCount < moveDistanceCm/MoveDistancePerCicle)
             {
                 double gyroValue = getGyro();
                 double error = gyroValue - gyroOffset;
@@ -72,9 +72,9 @@ namespace AI_In_Robotics.Classes
         {
             //System.IO.StreamWriter file = new System.IO.StreamWriter("D:MotorPIDtest.txt");
             double moveCiclesCount = 0;
-            double kp = 0.8;
-            double Ki = 0.12;
-            double Kd = 0.1;
+            double kp = 0.4;
+            double Ki = 0.125;
+            double Kd = 0.083;
             double gyroOffset = getGyro() + rotateDeg;
             double Tp = 0;
             double integral = 0;
@@ -82,7 +82,7 @@ namespace AI_In_Robotics.Classes
             double lastError = 0;
             double derivative = 0;
 
-            while ((moveCiclesCount < 10) || (Math.Abs(error) > 3))
+            while ((moveCiclesCount < 15) || (Math.Abs(error) > 1))
             {
                 double gyroValue = getGyro();
                 error = gyroValue - gyroOffset;
@@ -163,28 +163,6 @@ namespace AI_In_Robotics.Classes
             ((MainWindow)System.Windows.Application.Current.MainWindow).Image.Source = bitmapClone.Drawparticles(Pfilter.ParticleSet);
         }
 
-        public void Turn90Deg(MotionEnum motion)
-        {
-            if (motion == MotionEnum.Right)
-            {
-                Commands.Enqueue(() => Thread.Sleep(200));
-                Commands.Enqueue(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.A, Polarity.Forward));
-                Commands.Enqueue(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.D, Polarity.Backward));
-                Commands.Enqueue(
-                    () => _brick.DirectCommand.StepMotorAtPowerAsync(OutputPort.A | OutputPort.D, 50, 180, false));
-            }
-            else if (motion == MotionEnum.Left)
-            {
-                Commands.Enqueue(() => Thread.Sleep(200));
-                Commands.Enqueue(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.A, Polarity.Backward));
-                Commands.Enqueue(() => _brick.DirectCommand.SetMotorPolarityAsync(OutputPort.D, Polarity.Forward));
-                Commands.Enqueue(
-                    () => _brick.DirectCommand.StepMotorAtPowerAsync(OutputPort.A | OutputPort.D, 50, 180, false));
-            }
-            else
-                throw new ArgumentException("Only right or left");
-        }
-
         public void ExecuteCommands()
         {
             _brick_BrickChanged(this, new BrickChangedEventArgs());
@@ -199,12 +177,4 @@ namespace AI_In_Robotics.Classes
             com();
         }
     }
-
-    public enum MotionEnum
-    {
-        Right,
-        Left,
-        Front,
-        Back
-    };
 }

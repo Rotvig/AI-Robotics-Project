@@ -2,4 +2,19 @@
 \section{World Map}
 \label{sec:worldMap}
 
-test test
+The world map is one of the basic requirements needed for both localization and path finding.
+In this project the world map is used to do fictive particle measurements for the particle filter, and provide a bit map containing obstacles for the A* algorithm.
+The world map class is containing the length and width of the world, and a list of objects in the world.
+It has been decided to only use squares objects in the world map, and these are modelled as a set of 4 lines.
+Each square object is defined by 4 parameters, a corner position, length, width and an orientation offset of the x axis in degrees.
+A useful geometry library called \emph{MathNet.Spatial} is used to easy modulation of points, lines and angles, along easy access to geometry algebra as line length and the intersect point of two lines.
+
+\subsection{Particle measurements}
+
+The robot is measuring the distance to surrounding objects as the means of localization, and the particles therefore needs the ability to do the same action in the world map.
+This is implemented by creating a line from the particle in the particle orientation direction, and calculate the intersect point with the world edge lines and object lines, as seen on figure \ref{fig:particleMeasurement}
+The distance to the closest intersect point from the particle is chosen as the fictive measurement of that particle.
+
+\myFigure{Implementation/WorldMap/particleMeasurement}{The principle of particle distance measurements in the world map.}{fig:particleMeasurement}{0.9}
+
+\pagebreak

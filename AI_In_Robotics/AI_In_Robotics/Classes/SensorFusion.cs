@@ -20,7 +20,7 @@ namespace AI_In_Robotics.Classes
         Matrix<double> Pk;
 
         //Values for calibration
-        const int CalibrationRutinesToBeDone = 16;
+        const int CalibrationRutinesToBeDone = 1;
         uint CalibrationRutineCount = 0;
         const int NumberOfCalibrationReading = 30;
         List<double> CalDsitances = new List<double>() {10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85};
@@ -64,6 +64,8 @@ namespace AI_In_Robotics.Classes
 
                 Pk = Pk.Multiply(DenseMatrix.CreateIdentity(1).Subtract(Gk.Multiply(_C)));
 
+                Console.WriteLine(xEstimate[0, 0]);
+
                 return xEstimate[0, 0];
             }
             else
@@ -85,7 +87,7 @@ namespace AI_In_Robotics.Classes
                 //SonarCalibateDataSeries.Add(sonarReadTest());
                 //InfraredCalibateSeries.Add(infraredReadTest());
                 SensorFusionCalibateSeries.Add(Read());
-                System.Threading.Thread.Sleep(1);
+                System.Threading.Thread.Sleep(100);
             }
 
             SonarCalibateData.Add(SonarCalibateDataSeries);

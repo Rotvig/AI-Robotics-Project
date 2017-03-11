@@ -22,7 +22,7 @@ namespace AI_In_Robotics.Classes
         //Values for calibration
         const int CalibrationRutinesToBeDone = 16;
         uint CalibrationRutineCount = 0;
-        const int NumberOfCalibrationReading = 1;
+        const int NumberOfCalibrationReading = 30;
         List<double> CalDsitances = new List<double>() {10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85};
         List<double> sonarTestReadings = new List<double>() {17.4, 23.5, 28, 33.3, 38.4, 43.3, 48.1, 53.6, 58.6, 63.5, 68.5, 73.7, 77.8, 83.1, 87.9, 93};
         List<double> infraredTestReadings = new List<double>() {0, 3, 9, 15, 20.5, 25, 29.1, 34.2, 39, 42.9, 46, 48.9, 51.9, 53.8, 55.5, 57};
@@ -80,10 +80,10 @@ namespace AI_In_Robotics.Classes
 
             for (int CalibrationReading = 0; CalibrationReading < NumberOfCalibrationReading; CalibrationReading++)
             {
-                //SonarCalibateDataSeries.Add(Sonar.Read());
-                //InfraredCalibateSeries.Add(Infrared.Read());
-                SonarCalibateDataSeries.Add(sonarReadTest());
-                InfraredCalibateSeries.Add(infraredReadTest());
+                SonarCalibateDataSeries.Add(Sonar.Read());
+                InfraredCalibateSeries.Add(Infrared.Read());
+                //SonarCalibateDataSeries.Add(sonarReadTest());
+                //InfraredCalibateSeries.Add(infraredReadTest());
                 SensorFusionCalibateSeries.Add(Read());
                 System.Threading.Thread.Sleep(1);
             }
@@ -142,7 +142,7 @@ namespace AI_In_Robotics.Classes
             var InfraredErrorVarians = Variance(InfraredCalibateError, InfraredErrorMean, 0, CalibrationRutinesToBeDone);
             var SensorFusionErrorMean = Mean(SensorFusionCalibateError, 0, CalibrationRutinesToBeDone);
             var SensorFusionErrorVarians = Variance(SensorFusionCalibateError, SensorFusionErrorMean, 0, CalibrationRutinesToBeDone);
-                 }
+        }
 
         public double Mean(List<double> values, int start, int end)
         {

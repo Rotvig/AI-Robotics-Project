@@ -108,6 +108,8 @@ namespace AI_In_Robotics.Classes
                 lastError = error;
                 moveCiclesCount++;
             }
+
+            Console.WriteLine("Turn done");
         }
 
         private void moveMoters(double powerRight, double powerLeft)

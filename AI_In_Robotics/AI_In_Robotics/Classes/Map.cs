@@ -126,9 +126,10 @@ namespace AI_In_Robotics.Classes
         {
             var margin = 0.00001;
 
-            //Check if the two values are equal with small margin
+            //Check if the two X values are equal with small margin
             if (Math.Abs(objectLine.StartPoint.X - objectLine.EndPoint.X) < margin)
             {
+                //Check if the two Y values are equal with small margin
                 if (Math.Abs(objectLine.StartPoint.Y - objectLine.EndPoint.Y) < margin)
                 {
                     throw new ArgumentException("Line have same start and end point");
@@ -263,6 +264,7 @@ namespace AI_In_Robotics.Classes
         public bool IsPointInSquare(Point2D Point)
         {
             var margin = 0.00001;
+            var pointInSqaure = false;
 
             foreach (var obj in WorldObjects)
             {
@@ -271,14 +273,33 @@ namespace AI_In_Robotics.Classes
                 {
                     if (CheckIfPointIsOnLine(line, Point))
                     {
-                        return IntersectionIsOnLine(Point, line);
+                        if(IntersectionIsOnLine(Point, line))
+                        {
+                            pointInSqaure = true;
+                            break;
+                        }
+                        else
+                        {
+                            pointInSqaure = false;
+                            sumOfArea = 0;
+                            break;
+                        }
                     }
 
                     sumOfArea += CalculateTriangleArea(line, Point);
                 }
 
-                if (Math.Abs(sumOfArea - obj.area) < margin)
+                if (Math.Abs(sumOfArea - obj.area) < margin && sumOfArea != 0)
+                    pointInSqaure = true;
+
+                if (pointInSqaure)
+                {
                     return true;
+                }
+                else
+                {
+                    sumOfArea = 0;
+                }
             }
 
             return false;
@@ -330,7 +351,8 @@ namespace AI_In_Robotics.Classes
             SquareEdgeLines.Add(CalcSquareLine(StartPoint, xSize, lineOrientationDeg));
             SquareEdgeLines.Add(CalcSquareLine(SquareEdgeLines[0].EndPoint, ySize, lineOrientationDeg + 90));
             SquareEdgeLines.Add(CalcSquareLine(SquareEdgeLines[1].EndPoint, xSize, lineOrientationDeg + 180));
-            SquareEdgeLines.Add(CalcSquareLine(SquareEdgeLines[2].EndPoint, ySize, lineOrientationDeg + 270));
+            SquareEdgeLines.Add(CalcSquareLine(StartPoint, ySize, lineOrientationDeg + 90));
+            //SquareEdgeLines.Add(CalcSquareLine(SquareEdgeLines[2].EndPoint, ySize, lineOrientationDeg + 270));
         }
 
         private Line2D CalcSquareLine(Point2D StartPoint, double lineLength, double lineOrientationDeg)

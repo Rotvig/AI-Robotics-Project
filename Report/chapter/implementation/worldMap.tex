@@ -3,7 +3,7 @@
 \label{sec:worldMap}
 
 The world map is one of the basic requirements needed for both localization and path finding.
-In this project the world map is used to do fictive particle measurements for the particle filter, and provide a bit map containing obstacles for the A* algorithm.
+In this project the world map is used to do fictive particle measurements for the particle filter, and provide a read map containing obstacles for the A* algorithm.
 The world map class is containing the length and width of the world, and a list of objects in the world.
 It has been decided to only use squares objects in the world map, and these are modelled as a set of 4 lines.
 Each square object is defined by 4 parameters, a corner position, length, width and an orientation offset of the x axis in degrees.
@@ -12,9 +12,25 @@ A useful geometry library called \emph{MathNet.Spatial} is used to easy modulati
 \subsection{Particle measurements}
 
 The robot is measuring the distance to surrounding objects as the means of localization, and the particles therefore needs the ability to do the same action in the world map.
-This is implemented by creating a line from the particle in the particle orientation direction, and calculate the intersect point with the world edge lines and object lines, as seen on figure \ref{fig:particleMeasurement}
-The distance to the closest intersect point from the particle is chosen as the fictive measurement of that particle.
+This is implemented by creating a line from the particle in the particle orientation direction, and calculate the intersect points with the world edge lines and object lines, as seen on figure \ref{fig:particleMeasurement}.
+The distance to the closest intersect point from the particle is chosen as the fictive distance measurement of that particle.
 
-\myFigure{Implementation/WorldMap/particleMeasurement}{The principle of particle distance measurements in the world map.}{fig:particleMeasurement}{0.9}
+\myFigure{Implementation/WorldMap/particleMeasurement}{The principle of particle distance measurements in the world map.}{fig:particleMeasurement}{1}
+
+\subsection{A* road map generation}
+
+The A* algorithm needs a grid based map, where each tile is marked as free or blocked, to be able to plan a driving route.
+For simplicity it has been decided to have the world map and road map at the same scale, this means a 100 by 100 cm world map, will be a 100*100 tiles road map.
+It is necessary to determined whether each of the tiles is inside one of the world objects or not, to draw a correct read map.
+
+This is done by area calculation as seen on figure \ref{fig:ReadMapAreaCalc}.
+Four triangles is created from the tile coordinate to each of the object corners, marked A to D on figure \ref{fig:ReadMapAreaCalc}.
+The area sum of these four triangles is compared to the area of the object, if the triangle area sum is equal to the object area, the tile is inside the object and is marked as block, else it is marked free.
+
+\myFigure{Implementation/WorldMap/ReadMapAreaCalc}{The principle of calculating area to determined if a point is inside a square.}{fig:ReadMapAreaCalc}{0.6}
+
+Figure \ref{fig:BlockPlot} show a print out of a test read map containing three obstacles that the A* algorithm have to navigate around.
+
+\myFigure{Implementation/WorldMap/BlockPlot}{A plot of the read map, with three obstacles placed at various positions. All blocked tiles is marked as black.}{fig:BlockPlot}{0.4}
 
 \pagebreak

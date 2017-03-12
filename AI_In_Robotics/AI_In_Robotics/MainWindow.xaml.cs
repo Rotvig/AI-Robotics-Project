@@ -21,7 +21,7 @@ namespace AI_In_Robotics
         private SensorFusion Sensors;
         private Motion motionControle;
 
-        static int N = 1000;
+        static int N = 100000;
         static ParticleFilter filter;
         static Map World;
         static Bitmap OriginalBitmap;
@@ -65,7 +65,8 @@ namespace AI_In_Robotics
         private async void Ready(object sender, RoutedEventArgs e)
         {
             //brick = new Brick(new BluetoothCommunication("COM11"), true); // Jeppe
-            brick = new Brick(new BluetoothCommunication("COM5"), true); // Kim
+            brick = new Brick(new BluetoothCommunication("COM3"), true); // Kim1
+            //brick = new Brick(new BluetoothCommunication("COM5"), true); // Kim2
 
             await brick.ConnectAsync();
 
@@ -77,17 +78,20 @@ namespace AI_In_Robotics
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            World = new Map(152, 123);
-            filter = new ParticleFilter(N, World);
+            World = new Map(258, 129);
+            World.AddSquare(68, 24, 24, 32, 0);
+            World.AddSquare(48, 94, 19, 12, 0);
+            World.AddSquare(133, 96, 16, 24, 0);
+            World.AddSquare(160, 27, 36, 14, 0);
 
-            //World.AddSquare(1, 1, 2, 3, 0);
-            //World.AddSquare(12, 12, 5, 5, 45);
+
+            filter = new ParticleFilter(N, World);
 
             int fromX = 0, fromY = 0, toX = 19, toY = 19;
             var roadMap = World.GetAStarRoadMap(fromX, fromY, toX, toY);
 
 
-            OriginalBitmap = new Bitmap(153, 124);
+            OriginalBitmap = new Bitmap(259, 130);
             Image.Source = OriginalBitmap.DrawObjects(roadMap);
 
             BitmapClone = (Bitmap)OriginalBitmap.Clone();
@@ -104,62 +108,7 @@ namespace AI_In_Robotics
             if (e.Key == System.Windows.Input.Key.P)
             {
                 TestCounter++;
-                if (TestCounter == 1)
-                {
-                    filter.Resample(250);
-                    filter.Resample(250);
-                    filter.TurnParticlesRight(90);
-                    filter.Resample(50);
-                    filter.Resample(50);
-                    filter.TurnParticlesRight(90);
-                    filter.Resample(150);
-                    filter.Resample(150);
-                    filter.TurnParticlesRight(90);
-                    filter.Resample(350);
-                    filter.Resample(350);
-                    filter.TurnParticlesRight(90);
-                    filter.Resample(250);
-                    filter.Resample(250);
-
-                    BitmapClone = (Bitmap)OriginalBitmap.Clone();
-                    Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
-                }
-                if (TestCounter == 2)
-                {
-                    filter.MoveParticles(25);
-                    filter.Resample(225);
-                    filter.Resample(225);
-
-                    BitmapClone = (Bitmap)OriginalBitmap.Clone();
-                    Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
-                }
-                if (TestCounter == 3)
-                {
-                    filter.MoveParticles(50);
-                    filter.Resample(175);
-                    filter.Resample(175);
-
-                    BitmapClone = (Bitmap)OriginalBitmap.Clone();
-                    Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
-                }
-                if (TestCounter == 4)
-                {
-                    filter.TurnParticlesRight(90);
-                    filter.Resample(50);
-                    filter.Resample(50);
-                    filter.TurnParticlesRight(90);
-                    filter.Resample(225);
-                    filter.Resample(225);
-                    filter.TurnParticlesRight(90);
-                    filter.Resample(350);
-                    filter.Resample(350);
-                    filter.TurnParticlesRight(90);
-                    filter.Resample(175);
-                    filter.Resample(175);
-
-                    BitmapClone = (Bitmap)OriginalBitmap.Clone();
-                    Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
-                }
+                motionControle.RotationScan(Sensors, filter, OriginalBitmap);
             }
 
             if (e.Key == System.Windows.Input.Key.M)
@@ -171,6 +120,46 @@ namespace AI_In_Robotics
             {
                 motionControle.RotationScan(Sensors, filter, OriginalBitmap);
             }
+
+
+
+            // specific test
+            if (e.Key == System.Windows.Input.Key.H)    // Højre
+            {
+                motionControle.PIDTurn(-45);
+                filter.TurnParticlesRight(45);
+
+                //filter.Resample(Sensors.Read());
+
+                BitmapClone = (Bitmap)OriginalBitmap.Clone();
+                Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
+            }
+            if (e.Key == System.Windows.Input.Key.V) // Venstre
+            {
+                motionControle.PIDTurn(45);
+                filter.TurnParticlesRight(45);
+
+                //filter.Resample(Sensors.Read());
+
+                BitmapClone = (Bitmap)OriginalBitmap.Clone();
+                Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
+            }
+            if (e.Key == System.Windows.Input.Key.F) // Fremad
+            {
+                motionControle.PIDMove(10);
+                filter.MoveParticles(10);
+
+                BitmapClone = (Bitmap)OriginalBitmap.Clone();
+                Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
+            }
+            if (e.Key == System.Windows.Input.Key.R) // Resample
+            {
+                filter.Resample(Sensors.Read());
+
+                BitmapClone = (Bitmap)OriginalBitmap.Clone();
+                Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
+            }
+
         }
     }
 }

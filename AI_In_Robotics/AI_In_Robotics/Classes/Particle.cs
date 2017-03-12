@@ -33,7 +33,7 @@ namespace AI_In_Robotics.Classes
 
         public void PositionNoise()
         {
-            pos = new Point2D(pos.X + Rand.Gauss(), pos.Y + Rand.Gauss()); //TODO variance defaults to 1
+            pos = new Point2D(pos.X + Rand.Gauss(0, 5), pos.Y + Rand.Gauss(0, 2.5)); //TODO variance defaults to 1
         }
 
         public void ThetaNoise()

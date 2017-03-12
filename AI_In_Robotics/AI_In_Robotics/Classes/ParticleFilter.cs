@@ -45,6 +45,7 @@ namespace AI_In_Robotics.Classes
                 part.pos = new Point2D(part.pos.X + Math.Cos(part.theta) * dist,
                                         part.pos.Y + Math.Sin(part.theta) * dist);
                 part.PositionNoise();
+                part.ThetaNoise();
 
                 // If outside world or inside landmark, destroy particle and make new random particle.
                 if (part.pos.X > World.WorldSizeX || part.pos.X < 0 || part.pos.Y > World.WorldSizeY ||
@@ -152,7 +153,7 @@ namespace AI_In_Robotics.Classes
         {
             double prob = 1;
             var senseNoise = 5.0; // TODO senseNoise??
-            double maxMeasure = 176; // TODO maxMeasure = approx world diagonal
+            double maxMeasure = 280; // TODO maxMeasure = approx world diagonal
             double expectedDist = World.GetDistance(part.pos, RadToDeg(part.theta), maxMeasure);
 
             prob *= Math.Exp(-Math.Pow(expectedDist - measurement, 2) / Math.Pow(senseNoise, 2) / 2) /

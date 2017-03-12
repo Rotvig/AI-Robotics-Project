@@ -2,7 +2,7 @@
 \label{chp:pid}
 The Proportional-, Integral- and Derivative(PID)-controller can be used for motion and error correction. An example of a feedback loop with error correction is shown in figure \ref{fig:PID_Circuit}. 
  
-\myFigure{Theory/PID/PID_Circuit}{PID using error feedback.}{fig:PID_Circuit}{0.7}
+\myFigure{Theory/PID/PID_Circuit}{PID using error feedback. From the book \citep{FBS}}{fig:PID_Circuit}{0.7}
 
 PID can be used for motion correction such as correcting the steering of a car. For example if the error is defined as the crosstrack error which means how far the car is off the intended course. The PID controller can then be feed with the error, and the different parts of the PID controller can then adjust the control signal which affects the steering of the car. 
 
@@ -43,7 +43,7 @@ Twiddle is hill climbing algorithm. it works by trial and error. The problem wit
 
 Ziegler-Nichols works by initially Ki and Kd are set to zero. Then Kp is raised until oscillation appears. Then Kc is set to value of Kp and Tc is the period of the oscillation. When Kc and Tc are found the table in figure \ref{fig:zig} can be used to get Kp, Ti and Td.
 
-\myFigure{Theory/PID/zig}{Ziegler-Nichols frequency response method.}{fig:zig}{0.5}
+\myFigure{Theory/PID/zig}{Ziegler-Nichols frequency response method. From the book \citep{FBS}}{fig:zig}{0.5}
 
 The problem with Ziegler-Nichols is that it gives an aggressive gain and overshoot. 
 

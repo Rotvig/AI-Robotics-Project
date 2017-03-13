@@ -1,8 +1,10 @@
 \chapter{System description}
 \label{chp:sysdes}
-% explain lego car
-	%Why we use NXT lego  robot
-	% easy to begin and easy to configure
-% explain sensors used
-% explain API
-	% explain communiation and how the stuff are run on the PC
+
+For this project a LEGO Mindstorms EV3 is used to create a robot to locate itself inside a map and steer it to a goal.
+
+\todo{insert image of robot}
+LEGO Mindstorms EV3 was chosen because of the easy access to the component such as sensors and motors. Besides the easy access there was great support online. 
+For this project two motors and three sensors was used. The two motors was used to control the two front wheels. With two motors it gave a seamless rotation and a nice forward control. Three different sensors was used. Two for length measuring such as a infrared sensor and a sonar sensor. The last sensor was a gyroscope. This was used for controlling the robots motion such as rotation and forward or backward movements.
+
+To control the robot LEGO MINDSTORMS EV3 API for .NET\footnote{\url{https://github.com/BrianPeek/legoev3}} was used. It is an open source API. The API works by connecting to the robot via Bluetooth, USB or WIFI. When the connection is setup the user of the API can then send commands to the robot. This means that all calculation is done on the connected PC and then the correct commands are passed to the robot.

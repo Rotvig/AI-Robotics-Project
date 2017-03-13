@@ -34,29 +34,32 @@ namespace AI_In_Robotics.Classes
         public void motionTest()
         {
             //Console.WriteLine(getGyro());
-            //PIDMove(10);
+            //PIDMove(100);
             PIDTurn(90);
-            PIDTurn(90);
-            PIDTurn(90);
-            PIDTurn(90);
+            //PIDTurn(90);
+            //PIDTurn(90);
+            //PIDTurn(90);
         }
 
         public void PIDMove(double moveDistanceCm)
         {
-            //System.IO.StreamWriter file = new System.IO.StreamWriter("D:MotorPIDtest.txt");
+            System.IO.StreamWriter fileError = new System.IO.StreamWriter("D:MotorPIDerror.txt");
+            System.IO.StreamWriter fileRightPower = new System.IO.StreamWriter("D:MotorRightPower.txt");
+            System.IO.StreamWriter fileLeftPower = new System.IO.StreamWriter("D:MotorLeftPower.txt");
+            System.IO.StreamWriter fileTime = new System.IO.StreamWriter("D:MotorPIDtime.txt");
             double moveCiclesCount = 0;
-            double kp = 0.8;
-            double Ki = 0.12;
-            double Kd = 0.06;
-            double gyroOffset = getGyro();
-            double Tp = 0;
+            double kp = 1.44;
+            double Ki = 0.487;
+            double Kd = 1.064;
+            double gyroTargetValue = getGyro();
+            double movePower = 0;
             if (moveDistanceCm > 0)
             {
-                Tp = 25;
+                movePower = 25;
             }
             else
             {
-                Tp = -25;
+                movePower = -25;
             }
             double integral = 0;
             double lastError = 0;
@@ -65,50 +68,71 @@ namespace AI_In_Robotics.Classes
             while (moveCiclesCount < moveDistanceCm/MoveDistancePerCicle)
             {
                 double gyroValue = getGyro();
-                double error = gyroValue - gyroOffset;
+                double error = gyroValue - gyroTargetValue;
                 integral = integral + error;
                 derivative = error - lastError;
-                double turn = kp * error + Ki * integral + Kd * derivative;
-                double powerRight = Tp - turn;
-                double powerLeft = Tp + turn;
+                double turnPower = kp * error + Ki * integral + Kd * derivative;
+                double powerRight = movePower - turnPower;
+                double powerLeft = movePower + turnPower;
 
                 moveMoters(powerRight, powerLeft);
 
+                fileError.WriteLine(error);
+                fileRightPower.WriteLine(powerRight);
+                fileLeftPower.WriteLine(powerLeft);
+                fileTime.WriteLine(moveCiclesCount);
                 lastError = error;
                 moveCiclesCount++;
             }
+
+            fileError.Close();
+            fileRightPower.Close();
+            fileLeftPower.Close();
+            fileTime.Close();
         }
 
         public void PIDTurn(double rotateDeg)
         {
-            //System.IO.StreamWriter file = new System.IO.StreamWriter("D:MotorPIDtest.txt");
+            System.IO.StreamWriter fileError = new System.IO.StreamWriter("D:MotorPIDerror.txt");
+            System.IO.StreamWriter fileRightPower = new System.IO.StreamWriter("D:MotorRightPower.txt");
+            System.IO.StreamWriter fileLeftPower = new System.IO.StreamWriter("D:MotorLeftPower.txt");
+            System.IO.StreamWriter fileTime = new System.IO.StreamWriter("D:MotorPIDtime.txt");
             double moveCiclesCount = 0;
-            double kp = 0.5;
-            double Ki = 0.05;
-            double Kd = 0.1;
-            double gyroOffset = getGyro() + rotateDeg;
-            double Tp = 0;
+            double kp = 1.44;
+            double Ki = 0.487;
+            double Kd = 1.064;
+            double gyroTargetValue = getGyro() + rotateDeg;
+            double movePower = 0;
             double integral = 0;
             double error = rotateDeg;
             double lastError = 0;
             double derivative = 0;
 
-            while ((moveCiclesCount < 20) || (Math.Abs(error) > 1))
+            //while ((moveCiclesCount < 20) || (Math.Abs(error) > 1))
+            while ((moveCiclesCount < 100))
             {
                 double gyroValue = getGyro();
-                error = gyroValue - gyroOffset;
+                error = gyroValue - gyroTargetValue;
                 integral = integral + error;
                 derivative = error - lastError;
-                double turn = kp * error + Ki * integral + Kd * derivative;
-                double powerRight = Tp - turn;
-                double powerLeft = Tp + turn;
+                double turnPower = kp * error + Ki * integral + Kd * derivative;
+                double powerRight = movePower - turnPower;
+                double powerLeft = movePower + turnPower;
 
                 moveMoters(powerRight, powerLeft);
 
+                fileError.WriteLine(error);
+                fileRightPower.WriteLine(powerRight);
+                fileLeftPower.WriteLine(powerLeft);
+                fileTime.WriteLine(moveCiclesCount);
                 lastError = error;
                 moveCiclesCount++;
             }
 
+            fileError.Close();
+            fileRightPower.Close();
+            fileLeftPower.Close();
+            fileTime.Close();
             Console.WriteLine("Turn done");
         }
 

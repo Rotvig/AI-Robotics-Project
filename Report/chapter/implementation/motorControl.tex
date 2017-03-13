@@ -2,6 +2,47 @@
 \section{Motor Control}
 \label{sec:motorControl}
 
-test test
+The robot has two mounted NXT motors, one on either side.
+The robot movement is controlled, by setting the power and direction of these two motors with the NXT functions seen in listing \ref{list:NXT_moveFuncs}.
+The distance that the robot is travelling is a function of both the applied power and how long the action is lasting.
+By experiments is has been defined that the robot is moving 2 cm per period of 250 Ms with a power of 25 applied to the motors.
+The last parameter \emph{Brake} stops the motor after timeout, if set to \emph{True}.
+
+\begin{lstlisting}[caption={The two NXT funtions used to control the motors.}, label=list:NXT_moveFuncs]
+SetMotorPolarityAsync(OutputPort, Polarity);
+TurnMotorAtPowerForTimeAsync(OutputPort, Power, MoveMs, Brake);
+\end{lstlisting}
+
+\subsection{PID controller}
+
+It has been observed that the motors have slightly different torque, this have the effect that if the same power is applied to both motors, the robot will swing slightly to the right.
+The best way to avoid this is to add a PID regulator, based on a gyroscope.
+This way different powers can be applied to the two motors, depending on the error of gyroscope measurement.
+A PID regulator also gives the ability of making precise turns.
+
+\myFigure{Implementation/MotorControl/PID_TurnFigure}{Principle of PID regulator turning robot as function of gyroscope error}{fig:PID_TurnFigure}{0.55}
+
+Figure \ref{fig:PID_TurnFigure} show the principle of the implemented PID regulator.
+The \emph{error} is a direct measure of how much the robot is of course in degrees. A positivist gyroscope value is a result of the robot turning left.
+
+$$ error = gyroValue - gyroTargetValue $$
+
+The \emph{turnPower} value is specifying the action to be done depending on the \emph{error}. This is where the PID regulator is added:
+
+$$ integral = integral + error $$
+$$ derivative = error - lastError $$
+$$ turnPower = kp * error + Ki * integral + Kd * derivative $$
+
+The \emph{turnPower} value is know applied to the two motors to minimize the error. A positive \emph{turnPower} means that the robot is turning left, and more power is therefore applied to the left motor, and vice versa for the right motor.
+
+$$ powerRight = movePower - turnPower $$
+$$ powerLeft = movePower + turnPower $$
+
+The \emph{movePower} parameter is defining the basic operation.
+This value is 25 for forward motion, -25 for backwards motion, and 0 for rotation.
+
+\subsection{PID Tuning}
+
+
 
 \pagebreak

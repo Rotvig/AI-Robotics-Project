@@ -1,2 +1,36 @@
 \chapter{Kalman Filter}
 \label{chp:kalman}
+
+The Kalman filter algorithm for localization is a spacial case of Markov localization already described in chapter \ref{chp:local}.
+The Kalman filter is different in the sense that instead of calculating the probability discrete for every tile on the map, the position is modelled with a continuous Gaussian distribution.
+A Gaussian is a well known and often used distribution in probability theory.
+The Gaussian function is shown in equation \ref{eq:Gaussian}, and is defined by two values, the mean \emph{$\mu$} that describe the middle of the distribution, and the variance \emph{$\sigma^2$} that describe spread of the distribution.
+
+\begin{equation}
+\label{eq:Gaussian}
+f(x) = \frac{1}{\sqrt{2*\pi*\sigma^2}} * exp^{-\frac{1}{2}*\frac{(x-\mu)^2}{\sigma^2}}
+\end{equation}
+
+When having a multivariate Gaussian distribution in more dimensions the mean becomes a vector \emph{$\vec{\mu}$}, and the variance becomes a matrix \emph{$\Sigma$} defining the spread in all dimensions.
+Figure \ref{fig:Gaussian} show a multivariate Gaussian distribution, this could be an example of the probability of a robot being in different positions in a x,y plane.
+
+\myFigure{Theory/KalmanFilter/Gaussian}{Multivariate Gaussian distribution in two dimensions.}{fig:Gaussian}{0.5}
+
+The Kalman filter is based on a state space model, example seen on figure \fref{fig:StateSpaceModel}, that is used to describe and predict the behaviour of linear systems.
+The state space model describe how a system transform some input/movement \emph{$\vec{u}$} to a hidden state \emph{$\vec{x}$}, and generate an output/measurement \emph{$\vec{y}$}, with the use of matrices. The most impotent is the input matrix \emph{$G$} that transform the input to the hidden state, the state transmission matrix \emph{$F$} that predict the next hidden state from the present and the output matrix \emph{$H$} that transform the hidden state to the output. Noise is added on both input and output of the system.
+
+An example of a state space model could be a robot that apply an acceleration as input, measure a noisy position, and tries to estimate its velocity and true position.
+
+\myFigure{Theory/KalmanFilter/StateSpaceModel}{An example of a state space model, that is used describe linear system with a set of matrices. This model describe how a system transform some input \emph{$\vec{u}$} to a hidden state \emph{$\vec{x}$}, and generate an output \emph{$\vec{y}$}.}{fig:StateSpaceModel}{0.8}
+
+Just as the Markov localization the Kalman filter is separated in two steps. An prediction step that
+
+\begin{equation}
+\label{eq:KalmanPrediction1}
+\vec{x}'_{k} = F * \vec{x}_{k-1} + G * \vec{u}_{k}
+\end{equation}
+
+\begin{equation}
+\label{eq:KalmanPrediction2}
+P'_{k} = F * P_{k-1} * F^T + G * Q * G^T
+\end{equation}

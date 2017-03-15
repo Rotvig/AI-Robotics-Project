@@ -20,7 +20,7 @@ The best way to avoid this is to add a PID regulator, based on a gyroscope.
 This way different powers can be applied to the two motors, depending on the error of gyroscope measurement.
 A PID regulator also gives the ability of making precise turns.
 
-\myFigure{Implementation/MotorControl/PID_TurnFigure}{Principle of PID regulator turning robot as function of gyroscope error}{fig:PID_TurnFigure}{0.55}
+\myFigure{Implementation/MotorControl/PID_TurnFigure}{Principle of PID regulator turning robot as function of gyroscope error.}{fig:PID_TurnFigure}{0.55}
 
 Figure \ref{fig:PID_TurnFigure} show the principle of the implemented PID regulator.
 The \emph{error} is a direct measure of how much the robot is of course in degrees. A positivist gyroscope value is a result of the robot turning left.
@@ -31,9 +31,10 @@ The \emph{turnPower} value is specifying the action to be done depending on the 
 
 $$ integral = integral + error $$
 $$ derivative = error - lastError $$
-$$ turnPower = kp * error + Ki * integral + Kd * derivative $$
+$$ turnPower = Kp * error + Ki * integral + Kd * derivative $$
 
-The \emph{turnPower} value is know applied to the two motors to minimize the error. A positive \emph{turnPower} means that the robot is turning left, and more power is therefore applied to the left motor, and vice versa for the right motor.
+The \emph{turnPower} value is know applied to the two motors to minimize the error.
+A positive \emph{turnPower} means that the robot is turning left, and more power is therefore applied to the left motor, and vice versa for the right motor.
 
 $$ powerRight = movePower - turnPower $$
 $$ powerLeft = movePower + turnPower $$
@@ -43,6 +44,56 @@ This value is 25 for forward motion, -25 for backwards motion, and 0 for rotatio
 
 \subsection{PID Tuning}
 
+The PID parameters are tuned in a scenario of preforming a 90 degree turn, following the Ziegler–Nichols method.
+This method starts by finding the critical gain \emph{$K_c$}, by setting \emph{$Ki$} and \emph{$Kd$} to 0, and increase \emph{$Kp$} until oscillation is just stable.
+Figure \ref{fig:PID_OscillationGraf} show the oscillation state of the system with \emph{$Kp = 2.4$}.
 
+\myFigure{Implementation/MotorControl/PID_OscillationGraf}{Graph of system with  ultimate gain: \emph{$K_c = 2.4$}}{fig:PID_OscillationGraf}{1}
+
+From figure \ref{fig:PID_OscillationGraf}, is it possible to determined the oscillation period \emph{$P_c$}.
+This is done by measure the start and end time of 10 oscillation, calculate the mean period and multiply by the motion time step of 250 ms.
+
+$$ P_c = \frac{67.6518-8.524}{10} * 0.250 = 1.478 $$
+
+The loop time is also needed for the Ziegler–Nichols method.
+
+$$ dT = 0.250 $$
+
+\myFigure{Implementation/MotorControl/PID_Params}{Table of PID constants when using the Ziegler–Nichols method.}{fig:PID_Params}{0.7}
+
+\todo{Add link}
+
+%\footnote{Link to source: \url{http://www.inpharmix.com/jps/PID_Controller_For_Lego_Mindstorms_Robots.html}}
+
+\emph{$K_c$}, \emph{$P_c$} and \emph{$dT$} is used to calculate the PID parameters following the table in figure \ref{fig:PID_OscillationGraf}.
+
+$$ Kp = 0.6 * K_c = 1.44 $$
+
+$$ Ki = \frac{2*Kp*dT}{P_c} = 0.487 $$
+
+$$ Ki = \frac{Kp*P_c}{8*dT} = 1.064 $$
+
+These 3 PID parameters are implemented in the software and tested in two movement cases; a 90 degree left turn seen in figure \ref{fig:PID_90DegreeTurn}, and a forward movement for 30 cm seen in figure \ref{fig:PID_Forward}.
+
+\todo{Make figure clearing}
+
+\mySubFigure{Implementation/MotorControl/PID_90DegreeTurnError}{Implementation/MotorControl/PID_90DegreeTurnMotors}
+{Graphs of PID regulation of a 90 degree turn. The \emph{gyroTargetValue} is set to 90 for the robot to do a 90 degree left turn.}
+{Error plot of the turn. The Error starts in -90, makes about 50\% overshot and swing in to a stable value in about 5 sec.}
+{The power values to the two motors, a positive value means forward spin and a negative value means backwards spin. Green is the left motor and blue is the right motor. It can be seen that the values match with a left swing and that the values go towards 0 with deceasing error.}
+{fig:PID_90DegreeTurn}{fig:PID_90DegreeTurnError}{fig:PID_90DegreeTurnMotors}
+
+\mySubFigure{Implementation/MotorControl/PID_ForwardError}{Implementation/MotorControl/PID_ForwardMotors}
+{Graphs of PID regulation of a forward motion of 30 cm. The \emph{gyroTargetValue} is set to 0 for the robot to do a forward motion.}
+{Error plot of the forward motion. The Error starts in 0, starts to oscillate a bit do to unbalanced motors, and stabilize after 4-5 sec.}
+{The power values to the two motors, a positive value means forward spin and a negative value means backwards spin. Green is the left motor and blue is the right motor. It can be seen that the values swing in correlation with the error, and that there is a little offset between the motors at the stable state.}
+{fig:PID_Forward}{fig:PID_ForwardnError}{fig:PID_ForwardTurnMotors}
+
+\FloatBarrier
+
+The PID motion test seen in figure \ref{fig:PID_90DegreeTurn} and \ref{fig:PID_Forward}, gives fine results with the calculated PID parameters.
+Both the turn and forward case have a bit too big overshoot, that can be fixed by fine tuning of the PID parameters a bit.
+Decrease \emph{$Kp$}, \emph{$Ki$} or increase \emph{$Kd$}, all have a positive effect on the overshoot, but do also have a negative effect on the rise time and settling time, making the robot turn slower.
+It comes down to find a good balance between \emph{high turn speed}, \emph{low turn time} and \emph{high turn precision}.
 
 \pagebreak

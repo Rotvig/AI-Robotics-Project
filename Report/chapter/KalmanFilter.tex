@@ -11,10 +11,10 @@ The Gaussian function is shown in equation \ref{eq:Gaussian}, and is defined by 
 f(x) = \frac{1}{\sqrt{2*\pi*\sigma^2}} * exp^{-\frac{1}{2}*\frac{(x-\mu)^2}{\sigma^2}}
 \end{equation}
 
-When having a multivariate Gaussian distribution in more dimensions the mean becomes a vector \emph{$\vec{\mu}$}, and the variance becomes a matrix \emph{$\Sigma$} defining the spread in all dimensions.
+When having a multivariate Gaussian distribution in more dimensions the mean becomes a vector \emph{$\vec{\mu}$}, and the variance becomes a covariance matrix \emph{$\Sigma$} defining the spread in all dimensions.
 Figure \ref{fig:Gaussian} show a multivariate Gaussian distribution, this could be an example of the probability of a robot being in different positions in a x,y plane.
 
-\myFigure{Theory/KalmanFilter/Gaussian}{Multivariate Gaussian distribution in two dimensions.}{fig:Gaussian}{0.5}
+\myFigure{Theory/KalmanFilter/Gaussian}{Multivariate Gaussian distribution in two dimensions.}{fig:Gaussian}{0.6}
 
 The Kalman filter is based on a state space model, example seen on figure \fref{fig:StateSpaceModel}, that is used to describe and predict the behaviour of linear systems.
 The state space model describe how a system transform some input/movement \emph{$\vec{u}$} to a hidden state \emph{$\vec{x}$}, and generate an output/measurement \emph{$\vec{y}$}, with the use of matrices. The most impotent is the input matrix \emph{$G$} that transform the input to the hidden state, the state transmission matrix \emph{$F$} that predict the next hidden state from the present and the output matrix \emph{$H$} that transform the hidden state to the output. Noise is added on both input and output of the system.
@@ -23,14 +23,60 @@ An example of a state space model could be a robot that apply an acceleration as
 
 \myFigure{Theory/KalmanFilter/StateSpaceModel}{An example of a state space model, that is used describe linear system with a set of matrices. This model describe how a system transform some input \emph{$\vec{u}$} to a hidden state \emph{$\vec{x}$}, and generate an output \emph{$\vec{y}$}.}{fig:StateSpaceModel}{0.8}
 
-Just as the Markov localization the Kalman filter is separated in two steps. An prediction step that
+\pagebreak
+
+Just as the Markov localization the Kalman filter is separated in two steps.
+The prediction step is trying to predict the robots next position based on some movement, and the update step is estimating the robot position based on the prediction and a number of measurements.
+The system continuously switch between predicting and updating to localize the robot.
+
+Equation \ref{eq:KalmanPrediction1} and \ref{eq:KalmanPrediction2} show the Kalman filter prediction step.
+The basic principle of the prediction step is to move the Gaussian distribution of the estimated position to a new location based on some movement.
+There will always be noise in the movement procedure, this mean the Gaussian distribution of the hidden state will always have a bigger spread after movement that before, do to the loss of information.
+The first equation \ref{eq:KalmanPrediction1} is predicting the hidden state \emph{$\vec{x'}$} from the previous state and the movement \emph{$\vec{u}$}.
+The second equation \ref{eq:KalmanPrediction2} is predicting the covariance matrix of the hidden state from the previous covariance matrix and the system noise from the movement.
 
 \begin{equation}
 \label{eq:KalmanPrediction1}
-\vec{x}'_{k} = F * \vec{x}_{k-1} + G * \vec{u}_{k}
+\vec{x}'_{k} = \boldsymbol{F} * \vec{x}_{k-1} + \boldsymbol{G} * \vec{u}_{k}
 \end{equation}
 
 \begin{equation}
 \label{eq:KalmanPrediction2}
-P'_{k} = F * P_{k-1} * F^T + G * Q * G^T
+\boldsymbol{P}'_{k} = \boldsymbol{F} * \boldsymbol{P}_{k-1} * \boldsymbol{F}^T + \boldsymbol{G} * \boldsymbol{Q} * \boldsymbol{G}^T
 \end{equation}
+
+Equation \ref{eq:KalmanUpdate1} to \ref{eq:KalmanUpdate4} show the Kalman filter update step.
+The basic principle of the update step is to combine one or more Gaussian distributions from the state estimate and sensor measurements, to get a new more precise estimate.
+When combining two Gaussian distributions, the result distribution will always have a smaller spread than any of the two original distributions, this is do to information gain in the system.
+The first equation \ref{eq:KalmanUpdate1} is calculating the error $ \varepsilon_{k} $ of the predicted state and the true measurement.
+Equation \ref{eq:KalmanUpdate2} is the Kalman gain $ \boldsymbol{K}_{k} $, this is a factor determining how big impact the measurement has on the state prediction, depending on the ratio of the state covariance matrix $\boldsymbol{P}'_{k}$ and the sensor noise $\boldsymbol{R}$.
+In case of relative small sensor noise, meaning that the measurements are accurate, the state estimate depends mostly on the measurements, and in case of relative high sensor noise, meaning that the measurements are inaccurate, the state estimate instead depends mostly on the previous state.
+In the end equation \ref{eq:KalmanUpdate3} and \ref{eq:KalmanUpdate4} calculate the new state estimate and covariance matrix, based on the sensor error, Kalman gain and predicted covariance matrix.
+
+\begin{equation}
+\label{eq:KalmanUpdate1}
+\varepsilon_{k} = \vec{z}_{k} - \boldsymbol{H} * \vec{x}'_{k}
+\end{equation}
+
+\begin{equation}
+\label{eq:KalmanUpdate2}
+\boldsymbol{K}_{k} = \boldsymbol{P}'_{k} * \boldsymbol{H}^T * (\boldsymbol{H} * \boldsymbol{P}'_{k} * \boldsymbol{H}^T + \boldsymbol{R})^-1
+\end{equation}
+
+\begin{equation}
+\label{eq:KalmanUpdate3}
+\vec{x}_{k} = \vec{x}'_{k} + \boldsymbol{K}_{k} * \varepsilon_{k}
+\end{equation}
+
+\begin{equation}
+\label{eq:KalmanUpdate4}
+\boldsymbol{P}_{k} = (\boldsymbol{I} - \boldsymbol{K}_{k} * \boldsymbol{H}) * \boldsymbol{P}'_{k}
+\end{equation}
+
+The Kalman filter is a very useful tool in the field of localization and autonomous robots.
+It is often used to estimate characteristics in the surrounding environment of a robot, as predicting the speed of another car, without being able to measure speed directly.
+
+The Kalman filter have some drawbacks though.
+As the state estimate is modelled with a Gaussian distributions, with only one peak, is it not possible to model a scenario where there is a probability of the robot being in two different positions.
+The system also have to be linear to be able to make the state space model that is necessary for the Kalman filter to work.
+The term Extended Kalman filter originates from this problem, in the sense that Extended Kalman filters is about ways of transforming nonlinear systems to linear systems so that Kalman filters can be used.

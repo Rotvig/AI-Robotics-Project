@@ -3,9 +3,35 @@
 \label{sec:sensorControl}
 
 It has been decided to mount two different distance measurement sensors on the robot.
-The first is a sonar sensor measuring distance by the reflection of high frequency sound waves on objects, and the second is an infra red sensor doing the same thing, but with light instead.
-In the documentation of the sensors its stated that the sonar sensor have a longer reach of about 1.5 meters, to the ca. 50 cm for the infra red sensor.
-The infra red sensor on the other hand should be more precise at short distances.
+The first is a sonar sensor measuring distance by the reflection of high frequency sound waves on objects, and the second is an infrared sensor doing the same thing, but with light instead.
+In the documentation of the sensors its stated that the sonar sensor have a longer reach of about 1.5 meters, to the ca. 50 cm for the infrared sensor.
+The infrared sensor on the other hand should be more precise at short distances.
 The idea is to combine these two sensors and both get the benefits of the long range, and the short distance precision.
+
+\subsection{Sensor calibration}
+
+The infrared sensor is mounted on the front of the robot and the sonar on the back.
+This physical setup means that the sensors are measuring a negative offset and positive offset.
+It has been decided to calibrate the sensors to a point right between the wheels of the robot, as this point is stationary when the robot turns.
+A simple paper line in front of a wall with marked distances from 10 cm to 80 cm with 5 cm jumps, is used to calibrate the sensors.
+The sensor values from both sensors are logged at all marked distances, to get the characteristics of how the sensors operate at different distances.
+
+Figure \ref{fig:SensorCalibration} show the calibration results, plotted in the software tool \emph{Graph}, that have ability of calculating a linear trend line of a series of points.
+It can be seen that the sonar have a very fine linear trend line, and an offset of $ -8.19 $.
+The infrared sensor is as expected linear to about 45 cm, where the data points starts to curve upwards.
+Only the points below 50 is used to calculate the trend line, and have an offset of $ 10.6 $.
+
+\myFigure{Implementation/SensorControl/SensorCalibrationPlot}{Graph of the sensor calibration measurements. Points mark the measurements and the line is trend line of the points.}{fig:SensorCalibration}{0.51}
+
+These offsets are included to the software by making an addition constant for each sensor.
+This value is added to each sensor measurement to calibrate the sensor, as shown in listing \ref{list:NXT_sensorFuncs}.
+
+\begin{lstlisting}[caption={The function for reading and calibrate the sensor measurements, from the sensor class}, label=list:NXT_sensorFuncs]
+public double Read()
+{
+	Thread.Sleep(20);
+	return _brick.Ports[_port].SIValue + calibrationAddition;
+}
+\end{lstlisting}
 
 \pagebreak

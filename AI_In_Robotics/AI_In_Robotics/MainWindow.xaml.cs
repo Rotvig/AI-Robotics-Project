@@ -45,8 +45,8 @@ namespace AI_In_Robotics
 
         private async void Ready(object sender, RoutedEventArgs e)
         {
-            //brick = new Brick(new BluetoothCommunication("COM11"), true); // Jeppe
-            brick = new Brick(new BluetoothCommunication("COM3"), true); // Kim1
+            brick = new Brick(new BluetoothCommunication("COM9"), true); // Jeppe
+            //brick = new Brick(new BluetoothCommunication("COM3"), true); // Kim1
             //brick = new Brick(new BluetoothCommunication("COM5"), true); // Kim2
 
             await brick.ConnectAsync();
@@ -65,12 +65,12 @@ namespace AI_In_Robotics
             World.AddSquare(133, 96, 16, 24, 0);
             World.AddSquare(160, 27, 36, 14, 0);
 
-            filter = new ParticleFilter(N, World);
+            filter = new ParticleFilter(N, World, 220, 35, 180);
 
             int fromX = 0, fromY = 0, toX = 19, toY = 19;
             var roadMap = World.GetAStarRoadMap(fromX, fromY, toX, toY);
 
-            Astar = new Astar(roadMap, 5);
+            Astar = new Astar(roadMap, 5, 5, 5);
 
             OriginalBitmap = new Bitmap(259, 130);
             Image.Source = OriginalBitmap.DrawObjects(roadMap);
@@ -143,15 +143,17 @@ namespace AI_In_Robotics
 
             if (e.Key == System.Windows.Input.Key.Space)
             {
-                while(true)
+                var position = filter.getPosition();
+
+                while ((position.X - Astar._goalX) > 5 && (position.Y - Astar._goalY) > 5)
                 {
                     filter.Resample(Sensors.Read()); // Complete run
-                    var position = filter.getPosition();
+                    position = filter.getPosition();
 
                     BitmapClone = (Bitmap)OriginalBitmap.Clone();
                     Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
 
-                    Movement movement = Astar.GetNextMove(Astar.FindPath(position.X, position.Y));
+                    Movement movement = Astar.FindPath((int)position.X, (int)position.Y);
 
                     double orientationTaget = 0;
                     double turnAngle = 0;
@@ -162,55 +164,55 @@ namespace AI_In_Robotics
                             orientationTaget = 0 * Math.PI;
                             if (position.theta < Math.PI)
                             {
-                                turnAngle = (rad2deg(-position.theta));
+                                turnAngle = (filter.RadToDeg(-position.theta));
                             }
                             else
                             {
-                                motionControle.PIDTurn(rad2deg(2*Math.PI - position.theta));
+                                motionControle.PIDTurn(filter.RadToDeg(2*Math.PI - position.theta));
                             }
                             break;
                         case Movement.Up:
                             orientationTaget = 0.5 * Math.PI;
                             if (position.theta > orientationTaget &&  position.theta < (1.5 * Math.PI))
                             {
-                                turnAngle = rad2deg((0.5 * Math.PI) - position.theta);
+                                turnAngle = filter.RadToDeg((0.5 * Math.PI) - position.theta);
                             }
                             else
                             {
                                 if(position.theta < Math.PI)
                                 {
-                                    turnAngle = rad2deg(0.5 * Math.PI - position.theta);
+                                    turnAngle = filter.RadToDeg(0.5 * Math.PI - position.theta);
                                 }
                                 else
                                 {
-                                    turnAngle = rad2deg(0.5 * Math.PI + (position.theta - 1.5 * Math.PI));
+                                    turnAngle = filter.RadToDeg(0.5 * Math.PI + (position.theta - 1.5 * Math.PI));
                                 }
                             }
                             break;
                         case Movement.Left:
                             if (position.theta > orientationTaget && position.theta < (2 * Math.PI))
                             {
-                                turnAngle = (rad2deg(Math.PI - position.theta));
+                                turnAngle = filter.RadToDeg(Math.PI - position.theta);
                             }
                             else
                             {
-                                turnAngle = (rad2deg(Math.PI - position.theta));
+                                turnAngle = filter.RadToDeg(Math.PI - position.theta);
                             }
                             break;
                         case Movement.Down:
                             if (position.theta < orientationTaget && position.theta > (0.5 * Math.PI))
                             {
-                                turnAngle = -(rad2deg(1.5 * Math.PI - position.theta));
+                                turnAngle = -(filter.RadToDeg(1.5 * Math.PI - position.theta));
                             }
                             else
                             {
                                 if (position.theta < Math.PI)
                                 {
-                                    turnAngle = rad2deg(-0.5 * Math.PI - position.theta);
+                                    turnAngle = filter.RadToDeg(-0.5 * Math.PI - position.theta);
                                 }
                                 else
                                 {
-                                    turnAngle = rad2deg(1.5 * Math.PI - position.theta);
+                                    turnAngle = filter.RadToDeg(1.5 * Math.PI - position.theta);
                                 }
                             }
                             break;

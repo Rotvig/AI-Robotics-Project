@@ -11,8 +11,8 @@ namespace AI_In_Robotics.Classes
     public class Astar
     {
         private readonly char[,] _worldMap;
-        private readonly int _goalX;
-        private readonly int _goalY;
+        public readonly int _goalX;
+        public readonly int _goalY;
 
         public Astar(char[,] worldMap, int goalX, int goalY, int fieldsToApply = 0)
         {

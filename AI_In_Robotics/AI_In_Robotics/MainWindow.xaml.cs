@@ -91,7 +91,6 @@ namespace AI_In_Robotics
             int fromX = 0, fromY = 0, toX = 19, toY = 19;
             var roadMap = World.GetAStarRoadMap(fromX, fromY, toX, toY);
 
-
             OriginalBitmap = new Bitmap(259, 130);
             Image.Source = OriginalBitmap.DrawObjects(roadMap);
 
@@ -172,7 +171,8 @@ namespace AI_In_Robotics
                     BitmapClone = (Bitmap)OriginalBitmap.Clone();
                     Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
 
-                    Astar.FindPath();
+                    var movement Astar.GetNextMove(Astar.FindPath());
+
 
                 }
             }

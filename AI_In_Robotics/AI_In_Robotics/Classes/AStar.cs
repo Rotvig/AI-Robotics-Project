@@ -10,7 +10,7 @@ namespace AI_In_Robotics.Classes
 {
     public class Astar
     {
-        public Node AStar(char[,] matrix, int startX, int startY, int goalX, int goalY, int fieldsToApply = 0)
+        public Node FindPath(char[,] matrix, int startX, int startY, int goalX, int goalY, int fieldsToApply = 0)
         {
             //Find max Size of map
             var maxX = matrix.GetLength(0);
@@ -220,7 +220,7 @@ namespace AI_In_Robotics.Classes
             //looking for shortest path from 'S' at (0,1) to 'E' at (3,3)
             //obstacles marked by 'X'
             int fromX = 0, fromY = 1, toX = 3, toY = 3;
-            var endNode = new Astar().AStar(matrix, fromX, fromY, toX, toY);
+            var endNode = new Astar().FindPath(matrix, fromX, fromY, toX, toY);
 
             //looping through the Parent nodes until we get to the start node
             var path = new Stack<Node>();

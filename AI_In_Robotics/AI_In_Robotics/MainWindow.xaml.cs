@@ -23,6 +23,7 @@ namespace AI_In_Robotics
 
         static int N = 100000;
         static ParticleFilter filter;
+        static Astar Astar;
         static Map World;
         static Bitmap OriginalBitmap;
         static Bitmap BitmapClone;
@@ -52,7 +53,7 @@ namespace AI_In_Robotics
 
             int fromX = 0, fromY = 19, toX = 19, toY = 19;
             var roadMap = myMap.GetAStarRoadMap(fromX, fromY, toX, toY);
-            var endNode = pathFinding.AStar(roadMap, fromX, fromY, toX, toY, 1);
+            var endNode = pathFinding.FindPath(roadMap, fromX, fromY, toX, toY, 1);
 
             var bigMap = Astar.EnLargeObjects(roadMap, 1);
 
@@ -84,8 +85,8 @@ namespace AI_In_Robotics
             World.AddSquare(133, 96, 16, 24, 0);
             World.AddSquare(160, 27, 36, 14, 0);
 
-
             filter = new ParticleFilter(N, World);
+            Astar = new Astar();
 
             int fromX = 0, fromY = 0, toX = 19, toY = 19;
             var roadMap = World.GetAStarRoadMap(fromX, fromY, toX, toY);
@@ -100,7 +101,7 @@ namespace AI_In_Robotics
 
         private void KeyEvent(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if (e.Key == System.Windows.Input.Key.Space)
+            if (e.Key == System.Windows.Input.Key.C)
             {
                 Sensors.CalibrateSensors();
             }
@@ -124,7 +125,7 @@ namespace AI_In_Robotics
 
 
             // specific test
-            if (e.Key == System.Windows.Input.Key.H)    // Højre
+            if (e.Key == System.Windows.Input.Key.H) // Højre
             {
                 motionControle.PIDTurn(-45);
                 filter.TurnParticlesRight(45);
@@ -158,6 +159,22 @@ namespace AI_In_Robotics
 
                 BitmapClone = (Bitmap)OriginalBitmap.Clone();
                 Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
+            }
+
+            if (e.Key == System.Windows.Input.Key.Space)
+            {
+                while(true)
+                {
+                    filter.Resample(Sensors.Read()); // Complete run
+                    //var position = filter.GetPosition();
+                    //var orientation = filter.GetOrientation();
+
+                    BitmapClone = (Bitmap)OriginalBitmap.Clone();
+                    Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
+
+                    Astar.FindPath();
+
+                }
             }
 
         }

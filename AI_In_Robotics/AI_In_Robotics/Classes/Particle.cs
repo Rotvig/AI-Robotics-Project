@@ -26,6 +26,12 @@ namespace AI_In_Robotics.Classes
             theta = Math.PI * Rand.RandomInt(0, 360) / 180;
         }
 
+        public Particle(double newX, double newY, double newTheta)
+        {
+            pos = new Point2D(newX, newY);
+            theta = theta;
+        }
+
         public Particle() 
         {
 

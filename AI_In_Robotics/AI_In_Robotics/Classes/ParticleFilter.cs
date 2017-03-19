@@ -171,6 +171,22 @@ namespace AI_In_Robotics.Classes
             }
         }
 
+        public Particle getPosition()
+        {
+            double tmpX = 0;
+            double tmpY = 0;
+            double tmpTheta = 0;
+            foreach(var part in ParticleSet)
+            {
+                tmpX += part.X;
+                tmpY += part.Y;
+                tmpTheta += part.theta;
+            }
+
+            var approxPos = new Particle(tmpX/_N , tmpY/_N , tmpTheta/_N);
+            return approxPos;
+        }
+
 
         private void NormalizeWeights()
         {

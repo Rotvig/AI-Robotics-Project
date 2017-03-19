@@ -34,6 +34,24 @@ namespace AI_In_Robotics.Classes
                     noisyX = startX + Rand.Gauss(0, 20);
                     noisyY = startY + Rand.Gauss(0, 10);
                     noisyTheta = DegToRad(startAngle + Rand.Gauss(0, 5));
+
+                    if(noisyX < 0)
+                    {
+                        noisyX = 1;
+                    }
+                    if (noisyY < 0)
+                    {
+                        noisyY = 1;
+                    }
+                    if (noisyX > myWorld.WorldSizeX)
+                    {
+                        noisyX = myWorld.WorldSizeX - 1;
+                    }
+                    if (noisyY > myWorld.WorldSizeY)
+                    {
+                        noisyY = myWorld.WorldSizeY - 1;
+                    }
+
                     part = new Particle(noisyX, noisyY, noisyTheta);
                     part.weight = 1 / (double)_N;
                 } while (World.IsPointInSquare(part.pos));

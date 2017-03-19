@@ -10,15 +10,21 @@ namespace AI_In_Robotics.Classes
 {
     public class Astar
     {
-        public Node FindPath(char[,] matrix, int startX, int startY, int goalX, int goalY, int fieldsToApply = 0)
+        private readonly char[,] _worldMap;
+        public Astar(char[,] worldMap)
+        {
+            _worldMap = worldMap;
+        }
+
+        public Node FindPath(int startX, int startY, int goalX, int goalY, int fieldsToApply = 0)
         {
             //Find max Size of map
-            var maxX = matrix.GetLength(0);
+            var maxX = _worldMap.GetLength(0);
             if (maxX == 0)
                 return null;
-            var maxY = matrix.GetLength(1);
+            var maxY = _worldMap.GetLength(1);
 
-            var enLargedObjectMatrix = EnLargeObjects(matrix, fieldsToApply);
+            var enLargedObjectMatrix = EnLargeObjects(fieldsToApply);
 
             //the keys for open and closed are x.ToString() + y.ToString() of the Node 
             var open = new Dictionary<string, Node>();
@@ -114,14 +120,14 @@ namespace AI_In_Robotics.Classes
             return D*(dx + dy);
         }
 
-        public static char[,] EnLargeObjects(char[,] matrix, int fieldsToApply = 0)
+        public char[,] EnLargeObjects(int fieldsToApply = 0)
         {
-            var maxX = matrix.GetLength(0);
+            var maxX = _worldMap.GetLength(0);
             if (maxX == 0)
                 return null;
-            var maxY = matrix.GetLength(1);
+            var maxY = _worldMap.GetLength(1);
 
-            var enLargedMap = (char[,])matrix.Clone();
+            var enLargedMap = (char[,])_worldMap.Clone();
 
             if (fieldsToApply == 0)
                 return enLargedMap;
@@ -130,42 +136,24 @@ namespace AI_In_Robotics.Classes
             {
                 for (var yIndex = 0; yIndex < maxY; yIndex++)
                 {
-                    if (matrix[xIndex, yIndex] != 'X') continue;
+                    if (_worldMap[xIndex, yIndex] != 'X') continue;
 
-                    if (CheckIfItsInsideMap(xIndex + fieldsToApply, yIndex, maxX, maxY) && matrix[xIndex + fieldsToApply, yIndex] != 'X')
+                    if (CheckIfItsInsideMap(xIndex + fieldsToApply, yIndex, maxX, maxY) && _worldMap[xIndex + fieldsToApply, yIndex] != 'X')
                     {
                         enLargedMap[xIndex + fieldsToApply, yIndex] = 'X';
                     }
-                    if(CheckIfItsInsideMap(xIndex, yIndex + fieldsToApply, maxX, maxY) && matrix[xIndex, yIndex + fieldsToApply] != 'X' )
+                    if(CheckIfItsInsideMap(xIndex, yIndex + fieldsToApply, maxX, maxY) && _worldMap[xIndex, yIndex + fieldsToApply] != 'X' )
                     {
                         enLargedMap[xIndex, yIndex + fieldsToApply] = 'X';
                     }
-                    if (CheckIfItsInsideMap(xIndex - fieldsToApply, yIndex, maxX, maxY) && matrix[xIndex - fieldsToApply, yIndex] != 'X')
+                    if (CheckIfItsInsideMap(xIndex - fieldsToApply, yIndex, maxX, maxY) && _worldMap[xIndex - fieldsToApply, yIndex] != 'X')
                     {
                         enLargedMap[xIndex - fieldsToApply, yIndex] = 'X';
                     }
-                    if (CheckIfItsInsideMap(xIndex, yIndex - fieldsToApply, maxX, maxY) && matrix[xIndex, yIndex - fieldsToApply] != 'X')
+                    if (CheckIfItsInsideMap(xIndex, yIndex - fieldsToApply, maxX, maxY) && _worldMap[xIndex, yIndex - fieldsToApply] != 'X')
                     {
                         enLargedMap[xIndex, yIndex - fieldsToApply] = 'X';
                     }
-                    /*
-                    if (CheckIfItsInsideMap(xIndex + fieldsToApply, yIndex + fieldsToApply, maxX, maxY) && matrix[xIndex + fieldsToApply, yIndex + fieldsToApply] != 'X')
-                    {
-                        enLargedMap[xIndex + fieldsToApply, yIndex + fieldsToApply] = 'X';
-                    }
-                    if (CheckIfItsInsideMap(xIndex - fieldsToApply, yIndex - fieldsToApply, maxX, maxY) && matrix[xIndex - fieldsToApply, yIndex - fieldsToApply] != 'X')
-                    {
-                        enLargedMap[xIndex - fieldsToApply, yIndex - fieldsToApply] = 'X';
-                    }
-                    if (CheckIfItsInsideMap(xIndex - fieldsToApply, yIndex + fieldsToApply, maxX, maxY) && matrix[xIndex - fieldsToApply, yIndex + fieldsToApply] != 'X')
-                    {
-                        enLargedMap[xIndex - fieldsToApply, yIndex + fieldsToApply] = 'X';
-                    }
-                    if (CheckIfItsInsideMap(xIndex + fieldsToApply, yIndex - fieldsToApply, maxX, maxY) && matrix[xIndex + fieldsToApply, yIndex - fieldsToApply] != 'X')
-                    {
-                        enLargedMap[xIndex + fieldsToApply, yIndex - fieldsToApply] = 'X';
-                    }
-                    */
                 }
             }
             return enLargedMap;
@@ -220,7 +208,7 @@ namespace AI_In_Robotics.Classes
             //looking for shortest path from 'S' at (0,1) to 'E' at (3,3)
             //obstacles marked by 'X'
             int fromX = 0, fromY = 1, toX = 3, toY = 3;
-            var endNode = new Astar().FindPath(matrix, fromX, fromY, toX, toY);
+            var endNode = new Astar(matrix).FindPath(fromX, fromY, toX, toY);
 
             //looping through the Parent nodes until we get to the start node
             var path = new Stack<Node>();

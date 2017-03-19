@@ -11,17 +11,22 @@ namespace AI_In_Robotics.Classes
     public class Astar
     {
         private readonly char[,] _worldMap;
-        public Astar(char[,] worldMap, int fieldsToApply = 0)
+        private readonly int _goalX;
+        private readonly int _goalY;
+
+        public Astar(char[,] worldMap, int goalX, int goalY, int fieldsToApply = 0)
         {
+            _goalX = goalX;
+            _goalY = goalY;
             _worldMap = EnLargeObjects(worldMap, fieldsToApply);
         }
 
-        public Node FindPath(int startX, int startY, int goalX, int goalY)
+        public Movement FindPath(int startX, int startY)
         {
             //Find max Size of map
             var maxX = _worldMap.GetLength(0);
             if (maxX == 0)
-                return null;
+                throw new ArgumentException("Error in Worldmap");
             var maxY = _worldMap.GetLength(1);
 
             //the keys for open and closed are x.ToString() + y.ToString() of the Node 
@@ -51,8 +56,8 @@ namespace AI_In_Robotics.Classes
                 // pop smallest off the open list
                 var smallest = FindSmallestOpenNode(open);
 
-                if (smallest.Value.x == goalX && smallest.Value.y == goalY)
-                    return smallest.Value;
+                if (smallest.Value.x == _goalX && smallest.Value.y == _goalY)
+                    return GetNextMove(smallest.Value, startX, startY);
 
                 open.Remove(smallest.Key);
                 closed.Add(smallest.Key, smallest.Value);
@@ -66,7 +71,7 @@ namespace AI_In_Robotics.Classes
                     // if a node with the same position as successor is in the CLOSED list \ 
                     // which has a lower f than successor, skip this successor
                     if (nbrX < 0 || nbrY < 0 || nbrX >= maxX || nbrY >= maxY
-                        || enLargedObjectMatrix[nbrX, nbrY] == 'X' //obstacles marked by 'X'
+                        || _worldMap[nbrX, nbrY] == 'X' //obstacles marked by 'X'
                         || closed.ContainsKey(nbrKey))
                         continue;
 
@@ -76,7 +81,7 @@ namespace AI_In_Robotics.Classes
                     {
                         var curNbr = open[nbrKey];
                         //Distance from start to node
-                        var g = Math.Abs(Math.Sqrt((nbrX - goalX) ^ 2 + (nbrY - goalY) ^ 2));
+                        var g = Math.Abs(Math.Sqrt((nbrX - _goalX) ^ 2 + (nbrY - _goalY) ^ 2));
                         // successor.h = heuristic from goal to successor
                         var h = Calculateheuristic(curNbr, startX, startY);
                         var f = g + h;
@@ -95,7 +100,7 @@ namespace AI_In_Robotics.Classes
                         {
                             x = nbrX,
                             y = nbrY,
-                            g = Math.Abs(Math.Sqrt((nbrX - goalX) ^ 2 + (nbrY - goalY) ^ 2))
+                            g = Math.Abs(Math.Sqrt((nbrX - _goalX) ^ 2 + (nbrY - _goalY) ^ 2))
                         };
                         //Distance from start to node
                         // successor.h = heuristic from goal to successor
@@ -108,7 +113,7 @@ namespace AI_In_Robotics.Classes
                 }
             }
 
-            return null;
+            throw new ArgumentException("No Path could be found");
         }
 
         private int Calculateheuristic(Node node, int x, int y, int D = 1)
@@ -157,7 +162,7 @@ namespace AI_In_Robotics.Classes
             return enLargedMap;
         }
 
-        public Movement GetNextMove(Node endNode, int startX, int startY, int goalX, int goalY)
+        public Movement GetNextMove(Node endNode, int startX, int startY)
         {
             var path = new List<Node>();
             while (endNode.x != startX || endNode.y != startY)
@@ -206,26 +211,26 @@ namespace AI_In_Robotics.Classes
             //looking for shortest path from 'S' at (0,1) to 'E' at (3,3)
             //obstacles marked by 'X'
             int fromX = 0, fromY = 1, toX = 3, toY = 3;
-            var endNode = new Astar(matrix).FindPath(fromX, fromY, toX, toY);
+            //var endNode = new Astar(matrix).FindPath(fromX, fromY, toX, toY);
 
             //looping through the Parent nodes until we get to the start node
-            var path = new Stack<Node>();
+            //var path = new Stack<Node>();
 
-            while (endNode.x != fromX || endNode.y != fromY)
-            {
-                path.Push(endNode);
-                endNode = endNode.parent;
-            }
+            //while (endNode.x != fromX || endNode.y != fromY)
+            //{
+            //    path.Push(endNode);
+            //    endNode = endNode.parent;
+            //}
 
-            path.Push(endNode);
+            //path.Push(endNode);
 
-            Console.WriteLine("The shortest path from  " + "(" + fromX + "," + fromY + ")  to " + "(" + toX + "," + toY + ")  is:  \n");
+            //Console.WriteLine("The shortest path from  " + "(" + fromX + "," + fromY + ")  to " + "(" + toX + "," + toY + ")  is:  \n");
 
-            while (path.Count > 0)
-            {
-                var node = path.Pop();
-                Console.WriteLine("(" + node.x + "," + node.y + ")");
-            }
+            //while (path.Count > 0)
+            //{
+            //    var node = path.Pop();
+            //    Console.WriteLine("(" + node.x + "," + node.y + ")");
+            //}
         }
 
         public void PrintPath(Node endNode, int fromX, int fromY, int toX, int toY)

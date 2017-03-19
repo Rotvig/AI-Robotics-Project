@@ -91,7 +91,7 @@ namespace AI_In_Robotics.Classes
             fileTime.Close();
         }
 
-        public void TurnCommand(Movement movement, double angleDeg)
+        public double TurnCommand(Movement movement, double angleDeg)
         {
             double orientationTaget = 0;
             double turnAngle = 0;
@@ -164,17 +164,22 @@ namespace AI_In_Robotics.Classes
                 {
                     PIDTurn(90);
                     PIDTurn(turnAngle - 90);
+                    return turnAngle;
                 }
                 else if (turnAngle < -90)
                 {
                     PIDTurn(-90);
                     PIDTurn(turnAngle + 90);
+                    return turnAngle;
                 }
                 else
                 {
                     PIDTurn(turnAngle);
+                    return turnAngle;
                 }
             }
+
+            return 0;
         }
 
         public void PIDTurn(double rotateDeg)

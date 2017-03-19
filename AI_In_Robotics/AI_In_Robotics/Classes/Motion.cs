@@ -43,10 +43,10 @@ namespace AI_In_Robotics.Classes
 
         public void PIDMove(double moveDistanceCm)
         {
-            System.IO.StreamWriter fileError = new System.IO.StreamWriter("D:MotorPIDerror.txt");
-            System.IO.StreamWriter fileRightPower = new System.IO.StreamWriter("D:MotorRightPower.txt");
-            System.IO.StreamWriter fileLeftPower = new System.IO.StreamWriter("D:MotorLeftPower.txt");
-            System.IO.StreamWriter fileTime = new System.IO.StreamWriter("D:MotorPIDtime.txt");
+            //System.IO.StreamWriter fileError = new System.IO.StreamWriter("D:MotorPIDerror.txt");
+            //System.IO.StreamWriter fileRightPower = new System.IO.StreamWriter("D:MotorRightPower.txt");
+            //System.IO.StreamWriter fileLeftPower = new System.IO.StreamWriter("D:MotorLeftPower.txt");
+            //System.IO.StreamWriter fileTime = new System.IO.StreamWriter("D:MotorPIDtime.txt");
             double moveCiclesCount = 0;
             double kp = 1.2;
             double Ki = 0.40;
@@ -77,18 +77,18 @@ namespace AI_In_Robotics.Classes
 
                 moveMoters(powerRight, powerLeft);
 
-                fileError.WriteLine(error);
-                fileRightPower.WriteLine(powerRight);
-                fileLeftPower.WriteLine(powerLeft);
-                fileTime.WriteLine(moveCiclesCount);
+                //fileError.WriteLine(error);
+                //fileRightPower.WriteLine(powerRight);
+                //fileLeftPower.WriteLine(powerLeft);
+                //fileTime.WriteLine(moveCiclesCount);
                 lastError = error;
                 moveCiclesCount++;
             }
 
-            fileError.Close();
-            fileRightPower.Close();
-            fileLeftPower.Close();
-            fileTime.Close();
+            //fileError.Close();
+            //fileRightPower.Close();
+            //fileLeftPower.Close();
+            //fileTime.Close();
         }
 
         public double TurnCommand(Movement movement, double angleDeg)
@@ -184,10 +184,10 @@ namespace AI_In_Robotics.Classes
 
         public void PIDTurn(double rotateDeg)
         {
-            System.IO.StreamWriter fileError = new System.IO.StreamWriter("D:MotorPIDerror.txt");
-            System.IO.StreamWriter fileRightPower = new System.IO.StreamWriter("D:MotorRightPower.txt");
-            System.IO.StreamWriter fileLeftPower = new System.IO.StreamWriter("D:MotorLeftPower.txt");
-            System.IO.StreamWriter fileTime = new System.IO.StreamWriter("D:MotorPIDtime.txt");
+            //System.IO.StreamWriter fileError = new System.IO.StreamWriter("D:MotorPIDerror.txt");
+            //System.IO.StreamWriter fileRightPower = new System.IO.StreamWriter("D:MotorRightPower.txt");
+            //System.IO.StreamWriter fileLeftPower = new System.IO.StreamWriter("D:MotorLeftPower.txt");
+            //System.IO.StreamWriter fileTime = new System.IO.StreamWriter("D:MotorPIDtime.txt");
             double moveCiclesCount = 0;
             double kp = 1.2;
             double Ki = 0.40;
@@ -211,18 +211,18 @@ namespace AI_In_Robotics.Classes
 
                 moveMoters(powerRight, powerLeft);
 
-                fileError.WriteLine(error);
-                fileRightPower.WriteLine(powerRight);
-                fileLeftPower.WriteLine(powerLeft);
-                fileTime.WriteLine(moveCiclesCount);
+                //fileError.WriteLine(error);
+                //fileRightPower.WriteLine(powerRight);
+                //fileLeftPower.WriteLine(powerLeft);
+                //fileTime.WriteLine(moveCiclesCount);
                 lastError = error;
                 moveCiclesCount++;
             }
 
-            fileError.Close();
-            fileRightPower.Close();
-            fileLeftPower.Close();
-            fileTime.Close();
+            //fileError.Close();
+            //fileRightPower.Close();
+            //fileLeftPower.Close();
+            //fileTime.Close();
             Console.WriteLine("Turn done");
         }
 

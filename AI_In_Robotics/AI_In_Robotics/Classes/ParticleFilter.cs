@@ -31,11 +31,11 @@ namespace AI_In_Robotics.Classes
                 Particle part;
                 do
                 {
-                    noisyX = startX + Rand.Gauss(0, 20);
-                    noisyY = startY + Rand.Gauss(0, 10);
+                    noisyX = startX + Rand.Gauss(0, 10);
+                    noisyY = startY + Rand.Gauss(0, 5);
                     noisyTheta = DegToRad(startAngle + Rand.Gauss(0, 5));
 
-                    if(noisyX < 0)
+                    if (noisyX < 0)
                     {
                         noisyX = 1;
                     }
@@ -216,14 +216,14 @@ namespace AI_In_Robotics.Classes
             double tmpX = 0;
             double tmpY = 0;
             double tmpTheta = 0;
-            foreach(var part in ParticleSet)
+            foreach (var part in ParticleSet)
             {
                 tmpX += part.X;
                 tmpY += part.Y;
                 tmpTheta += part.theta;
             }
 
-            var approxPos = new Particle(tmpX/_N , tmpY/_N , tmpTheta/_N);
+            var approxPos = new Particle(tmpX / _N, tmpY / _N, tmpTheta / _N);
             return approxPos;
         }
 

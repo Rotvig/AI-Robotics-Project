@@ -19,12 +19,13 @@ namespace AI_In_Robotics.Utils
             return bitmap.BitmapToBitmapSource();
         }
 
-        public static BitmapSource DrawparticlesFoo(Bitmap bitmap, IReadOnlyCollection<Particle> listOfCoordinates)
+        public static BitmapSource DrawRobotPos(this Bitmap bitmap, Particle pos)
         {
-            foreach (var particle in listOfCoordinates)
-            {
-                bitmap.SetPixel(Convert.ToInt32(particle.X), Convert.ToInt32(particle.Y), Color.Red);
-            }
+            bitmap.SetPixel(Convert.ToInt32(pos.X), Convert.ToInt32(pos.Y), Color.Green);
+            bitmap.SetPixel(Convert.ToInt32(pos.X), Convert.ToInt32(pos.Y - 1), Color.Green);
+            bitmap.SetPixel(Convert.ToInt32(pos.X), Convert.ToInt32(pos.Y + 1), Color.Green);
+            bitmap.SetPixel(Convert.ToInt32(pos.X + 1), Convert.ToInt32(pos.Y), Color.Green);
+            bitmap.SetPixel(Convert.ToInt32(pos.X - 1), Convert.ToInt32(pos.Y), Color.Green);
             return bitmap.BitmapToBitmapSource();
         }
 

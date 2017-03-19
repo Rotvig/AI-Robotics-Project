@@ -43,9 +43,9 @@ namespace AI_In_Robotics
 
         private async void Ready(object sender, RoutedEventArgs e)
         {
-            brick = new Brick(new BluetoothCommunication("COM9"), true); // Jeppe
+            //brick = new Brick(new BluetoothCommunication("COM9"), true); // Jeppe
             //brick = new Brick(new BluetoothCommunication("COM3"), true); // Kim1
-            //brick = new Brick(new BluetoothCommunication("COM5"), true); // Kim2
+            brick = new Brick(new BluetoothCommunication("COM5"), true); // Kim2
 
             await brick.ConnectAsync();
 
@@ -73,7 +73,7 @@ namespace AI_In_Robotics
             OriginalBitmap = new Bitmap(259, 130);
             Image.Source = OriginalBitmap.DrawObjects(roadMap);
 
-            BitmapClone = (Bitmap) OriginalBitmap.Clone();
+            BitmapClone = (Bitmap)OriginalBitmap.Clone();
             Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
         }
 
@@ -109,7 +109,7 @@ namespace AI_In_Robotics
 
                 //filter.Resample(Sensors.Read());
 
-                BitmapClone = (Bitmap) OriginalBitmap.Clone();
+                BitmapClone = (Bitmap)OriginalBitmap.Clone();
                 Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
             }
             if (e.Key == Key.V) // Venstre
@@ -119,7 +119,7 @@ namespace AI_In_Robotics
 
                 //filter.Resample(Sensors.Read());
 
-                BitmapClone = (Bitmap) OriginalBitmap.Clone();
+                BitmapClone = (Bitmap)OriginalBitmap.Clone();
                 Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
             }
             if (e.Key == Key.F) // Fremad
@@ -127,14 +127,14 @@ namespace AI_In_Robotics
                 motionControle.PIDMove(10);
                 filter.MoveParticles(10);
 
-                BitmapClone = (Bitmap) OriginalBitmap.Clone();
+                BitmapClone = (Bitmap)OriginalBitmap.Clone();
                 Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
             }
             if (e.Key == Key.R) // Resample
             {
                 filter.Resample(Sensors.Read());
 
-                BitmapClone = (Bitmap) OriginalBitmap.Clone();
+                BitmapClone = (Bitmap)OriginalBitmap.Clone();
                 Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
             }
 
@@ -155,77 +155,15 @@ namespace AI_In_Robotics
 
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    BitmapClone = (Bitmap) OriginalBitmap.Clone();
-                    Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
-                }));
+                    BitmapClone = (Bitmap)OriginalBitmap.Clone();
+                    BitmapClone.Drawparticles(filter.ParticleSet);
 
-                var movement = Astar.FindPath((int) position.X, (int) position.Y);
-
-                double orientationTaget = 0;
-                double turnAngle = 0;
-                
-                switch (movement)
-                {
-                    case Movement.Right:
-                        orientationTaget = 0*Math.PI;
-                        if (position.theta < Math.PI)
-                        {
-                            turnAngle = (filter.RadToDeg(-position.theta));
-                        }
-                        else
-                        {
-                            motionControle.PIDTurn(filter.RadToDeg(2*Math.PI - position.theta));
-                        }
-                        break;
-                    case Movement.Up:
-                        orientationTaget = 0.5*Math.PI;
-                        if (position.theta > orientationTaget && position.theta < (1.5*Math.PI))
-                        {
-                            turnAngle = filter.RadToDeg((0.5*Math.PI) - position.theta);
-                        }
-                        else
-                        {
-                            if (position.theta < Math.PI)
-                            {
-                                turnAngle = filter.RadToDeg(0.5*Math.PI - position.theta);
-                            }
-                            else
-                            {
-                                turnAngle = filter.RadToDeg(0.5*Math.PI + (position.theta - 1.5*Math.PI));
-                            }
-                        }
-                        break;
-                    case Movement.Left:
-                        if (position.theta > orientationTaget && position.theta < (2*Math.PI))
-                        {
-                            turnAngle = filter.RadToDeg(Math.PI - position.theta);
-                        }
-                        else
-                        {
-                            turnAngle = filter.RadToDeg(Math.PI - position.theta);
-                        }
-                        break;
-                    case Movement.Down:
-                        if (position.theta < orientationTaget && position.theta > (0.5*Math.PI))
-                        {
-                            turnAngle = -(filter.RadToDeg(1.5*Math.PI - position.theta));
-                        }
-                        else
-                        {
-                            if (position.theta < Math.PI)
-                            {
-                                turnAngle = filter.RadToDeg(-0.5*Math.PI - position.theta);
-                            }
-                            else
-                            {
-                                turnAngle = filter.RadToDeg(1.5*Math.PI - position.theta);
-                            }
-                        }
-                        break;
-                        case Movement.NoPath:
-                            dontDoAnything = true;
-                        break;
+                    Image.Source = BitmapClone.DrawRobotPos(position);
                 }
+                    ));
+
+                var movement = Astar.FindPath((int)position.X, (int)position.Y);
+
 
                 if (dontDoAnything)
                 {
@@ -233,34 +171,24 @@ namespace AI_In_Robotics
                 }
                 else
                 {
-                    if (Math.Abs(turnAngle) > 5)
+                    var turnThisMuch = motionControle.TurnCommand(movement, filter.RadToDeg(position.theta));
+                    if (turnThisMuch < 0)
                     {
-                        if (turnAngle > 90)
-                        {
-                            motionControle.PIDTurn(90);
-                            motionControle.PIDTurn(turnAngle - 90);
-                            filter.TurnParticlesRight(turnAngle);
-                        }
-                        else if (turnAngle < -90)
-                        {
-                            motionControle.PIDTurn(-90);
-                            motionControle.PIDTurn(turnAngle + 90);
-                            filter.TurnParticlesRight(turnAngle);
-                        }
-                        else
-                        {
-                            motionControle.PIDTurn(turnAngle);
-                            filter.TurnParticlesRight(turnAngle);
-                        }
+                        filter.TurnParticlesRight(Math.Abs(turnThisMuch));
                     }
-
+                    else
+                    {
+                        filter.TurnParticlesLeft(turnThisMuch);
+                    }
                     motionControle.PIDMove(2);
                     filter.MoveParticles(2);
 
                     Dispatcher.BeginInvoke(new Action(() =>
                     {
-                        BitmapClone = (Bitmap) OriginalBitmap.Clone();
-                        Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
+                        BitmapClone = (Bitmap)OriginalBitmap.Clone();
+                        BitmapClone.Drawparticles(filter.ParticleSet);
+
+                        Image.Source = BitmapClone.DrawRobotPos(position);
                     }
                         ));
                 }

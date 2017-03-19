@@ -20,6 +20,28 @@ namespace AI_In_Robotics.Classes
             GenerateParticleSet();
         }
 
+        public ParticleFilter(int N, Map myWorld, double startX, double startY, double startAngle)
+        {
+            World = myWorld;
+
+            _N = N;
+            double noisyX, noisyY, noisyTheta;
+            for (var i = 0; i < _N; ++i)
+            {
+                Particle part;
+                do
+                {
+                    noisyX = startX + Rand.Gauss(0, 20);
+                    noisyY = startY + Rand.Gauss(0, 10);
+                    noisyTheta = DegToRad(startAngle + Rand.Gauss(0, 5));
+                    part = new Particle(noisyX, noisyY, noisyTheta);
+                    part.weight = 1 / (double)_N;
+                } while (World.IsPointInSquare(part.pos));
+
+                ParticleSet.Add(part);
+            }
+        }
+
 
         private void GenerateParticleSet()
         {
@@ -218,12 +240,12 @@ namespace AI_In_Robotics.Classes
         //    return shortestDistance;
         //}
 
-        private double RadToDeg(double rad)
+        public double RadToDeg(double rad)
         {
             return rad * 180 / Math.PI;
         }
 
-        private double DegToRad(double deg)
+        public double DegToRad(double deg)
         {
             return Math.PI * deg / 180;
         }

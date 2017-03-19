@@ -29,7 +29,7 @@ namespace AI_In_Robotics.Classes
         public Particle(double newX, double newY, double newTheta)
         {
             pos = new Point2D(newX, newY);
-            theta = theta;
+            theta = newTheta;
         }
 
         public Particle() 

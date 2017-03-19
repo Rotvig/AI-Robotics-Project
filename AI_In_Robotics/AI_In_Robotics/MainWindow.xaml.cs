@@ -70,7 +70,7 @@ namespace AI_In_Robotics
             int fromX = 0, fromY = 0, toX = 19, toY = 19;
             var roadMap = World.GetAStarRoadMap(fromX, fromY, toX, toY);
 
-            Astar = new Astar(roadMap, 5, 5, 5);
+            Astar = new Astar(roadMap, 5, 5, 10);
 
             OriginalBitmap = new Bitmap(259, 130);
             Image.Source = OriginalBitmap.DrawObjects(roadMap);
@@ -150,8 +150,13 @@ namespace AI_In_Robotics
                     filter.Resample(Sensors.Read()); // Complete run
                     position = filter.getPosition();
 
-                    BitmapClone = (Bitmap)OriginalBitmap.Clone();
-                    Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        BitmapClone = (Bitmap)OriginalBitmap.Clone();
+                        Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
+                    }
+                    ));
+
 
                     Movement movement = Astar.FindPath((int)position.X, (int)position.Y);
 
@@ -218,12 +223,36 @@ namespace AI_In_Robotics
                             break;
                     }
 
-                    motionControle.PIDTurn(turnAngle);
-                    filter.TurnParticlesRight(turnAngle);
+                    if(Math.Abs(turnAngle) > 5)
+                    {
+                        if(turnAngle > 90)
+                        {
+                            motionControle.PIDTurn(90);
+                            motionControle.PIDTurn(turnAngle-90);
+                            filter.TurnParticlesRight(turnAngle);
+                        }
+                        else if(turnAngle < -90)
+                        {
+                            motionControle.PIDTurn(-90);
+                            motionControle.PIDTurn(turnAngle + 90);
+                            filter.TurnParticlesRight(turnAngle);
+                        }
+                        else
+                        {
+                            motionControle.PIDTurn(turnAngle);
+                            filter.TurnParticlesRight(turnAngle);
+                        }
+                    }
 
                     motionControle.PIDMove(2);
                     filter.MoveParticles(2);
 
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        BitmapClone = (Bitmap)OriginalBitmap.Clone();
+                        Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
+                    }
+                    ));
                 }
             }
 

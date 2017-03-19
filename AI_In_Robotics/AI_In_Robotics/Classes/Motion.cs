@@ -34,8 +34,8 @@ namespace AI_In_Robotics.Classes
         public void motionTest()
         {
             //Console.WriteLine(getGyro());
-            //PIDMove(100);
-            PIDTurn(90);
+            PIDMove(5);
+            //PIDTurn(90);
             //PIDTurn(90);
             //PIDTurn(90);
             //PIDTurn(90);
@@ -48,9 +48,9 @@ namespace AI_In_Robotics.Classes
             System.IO.StreamWriter fileLeftPower = new System.IO.StreamWriter("D:MotorLeftPower.txt");
             System.IO.StreamWriter fileTime = new System.IO.StreamWriter("D:MotorPIDtime.txt");
             double moveCiclesCount = 0;
-            double kp = 1.44;
-            double Ki = 0.487;
-            double Kd = 1.064;
+            double kp = 1.2;
+            double Ki = 0.40;
+            double Kd = 1.2;
             double gyroTargetValue = getGyro();
             double movePower = 0;
             if (moveDistanceCm > 0)
@@ -98,9 +98,9 @@ namespace AI_In_Robotics.Classes
             System.IO.StreamWriter fileLeftPower = new System.IO.StreamWriter("D:MotorLeftPower.txt");
             System.IO.StreamWriter fileTime = new System.IO.StreamWriter("D:MotorPIDtime.txt");
             double moveCiclesCount = 0;
-            double kp = 1.44;
-            double Ki = 0.487;
-            double Kd = 1.064;
+            double kp = 1.2;
+            double Ki = 0.40;
+            double Kd = 1.2;
             double gyroTargetValue = getGyro() + rotateDeg;
             double movePower = 0;
             double integral = 0;
@@ -108,8 +108,7 @@ namespace AI_In_Robotics.Classes
             double lastError = 0;
             double derivative = 0;
 
-            //while ((moveCiclesCount < 20) || (Math.Abs(error) > 1))
-            while ((moveCiclesCount < 100))
+            while ((moveCiclesCount < 20) || (Math.Abs(error) > 2))
             {
                 double gyroValue = getGyro();
                 error = gyroValue - gyroTargetValue;

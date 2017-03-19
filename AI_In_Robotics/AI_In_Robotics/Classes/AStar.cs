@@ -5,7 +5,7 @@ using System.Linq;
 //Information:
 // http://stackoverflow.com/questions/2138642/how-to-implement-an-a-algorithm
 // http://web.mit.edu/eranki/www/tutorials/search/
-//http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
+// http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
 namespace AI_In_Robotics.Classes
 {
     public class Astar
@@ -66,7 +66,6 @@ namespace AI_In_Robotics.Classes
                         || closed.ContainsKey(nbrKey))
                         continue;
 
-
                     // if a node with the same position as successor is in the OPEN list \
                     // which has a lower f than successor, skip this successor
                     if (open.ContainsKey(nbrKey))
@@ -88,9 +87,13 @@ namespace AI_In_Robotics.Classes
                     else
                     {
                         // otherwise, add the node to the open list
-                        var curNbr = new Node {x = nbrX, y = nbrY};
+                        var curNbr = new Node
+                        {
+                            x = nbrX,
+                            y = nbrY,
+                            g = Math.Abs(Math.Sqrt((nbrX - goalX) ^ 2 + (nbrY - goalY) ^ 2))
+                        };
                         //Distance from start to node
-                        curNbr.g = Math.Abs(Math.Sqrt((nbrX - goalX) ^ 2 + (nbrY - goalY) ^ 2));
                         // successor.h = heuristic from goal to successor
                         curNbr.h = Calculateheuristic(curNbr, startX, startY);
                         // successor.f = successor.g + successor.h
@@ -113,8 +116,6 @@ namespace AI_In_Robotics.Classes
 
         public static char[,] EnLargeObjects(char[,] matrix, int fieldsToApply = 0)
         {
-
-
             var maxX = matrix.GetLength(0);
             if (maxX == 0)
                 return null;
@@ -170,6 +171,34 @@ namespace AI_In_Robotics.Classes
             return enLargedMap;
         }
 
+        public Movement GetNextMove(Node endNode, int startX, int startY, int goalX, int goalY)
+        {
+            var path = new List<Node>();
+            while (endNode.x != startX || endNode.y != startY)
+            {
+                path.Add(endNode);
+                endNode = endNode.parent;
+            }
+            path.Add(endNode);
+
+            Node nextMove = null;
+            if (path.Count >= 2)
+                nextMove = path[path.Count - 2];
+
+            Movement movement;
+            if (startY == nextMove.y)
+            {
+                movement = startX < nextMove.x ? Movement.Right : Movement.Left;
+            }
+            else
+            {
+                movement = startY < nextMove.y ? Movement.Up : Movement.Down;
+            }
+
+            Console.WriteLine("Movement: " + movement);
+            return movement;
+        }
+
         private static bool CheckIfItsInsideMap(int xIndex, int yIndex, int maxX, int maxY)
         {
             return (xIndex >= 0 && xIndex < maxX) && (yIndex >= 0 && yIndex < maxY);
@@ -185,11 +214,7 @@ namespace AI_In_Robotics.Classes
         {
             char[,] matrix =
             {
-                {'-', 'S', '-', '-', 'X'},
-                {'-', 'X', '-', '-', '-'},
-                {'-', '-', 'X', '-', 'X'},
-                {'X', '-', 'X', 'E', '-'},
-                {'-', '-', '-', '-', 'X'}
+                {'-', 'S', '-', '-', 'X'}, {'-', 'X', '-', '-', '-'}, {'-', '-', 'X', '-', 'X'}, {'X', '-', 'X', 'E', '-'}, {'-', '-', '-', '-', 'X'}
             };
 
             //looking for shortest path from 'S' at (0,1) to 'E' at (3,3)
@@ -208,9 +233,7 @@ namespace AI_In_Robotics.Classes
 
             path.Push(endNode);
 
-            Console.WriteLine("The shortest path from  " +
-                              "(" + fromX + "," + fromY + ")  to " +
-                              "(" + toX + "," + toY + ")  is:  \n");
+            Console.WriteLine("The shortest path from  " + "(" + fromX + "," + fromY + ")  to " + "(" + toX + "," + toY + ")  is:  \n");
 
             while (path.Count > 0)
             {
@@ -232,9 +255,7 @@ namespace AI_In_Robotics.Classes
 
             path.Push(endNode);
 
-            Console.WriteLine("The shortest path from  " +
-                              "(" + fromX + "," + fromY + ")  to " +
-                              "(" + toX + "," + toY + ")  is:  \n");
+            Console.WriteLine("The shortest path from  " + "(" + fromX + "," + fromY + ")  to " + "(" + toX + "," + toY + ")  is:  \n");
 
             while (path.Count > 0)
             {
@@ -249,6 +270,14 @@ namespace AI_In_Robotics.Classes
         public double g, h, f;
         public int x, y;
         public Node parent;
+    }
+
+    public enum Movement
+    {
+        Up,
+        Down,
+        Left,
+        Right
     }
 }
 

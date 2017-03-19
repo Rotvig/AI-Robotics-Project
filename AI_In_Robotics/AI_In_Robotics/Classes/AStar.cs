@@ -113,7 +113,7 @@ namespace AI_In_Robotics.Classes
                 }
             }
 
-            throw new ArgumentException("No Path could be found");
+            return Movement.NoPath;
         }
 
         private int Calculateheuristic(Node node, int x, int y, int D = 1)
@@ -265,6 +265,7 @@ namespace AI_In_Robotics.Classes
 
     public enum Movement
     {
+        NoPath,
         Up,
         Down,
         Left,

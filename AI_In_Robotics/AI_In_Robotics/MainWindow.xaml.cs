@@ -147,7 +147,7 @@ namespace AI_In_Robotics
         private void StartRobot()
         {
             var position = filter.getPosition();
-
+            var dontDoAnything = false;
             while ((position.X - Astar._goalX) > 5 && (position.Y - Astar._goalY) > 5)
             {
                 filter.Resample(Sensors.Read()); // Complete run
@@ -157,15 +157,13 @@ namespace AI_In_Robotics
                 {
                     BitmapClone = (Bitmap) OriginalBitmap.Clone();
                     Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
-                }
-                    ));
-
+                }));
 
                 var movement = Astar.FindPath((int) position.X, (int) position.Y);
 
                 double orientationTaget = 0;
                 double turnAngle = 0;
-
+                
                 switch (movement)
                 {
                     case Movement.Right:
@@ -224,38 +222,48 @@ namespace AI_In_Robotics
                             }
                         }
                         break;
+                        case Movement.NoPath:
+                            dontDoAnything = true;
+                        break;
                 }
 
-                if (Math.Abs(turnAngle) > 5)
+                if (dontDoAnything)
                 {
-                    if (turnAngle > 90)
-                    {
-                        motionControle.PIDTurn(90);
-                        motionControle.PIDTurn(turnAngle - 90);
-                        filter.TurnParticlesRight(turnAngle);
-                    }
-                    else if (turnAngle < -90)
-                    {
-                        motionControle.PIDTurn(-90);
-                        motionControle.PIDTurn(turnAngle + 90);
-                        filter.TurnParticlesRight(turnAngle);
-                    }
-                    else
-                    {
-                        motionControle.PIDTurn(turnAngle);
-                        filter.TurnParticlesRight(turnAngle);
-                    }
+                    dontDoAnything = false;
                 }
-
-                motionControle.PIDMove(2);
-                filter.MoveParticles(2);
-
-                Dispatcher.BeginInvoke(new Action(() =>
+                else
                 {
-                    BitmapClone = (Bitmap) OriginalBitmap.Clone();
-                    Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
+                    if (Math.Abs(turnAngle) > 5)
+                    {
+                        if (turnAngle > 90)
+                        {
+                            motionControle.PIDTurn(90);
+                            motionControle.PIDTurn(turnAngle - 90);
+                            filter.TurnParticlesRight(turnAngle);
+                        }
+                        else if (turnAngle < -90)
+                        {
+                            motionControle.PIDTurn(-90);
+                            motionControle.PIDTurn(turnAngle + 90);
+                            filter.TurnParticlesRight(turnAngle);
+                        }
+                        else
+                        {
+                            motionControle.PIDTurn(turnAngle);
+                            filter.TurnParticlesRight(turnAngle);
+                        }
+                    }
+
+                    motionControle.PIDMove(2);
+                    filter.MoveParticles(2);
+
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        BitmapClone = (Bitmap) OriginalBitmap.Clone();
+                        Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
+                    }
+                        ));
                 }
-                    ));
             }
         }
     }

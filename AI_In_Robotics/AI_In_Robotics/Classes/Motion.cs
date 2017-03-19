@@ -91,6 +91,92 @@ namespace AI_In_Robotics.Classes
             fileTime.Close();
         }
 
+        public void TurnCommand(Movement movement, double angleDeg)
+        {
+            double orientationTaget = 0;
+            double turnAngle = 0;
+
+            switch (movement)
+            {
+                case Movement.Right:
+                    orientationTaget = 0;
+                    if (angleDeg < 180)
+                    {
+                        turnAngle = -angleDeg;
+                    }
+                    else
+                    {
+                        PIDTurn(180 - angleDeg);
+                    }
+                    break;
+                case Movement.Up:
+                    orientationTaget = 90;
+                    if (angleDeg > orientationTaget && angleDeg < 270)
+                    {
+                        turnAngle = 90 - angleDeg;
+                    }
+                    else
+                    {
+                        if (angleDeg < 180)
+                        {
+                            turnAngle = 90 - angleDeg;
+                        }
+                        else
+                        {
+                            turnAngle = 90 + (360 - angleDeg);
+                        }
+                    }
+                    break;
+                case Movement.Left:
+                    orientationTaget = 180;
+                    if (angleDeg > orientationTaget)
+                    {
+                        turnAngle = 180 - angleDeg;
+                    }
+                    else
+                    {
+                        turnAngle = 180 - angleDeg;
+                    }
+                    break;
+                case Movement.Down:
+                    orientationTaget = 270;
+                    if (angleDeg < orientationTaget && angleDeg > 90)
+                    {
+                        turnAngle = (270 - angleDeg);
+                    }
+                    else
+                    {
+                        if (angleDeg < 180)
+                        {
+                            turnAngle = -90 - angleDeg;
+                        }
+                        else
+                        {
+                            turnAngle = 270 - angleDeg;
+                        }
+                    }
+                    break;
+            }
+
+            if (Math.Abs(turnAngle) > 5)
+            {
+                if (turnAngle > 90)
+                {
+                    PIDTurn(90);
+                    PIDTurn(turnAngle - 90);
+                }
+                else if (turnAngle < -90)
+                {
+                    PIDTurn(-90);
+                    PIDTurn(turnAngle + 90);
+                }
+                else
+                {
+                    PIDTurn(turnAngle);
+                }
+            }
+        }
+
         public void PIDTurn(double rotateDeg)
         {
             System.IO.StreamWriter fileError = new System.IO.StreamWriter("D:MotorPIDerror.txt");

@@ -151,8 +151,76 @@ namespace AI_In_Robotics
                     BitmapClone = (Bitmap)OriginalBitmap.Clone();
                     Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
 
-                    var movement Astar.GetNextMove(Astar.FindPath(position.X, position.Y));
+                    Movement movement = Astar.GetNextMove(Astar.FindPath(position.X, position.Y));
 
+                    double orientationTaget = 0;
+                    double turnAngle = 0;
+
+                    switch(movement)
+                    {
+                        case Movement.Right:
+                            orientationTaget = 0 * Math.PI;
+                            if (position.theta < Math.PI)
+                            {
+                                turnAngle = (rad2deg(-position.theta));
+                            }
+                            else
+                            {
+                                motionControle.PIDTurn(rad2deg(2*Math.PI - position.theta));
+                            }
+                            break;
+                        case Movement.Up:
+                            orientationTaget = 0.5 * Math.PI;
+                            if (position.theta > orientationTaget &&  position.theta < (1.5 * Math.PI))
+                            {
+                                turnAngle = rad2deg((0.5 * Math.PI) - position.theta);
+                            }
+                            else
+                            {
+                                if(position.theta < Math.PI)
+                                {
+                                    turnAngle = rad2deg(0.5 * Math.PI - position.theta);
+                                }
+                                else
+                                {
+                                    turnAngle = rad2deg(0.5 * Math.PI + (position.theta - 1.5 * Math.PI));
+                                }
+                            }
+                            break;
+                        case Movement.Left:
+                            if (position.theta > orientationTaget && position.theta < (2 * Math.PI))
+                            {
+                                turnAngle = (rad2deg(Math.PI - position.theta));
+                            }
+                            else
+                            {
+                                turnAngle = (rad2deg(Math.PI - position.theta));
+                            }
+                            break;
+                        case Movement.Down:
+                            if (position.theta < orientationTaget && position.theta > (0.5 * Math.PI))
+                            {
+                                turnAngle = -(rad2deg(1.5 * Math.PI - position.theta));
+                            }
+                            else
+                            {
+                                if (position.theta < Math.PI)
+                                {
+                                    turnAngle = rad2deg(-0.5 * Math.PI - position.theta);
+                                }
+                                else
+                                {
+                                    turnAngle = rad2deg(1.5 * Math.PI - position.theta);
+                                }
+                            }
+                            break;
+                    }
+
+                    motionControle.PIDTurn(turnAngle);
+                    filter.TurnParticlesRight(turnAngle);
+
+                    motionControle.PIDMove(2);
+                    filter.MoveParticles(2);
 
                 }
             }

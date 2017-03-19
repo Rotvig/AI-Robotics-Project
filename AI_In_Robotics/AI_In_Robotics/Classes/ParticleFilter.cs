@@ -31,9 +31,9 @@ namespace AI_In_Robotics.Classes
                 Particle part;
                 do
                 {
-                    noisyX = startX + Rand.Gauss(0, 10);
-                    noisyY = startY + Rand.Gauss(0, 5);
-                    noisyTheta = DegToRad(startAngle + Rand.Gauss(0, 5));
+                    noisyX = startX + Rand.Gauss(0, 2);
+                    noisyY = startY + Rand.Gauss(0, 2);
+                    noisyTheta = DegToRad(startAngle + Rand.Gauss(0, 0.5));
 
                     if (noisyX < 0)
                     {

@@ -43,9 +43,9 @@ namespace AI_In_Robotics
 
         private async void Ready(object sender, RoutedEventArgs e)
         {
-            brick = new Brick(new BluetoothCommunication("COM10"), true); // Jeppe
+            //brick = new Brick(new BluetoothCommunication("COM10"), true); // Jeppe
             //brick = new Brick(new BluetoothCommunication("COM3"), true); // Kim1
-            //brick = new Brick(new BluetoothCommunication("COM5"), true); // Kim2
+            brick = new Brick(new BluetoothCommunication("COM5"), true); // Kim2
 
             await brick.ConnectAsync();
 
@@ -57,20 +57,20 @@ namespace AI_In_Robotics
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            World = new Map(258, 129);
-            World.AddSquare(68, 24, 24, 32, 0);
-            World.AddSquare(48, 94, 19, 12, 0);
-            World.AddSquare(133, 96, 16, 24, 0);
-            World.AddSquare(160, 27, 36, 14, 0);
+            World = new Map(129, 129);
+            World.AddSquare(51, 1, 26, 33, 0);
+            World.AddSquare(74, 93, 36, 14, 0);
+            //World.AddSquare(133, 96, 16, 24, 0);
+            //World.AddSquare(160, 27, 36, 14, 0);
 
-            filter = new ParticleFilter(N, World, 220, 35, 180);
+            filter = new ParticleFilter(N, World, 104, 20, 180);
 
             int fromX = 0, fromY = 0, toX = 19, toY = 19;
             var roadMap = World.GetAStarRoadMap(fromX, fromY, toX, toY);
 
             Astar = new Astar(roadMap, 5, 5, 10);
 
-            OriginalBitmap = new Bitmap(259, 130);
+            OriginalBitmap = new Bitmap(130, 130);
             Image.Source = OriginalBitmap.DrawObjects(roadMap);
 
             BitmapClone = (Bitmap)OriginalBitmap.Clone();
@@ -115,7 +115,7 @@ namespace AI_In_Robotics
             if (e.Key == Key.V) // Venstre
             {
                 motionControle.PIDTurn(45);
-                filter.TurnParticlesRight(45);
+                filter.TurnParticlesLeft(45);
 
                 //filter.Resample(Sensors.Read());
 
@@ -148,40 +148,14 @@ namespace AI_In_Robotics
         {
             var position = filter.getPosition();
             var dontDoAnything = false;
+            double tmpSensorRead = 0;
             while ((position.X - Astar._goalX) > 5 && (position.Y - Astar._goalY) > 5)
             {
-                filter.Resample(Sensors.Read()); // Complete run
-                position = filter.getPosition();
-
-                Dispatcher.BeginInvoke(new Action(() =>
+                tmpSensorRead = Sensors.Read();
+                if (tmpSensorRead > 5 && tmpSensorRead < 185)
                 {
-                    BitmapClone = (Bitmap)OriginalBitmap.Clone();
-                    BitmapClone.Drawparticles(filter.ParticleSet);
-
-                    Image.Source = BitmapClone.DrawRobotPos(position);
-                }
-                    ));
-
-                var movement = Astar.FindPath((int)position.X, (int)position.Y);
-
-
-                if (dontDoAnything)
-                {
-                    dontDoAnything = false;
-                }
-                else
-                {
-                    var turnThisMuch = motionControle.TurnCommand(movement, filter.RadToDeg(position.theta));
-                    if (turnThisMuch < 0)
-                    {
-                        filter.TurnParticlesRight(Math.Abs(turnThisMuch));
-                    }
-                    else
-                    {
-                        filter.TurnParticlesLeft(turnThisMuch);
-                    }
-                    motionControle.PIDMove(2);
-                    filter.MoveParticles(2);
+                    filter.Resample(tmpSensorRead); // Complete run
+                    position = filter.getPosition();
 
                     Dispatcher.BeginInvoke(new Action(() =>
                     {
@@ -191,6 +165,71 @@ namespace AI_In_Robotics
                         Image.Source = BitmapClone.DrawRobotPos(position);
                     }
                         ));
+
+                    var movement = Astar.FindPath((int)position.X, (int)position.Y);
+
+
+                    if (dontDoAnything)
+                    {
+                        dontDoAnything = false;
+                    }
+                    else
+                    {
+                        var turnThisMuch = motionControle.TurnCommand(movement, filter.RadToDeg(position.theta));
+                        //motionControle.TurnCommand(Movement.Left, 90);
+                        //motionControle.TurnCommand(Movement.Left, 270);
+                        //motionControle.TurnCommand(Movement.Left, 255);
+                        //motionControle.TurnCommand(Movement.Left, 120);
+                        //motionControle.TurnCommand(Movement.Left, 0);
+                        //motionControle.TurnCommand(Movement.Left, 25);
+                        //motionControle.TurnCommand(Movement.Left, 310);
+
+                        //motionControle.TurnCommand(Movement.Right, 90);
+                        //motionControle.TurnCommand(Movement.Right, 270);
+                        //motionControle.TurnCommand(Movement.Right, 255);
+                        //motionControle.TurnCommand(Movement.Right, 120);
+                        //motionControle.TurnCommand(Movement.Right, 0);
+                        //motionControle.TurnCommand(Movement.Right, 25);
+                        //motionControle.TurnCommand(Movement.Right, 310);
+
+
+                        //motionControle.TurnCommand(Movement.Up, 90);
+                        //motionControle.TurnCommand(Movement.Up, 270);
+                        //motionControle.TurnCommand(Movement.Up, 255);
+                        //motionControle.TurnCommand(Movement.Up, 120);
+                        //motionControle.TurnCommand(Movement.Up, 0);
+                        //motionControle.TurnCommand(Movement.Up, 25);
+                        //motionControle.TurnCommand(Movement.Up, 310);
+
+
+                        //motionControle.TurnCommand(Movement.Down, 90);
+                        //motionControle.TurnCommand(Movement.Down, 270);
+                        //motionControle.TurnCommand(Movement.Down, 255);
+                        //motionControle.TurnCommand(Movement.Down, 120);
+                        //motionControle.TurnCommand(Movement.Down, 0);
+                        //motionControle.TurnCommand(Movement.Down, 25);
+                        //motionControle.TurnCommand(Movement.Down, 310);
+
+                        if (turnThisMuch < 0)
+                        {
+                            filter.TurnParticlesRight(Math.Abs(turnThisMuch));
+                        }
+                        else
+                        {
+                            filter.TurnParticlesLeft(turnThisMuch);
+                        }
+                        motionControle.PIDMove(5);
+                        filter.MoveParticles(5);
+
+                        Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            BitmapClone = (Bitmap)OriginalBitmap.Clone();
+                            BitmapClone.Drawparticles(filter.ParticleSet);
+
+                            Image.Source = BitmapClone.DrawRobotPos(position);
+                        }
+                            ));
+                    }
                 }
             }
         }

@@ -18,6 +18,8 @@ namespace AI_In_Robotics.Classes
                 calibrationAddition = Settings.sonarCalibrationAddition;
                 calibrationMultiplyer = Settings.sonarCalibrationMultiplyer;
                 _port = Settings.sonarPort;
+                //_brick.Ports[_port].SetMode(InfraredMode.Calibrate);
+                //Thread.Sleep(2000);
                 //_brick.Ports[_port].SetMode(InfraredMode.Proximity);
             }
             else
@@ -25,13 +27,13 @@ namespace AI_In_Robotics.Classes
                 calibrationAddition = Settings.infraredCalibrationAddition;
                 calibrationMultiplyer = Settings.infraredCalibrationMultiplyer;
                 _port = Settings.infraredPort;
-                //_brick.Ports[_port].SetMode(UltrasonicMode.SiCentimeters);
+                _brick.Ports[_port].SetMode(UltrasonicMode.SiCentimeters);
             }
         }
 
         public double Read()
         {
-            Thread.Sleep(20);
+            Thread.Sleep(50);
             return (_brick.Ports[_port].SIValue * calibrationMultiplyer) + calibrationAddition;
         }
     }

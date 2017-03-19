@@ -52,7 +52,10 @@ namespace AI_In_Robotics.Classes
             //double SonarSensor = sonarReadTest();
             //double InfraredSensor = infraredReadTest();
 
-            if(SonarSensor < 50)
+            Console.WriteLine(SonarSensor);
+            return SonarSensor;
+
+            /*if (SonarSensor < 50)
             {
                 Matrix<double> xEstimate = new DenseMatrix(1, 1, new double[] { (SonarSensor + InfraredSensor) / 2 });
 
@@ -71,7 +74,7 @@ namespace AI_In_Robotics.Classes
             else
             {
                 return SonarSensor;
-            }
+            }*/
         }
 
         public void CalibrateSensors()

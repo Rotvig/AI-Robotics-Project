@@ -41,26 +41,6 @@ namespace AI_In_Robotics
             //Console.SetOut(_writer);
 
             // Init project classes
-            AStartTest();
-        }
-
-        private void AStartTest()
-        {
-            var pathFinding = new Astar();
-            var myMap = new Map(20, 20);
-            myMap.AddSquare(1, 1, 2, 3, 0);
-            myMap.AddSquare(12, 12, 5, 5, 45);
-
-            int fromX = 0, fromY = 19, toX = 19, toY = 19;
-            var roadMap = myMap.GetAStarRoadMap(fromX, fromY, toX, toY);
-            var endNode = pathFinding.FindPath(roadMap, fromX, fromY, toX, toY, 1);
-
-            var bigMap = Astar.EnLargeObjects(roadMap, 1);
-
-            //pathFinding.PrintPath(endNode, fromX, fromY, toX, toY);
-            //myMap.PrintRoadMap(roadMap, endNode, fromX, fromY, toX, toY);
-            myMap.PrintRoadMap(bigMap, endNode, fromX, fromY, toX, toY);
-
         }
 
         private async void Ready(object sender, RoutedEventArgs e)
@@ -86,10 +66,11 @@ namespace AI_In_Robotics
             World.AddSquare(160, 27, 36, 14, 0);
 
             filter = new ParticleFilter(N, World);
-            Astar = new Astar();
 
             int fromX = 0, fromY = 0, toX = 19, toY = 19;
             var roadMap = World.GetAStarRoadMap(fromX, fromY, toX, toY);
+
+            Astar = new Astar(roadMap, 5);
 
             OriginalBitmap = new Bitmap(259, 130);
             Image.Source = OriginalBitmap.DrawObjects(roadMap);
@@ -165,13 +146,12 @@ namespace AI_In_Robotics
                 while(true)
                 {
                     filter.Resample(Sensors.Read()); // Complete run
-                    //var position = filter.GetPosition();
-                    //var orientation = filter.GetOrientation();
+                    var position = filter.getPosition();
 
                     BitmapClone = (Bitmap)OriginalBitmap.Clone();
                     Image.Source = BitmapClone.Drawparticles(filter.ParticleSet);
 
-                    var movement Astar.GetNextMove(Astar.FindPath());
+                    var movement Astar.GetNextMove(Astar.FindPath(position.X, position.Y));
 
 
                 }

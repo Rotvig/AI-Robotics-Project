@@ -49,7 +49,7 @@ Equation \ref{eq:KalmanUpdate1} to \ref{eq:KalmanUpdate4} show the Kalman filter
 The basic principle of the update step is to combine one or more Gaussian distributions from the state estimate and sensor measurements, to get a new more precise estimate.
 When combining two Gaussian distributions, the result distribution will always have a smaller spread than any of the two original distributions, this is do to information gain in the system.
 The first equation \ref{eq:KalmanUpdate1} is calculating the error $ \varepsilon_{k} $ of the predicted state and the true measurement.
-Equation \ref{eq:KalmanUpdate2} is the Kalman gain $ \boldsymbol{K}_{k} $, this is a factor determining how big impact the measurement has on the state prediction, depending on the ratio of the state covariance matrix $\boldsymbol{P}'_{k}$ and the sensor noise $\boldsymbol{R}$.
+Equation \ref{eq:KalmanUpdate2} is the Kalman gain $ \boldsymbol{G}_{k} $, this is a factor determining how big impact the measurement has on the state prediction, depending on the ratio of the state covariance matrix $\boldsymbol{P}'_{k}$ and the sensor noise $\boldsymbol{R}$.
 In case of relative small sensor noise, meaning that the measurements are accurate, the state estimate depends mostly on the measurements, and in case of relative high sensor noise, meaning that the measurements are inaccurate, the state estimate instead depends mostly on the previous state.
 In the end equation \ref{eq:KalmanUpdate3} and \ref{eq:KalmanUpdate4} calculate the new state estimate and covariance matrix, based on the sensor error, Kalman gain and predicted covariance matrix.
 
@@ -60,12 +60,12 @@ In the end equation \ref{eq:KalmanUpdate3} and \ref{eq:KalmanUpdate4} calculate 
 
 \begin{equation}
 \label{eq:KalmanUpdate2}
-\boldsymbol{K}_{k} = \boldsymbol{P}'_{k} * \boldsymbol{H}^T * (\boldsymbol{H} * \boldsymbol{P}'_{k} * \boldsymbol{H}^T + \boldsymbol{R})^-1
+\boldsymbol{G}_{k} = \boldsymbol{P}'_{k} * \boldsymbol{H}^T * (\boldsymbol{H} * \boldsymbol{P}'_{k} * \boldsymbol{H}^T + \boldsymbol{R})^-1
 \end{equation}
 
 \begin{equation}
 \label{eq:KalmanUpdate3}
-\vec{x}_{k} = \vec{x}'_{k} + \boldsymbol{K}_{k} * \varepsilon_{k}
+\vec{x}_{k} = \vec{x}'_{k} + \boldsymbol{G}_{k} * \varepsilon_{k}
 \end{equation}
 
 \begin{equation}

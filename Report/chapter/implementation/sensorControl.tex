@@ -2,29 +2,35 @@
 \section{Sensor Control}
 \label{sec:sensorControl}
 
-It has been decided to mount two different distance measurement sensors on the robot.
+It has been decided to mount two different EV3 distance measurement sensors on the robot.
 The first is a sonar sensor measuring distance by the reflection of high frequency sound waves on objects, and the second is an infrared sensor doing the same thing, but with light instead.
-In the documentation of the sensors its stated that the sonar sensor have a longer reach of about 1.5 meters, to the ca. 50 cm for the infrared sensor.
+In the documentation\footnote{Document describing the EV3 sensors \url{http://s3.amazonaws.com/scschoolfiles/379/generalusing_sensors.pdf}.} of the sensors it is stated that the sonar sensor have a longer reach of about 2.5 meters, the reach is not exactly stated for the infrared sensor, but it is expected to be lower do to the scattering of light.
+Af test is nedded to find the exact value for the infrared sensor range.
 The infrared sensor on the other hand should be more precise at short distances.
 The idea is to combine these two sensors and both get the benefits of the long range, and the short distance precision.
 
-\subsection{Sensor calibration}
+The sensor control functionality is separated in two classes, one is called \emph{Sensor} handling the EV3 interface and the calibration of the individual sensors, the other is called \emph{SensorFusion} ans is fusing the two sensor measurement into one distance, and also containing the unit tests of the entire sensor system.
 
-The infrared sensor is mounted on the front of the robot and the sonar on the back.
-This physical setup means that the sensors are measuring a negative offset and positive offset.
+\subsection{Sensor calibration}
+\label{sec:SensorCalibration}
+
+The infrared sensor is mounted in the front of the robot and the sonar on the back.
+This physical setup means that the sensors are measuring a negative and positive offset.
 It has been decided to calibrate the sensors to a point right between the wheels of the robot, as this point is stationary when the robot turns.
 A simple paper line in front of a wall with marked distances from 10 cm to 80 cm with 5 cm jumps, is used to calibrate the sensors.
 The sensor values from both sensors are logged at all marked distances, to get the characteristics of how the sensors operate at different distances.
 
-Figure \ref{fig:SensorCalibration} show the calibration results, plotted in the software tool \emph{Graph}, that have ability of calculating a linear trend line of a series of points.
+Figure \ref{fig:SensorCalibration} show the calibration results, plotted in the software tool \emph{Graph}, that have the ability of calculating a linear trend line of a series of points.
 It can be seen that the sonar have a very fine linear trend line, and an offset of $ -8.19 $.
-The infrared sensor is as expected linear to about 45 cm, where the data points starts to curve upwards.
-Only the points below 50 is used to calculate the trend line, and have an offset of $ 10.6 $.
+The infrared sensor have as expected a shorter range of about 45 cm, where the data points starts to curve sideways.
+Only the points below 45 is used to calculate the trend line, and have an offset of $ 10.6 $.
 
-\myFigure{Implementation/SensorControl/SensorCalibrationPlot}{Graph of the sensor calibration measurements. Points mark the measurements and the line is trend line of the points.}{fig:SensorCalibration}{0.51}
+\pagebreak
+
+\myFigure{Implementation/SensorControl/SensorCalibrationPlot}{Graph of the sensor calibration measurements. Points mark the measurements and the line is trend line of the points.}{fig:SensorCalibration}{0.8}
 
 These offsets are included to the software by making an addition constant for each sensor.
-This value is added to each sensor measurement to calibrate the sensor, as shown in listing \ref{list:NXT_sensorFuncs}.
+This value is added to each sensor measurement in the \emph{Sensor} class to calibrate the sensor, as shown in listing \ref{list:NXT_sensorFuncs}.
 
 \begin{lstlisting}[caption={The function for reading and calibrate the sensor measurements, from the sensor class}, label=list:NXT_sensorFuncs]
 public double Read()
@@ -33,5 +39,54 @@ public double Read()
 	return _brick.Ports[_port].SIValue + calibrationAddition;
 }
 \end{lstlisting}
+
+\subsection{Sensor fusion}
+
+The sensor fusion is done with a simple Kalman filter setup of only using the update step, to combined the two distance measurements to a single hidden state of the "true" distance to the object, equations can be seen in chapter \ref{chp:kalman}.
+Instead of the output matrix \emph{$H$} another matrix called \emph{$C$} is used, defining how much each sensor is contributing to the hidden state.
+In this project C is defined so that both sensors are contributing equal to the result, with the C defined in equation \ref{eq:C_matrix}.
+
+\begin{equation}
+\label{eq:C_matrix}
+C = 
+\begin{pmatrix}
+1 \\
+1
+\end{pmatrix}
+\end{equation}
+
+As mentioned in the Kalman filter theory the Kalman gain is calculated from the variance of the hidden state $\boldsymbol{P}'_{k}$ and the variance of the sensor measurements $\boldsymbol{R}$.
+The sensors variances is calculated by logging a big number of sensor measurements at different distances to determined the accuracy of each sensor.
+The covariance matrix $\boldsymbol{R}$ of the sensors are shown in equation \ref{eq:R_matrix}.
+It can be seen that the sonar sensor actually have a lower variance than the infrared sensor, this was not expected, but just mean that the Kalman filter will apply bigger weight on the sonar based on the variance of the sensors.
+
+\begin{equation}
+\label{eq:R_matrix}
+R = 
+\begin{pmatrix}
+v_{sonar} & 0 \\
+0       & v_{infrared}
+\end{pmatrix}
+=
+\begin{pmatrix}
+0.12 & 0 \\
+0       & 0.52
+\end{pmatrix}
+\end{equation}
+
+The Kalman filter actually functions by combining three values, that is the two sensor measurements ${z}_{k}$ and the estimated hidden state from last sample ${x}'_{k}$.
+In certain situation this is actually not preferable.
+If for example the robot is doing a turn, and going from measuring a short distance to a box, to measuring a longer distance to for example a wall, the estimated hidden state will have a too big impact, and the fusion will make a wrong new distance estimate.
+This could for example be fixed by setting a very high variance on the estimated hidden state, and thereby having a much higher weight on the sensor measurements.
+
+It has been decided to fix this in another way, that was giving better results.
+Instead of messing with the hidden state covariance matrix, a "simple" hidden state estimate is calculated before the Kalman filter by taking mean of the sensor values, and use this as the hidden state estimate ${x}'_{k}$.
+
+As the infrared sensor starts to measure wrong at about 45 cm, sensor fusion is only used when the sonar distance is lower than 45 cm, else only the sonar is used.
+
+A test of the sensor fusion and calibrated sensors have been conducted in the same way as described in section \ref{sec:SensorCalibration}, of making measurements at fixed distances from a wall.
+The error of how wrong the measurements is compared to the true value is calculated for the sensor fusion and both calibrated sensors.
+This test show a mean error of 0.8 from the sonar, -2.7 from the infrared sensor and -0.43 from the sensor fusion.
+As expected from out measurements of the variance, the infrared sensor have a higher error, but the sensor fusion still mange to generate a result that is smaller than both sensors.
 
 \pagebreak

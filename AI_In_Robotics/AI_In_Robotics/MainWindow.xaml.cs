@@ -19,7 +19,7 @@ namespace AI_In_Robotics
         private SensorFusion Sensors;
         private Motion motionControle;
 
-        private static readonly int N = 100000;
+        private static readonly int N = 10000;
         private static ParticleFilter filter;
         private static Astar Astar;
         private static Map World;
@@ -59,16 +59,17 @@ namespace AI_In_Robotics
         {
             World = new Map(129, 129);
             World.AddSquare(51, 1, 26, 33, 0);
-            World.AddSquare(74, 93, 36, 14, 0);
+            World.AddSquare(92, 79, 36, 14, 0);
             //World.AddSquare(133, 96, 16, 24, 0);
             //World.AddSquare(160, 27, 36, 14, 0);
 
-            filter = new ParticleFilter(N, World, 104, 20, 180);
+            //filter = new ParticleFilter(N, World, 108, 57, 90);
+            filter = new ParticleFilter(N, World);
 
             int fromX = 0, fromY = 0, toX = 19, toY = 19;
             var roadMap = World.GetAStarRoadMap(fromX, fromY, toX, toY);
 
-            Astar = new Astar(roadMap, 5, 5, 10);
+            Astar = new Astar(roadMap, 25, 20, 15);
 
             OriginalBitmap = new Bitmap(130, 130);
             Image.Source = OriginalBitmap.DrawObjects(roadMap);
@@ -149,7 +150,11 @@ namespace AI_In_Robotics
             var position = filter.getPosition();
             var dontDoAnything = false;
             double tmpSensorRead = 0;
-            while ((position.X - Astar._goalX) > 5 && (position.Y - Astar._goalY) > 5)
+
+            motionControle.RotationScan(Sensors, filter, OriginalBitmap);
+            motionControle.RotationScan(Sensors, filter, OriginalBitmap);
+
+            while ((position.X - Astar._goalX) > 10 || (position.Y - Astar._goalY) > 10)
             {
                 tmpSensorRead = Sensors.Read();
                 if (tmpSensorRead > 5 && tmpSensorRead < 185)
@@ -176,39 +181,6 @@ namespace AI_In_Robotics
                     else
                     {
                         var turnThisMuch = motionControle.TurnCommand(movement, filter.RadToDeg(position.theta));
-                        //motionControle.TurnCommand(Movement.Left, 90);
-                        //motionControle.TurnCommand(Movement.Left, 270);
-                        //motionControle.TurnCommand(Movement.Left, 255);
-                        //motionControle.TurnCommand(Movement.Left, 120);
-                        //motionControle.TurnCommand(Movement.Left, 0);
-                        //motionControle.TurnCommand(Movement.Left, 25);
-                        //motionControle.TurnCommand(Movement.Left, 310);
-
-                        //motionControle.TurnCommand(Movement.Right, 90);
-                        //motionControle.TurnCommand(Movement.Right, 270);
-                        //motionControle.TurnCommand(Movement.Right, 255);
-                        //motionControle.TurnCommand(Movement.Right, 120);
-                        //motionControle.TurnCommand(Movement.Right, 0);
-                        //motionControle.TurnCommand(Movement.Right, 25);
-                        //motionControle.TurnCommand(Movement.Right, 310);
-
-
-                        //motionControle.TurnCommand(Movement.Up, 90);
-                        //motionControle.TurnCommand(Movement.Up, 270);
-                        //motionControle.TurnCommand(Movement.Up, 255);
-                        //motionControle.TurnCommand(Movement.Up, 120);
-                        //motionControle.TurnCommand(Movement.Up, 0);
-                        //motionControle.TurnCommand(Movement.Up, 25);
-                        //motionControle.TurnCommand(Movement.Up, 310);
-
-
-                        //motionControle.TurnCommand(Movement.Down, 90);
-                        //motionControle.TurnCommand(Movement.Down, 270);
-                        //motionControle.TurnCommand(Movement.Down, 255);
-                        //motionControle.TurnCommand(Movement.Down, 120);
-                        //motionControle.TurnCommand(Movement.Down, 0);
-                        //motionControle.TurnCommand(Movement.Down, 25);
-                        //motionControle.TurnCommand(Movement.Down, 310);
 
                         if (turnThisMuch < 0)
                         {
@@ -218,8 +190,8 @@ namespace AI_In_Robotics
                         {
                             filter.TurnParticlesLeft(turnThisMuch);
                         }
-                        motionControle.PIDMove(5);
-                        filter.MoveParticles(5);
+                        motionControle.PIDMove(10);
+                        filter.MoveParticles(10);
 
                         Dispatcher.BeginInvoke(new Action(() =>
                         {
@@ -232,6 +204,7 @@ namespace AI_In_Robotics
                     }
                 }
             }
+            brick.DirectCommand.PlayToneAsync(100, 440, 500);
         }
     }
 }

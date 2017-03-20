@@ -13,7 +13,7 @@ namespace AI_In_Robotics.Classes
         private readonly Brick _brick;
         private const uint MotorMoveTimeMs = 250;
         private const double MoveDistancePerCicle = 2.05;
-        private const uint RotaionDegStep = 360 / 12;
+        private const uint RotaionDegStep = 360 / 4;
         private readonly Queue<Action> Commands = new Queue<Action>();
 
         public Motion(Brick brick)
@@ -106,7 +106,7 @@ namespace AI_In_Robotics.Classes
                     }
                     else
                     {
-                        PIDTurn(180 - angleDeg);
+                        turnAngle = 360 - angleDeg;
                     }
                     break;
                 case Movement.Up:
@@ -199,7 +199,7 @@ namespace AI_In_Robotics.Classes
             double lastError = 0;
             double derivative = 0;
 
-            while ((moveCiclesCount < 20) || (Math.Abs(error) > 2))
+            while ((moveCiclesCount < 20) || (Math.Abs(error) > 1))
             {
                 double gyroValue = getGyro();
                 error = gyroValue - gyroTargetValue;
@@ -271,23 +271,23 @@ namespace AI_In_Robotics.Classes
 
         public void RotationScan(SensorFusion sensors, ParticleFilter Pfilter, Bitmap map)
         {
-            Bitmap bitmapClone = (Bitmap)map.Clone();
+            //Bitmap bitmapClone = (Bitmap)map.Clone();
 
             for (uint rotationDegCount = 0; rotationDegCount < 360; rotationDegCount += RotaionDegStep)
             {
                 var value = sensors.Read();
-                Console.WriteLine(value);
+                //Console.WriteLine(value);
                 Pfilter.Resample(value);
 
                 PIDTurn(RotaionDegStep);
                 Pfilter.TurnParticlesLeft(RotaionDegStep);
 
-                ((MainWindow)System.Windows.Application.Current.MainWindow).Image.Source = bitmapClone.Drawparticles(Pfilter.ParticleSet);
+                //((MainWindow)System.Windows.Application.Current.MainWindow).Image.Source = bitmapClone.Drawparticles(Pfilter.ParticleSet);
             }
 
-            PIDMove(10);
-            Pfilter.MoveParticles(10);
-            ((MainWindow)System.Windows.Application.Current.MainWindow).Image.Source = bitmapClone.Drawparticles(Pfilter.ParticleSet);
+            //PIDMove(10);
+            //Pfilter.MoveParticles(10);
+            //((MainWindow)System.Windows.Application.Current.MainWindow).Image.Source = bitmapClone.Drawparticles(Pfilter.ParticleSet);
         }
 
         public void ExecuteCommands()

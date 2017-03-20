@@ -45,5 +45,9 @@ P(X_{i}^{t}) = \sum_{j} P(X_{j}^{t-1}) * P(X_{i}^{t} \mid X_{j}^{t-1})
 \pagebreak
 
 Figure \ref{fig:markov_localization_example} show the Markov localization algorithm in action when preforming measurements and movements.
+It can be seen that the robot gets an increasing better position estimate after each measurement.
 
 \myFigure{Theory/Localization/markov_localization_example}{Example of Markov localization algorithm. Each picture depicts the robots position in a hallway, together with a probability distribution of where the robot believe it is and the probability of the measurement. a) Starts with a uniform distribution. b) and d) Acquire a more precise probability distribution by making a measurement. C) and e) Movement result in less accurate probability distribution.}{fig:markov_localization_example}{0.7}
+
+In general Markov localization is a good algorithm for localization, and it gives the ability of model multi-modal probabilities, but as an expense in memory because the probability of every tile in the state space have to be calculated.
+This means that Markov localization is not a good choice in cases with a many dimensional state space.

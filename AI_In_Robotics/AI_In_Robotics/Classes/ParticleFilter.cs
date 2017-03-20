@@ -80,12 +80,16 @@ namespace AI_In_Robotics.Classes
 
         public void MoveParticles(double dist)
         {
+            double tmpDist = 0;
             foreach (var part in ParticleSet)
             {
-                part.pos = new Point2D(part.pos.X + Math.Cos(part.theta) * dist,
-                                        part.pos.Y + Math.Sin(part.theta) * dist);
-                part.PositionNoise();
-                part.ThetaNoise();
+                part.theta = (part.theta + Rand.Gauss(0, 0.0087)) % (2 * Math.PI); // approx 0.5 deg
+                tmpDist = dist + Rand.Gauss(0, 1);
+                part.pos = new Point2D(part.pos.X + Math.Cos(part.theta) * tmpDist,
+                                        part.pos.Y + Math.Sin(part.theta) * tmpDist);
+                //part.PositionNoise();
+                //part.ThetaNoise();
+
 
                 // If outside world or inside landmark, destroy particle and make new random particle.
                 if (part.pos.X > World.WorldSizeX || part.pos.X < 0 || part.pos.Y > World.WorldSizeY ||

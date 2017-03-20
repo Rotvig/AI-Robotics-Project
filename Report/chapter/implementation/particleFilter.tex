@@ -2,6 +2,35 @@
 \section{Particle Filter}
 \label{sec:particleFilter}
 
-test test
+This course introduced two main techniques for localization of the robots current position, these were Kalman Filter and Particle Filter, as described in chapter \ref{chp:kalman} and chapter \ref{chp:partFilter} respectively.
+For the localization in this project, particle filters were chosen, since it doesn't require landmarks and landmark recognition.
 
-\pagebreak
+The implementation of the particle filter was separated into two C\# classes, namely a \emph{Particle} class and a \emph{ParticleFilter} class, as shown in figure \ref{fig:partUML}.
+
+The Particle class serves as a definition of the properties of each individual particle, i.e. the X and Y coordinates, its orientation represented in radians by the variable \emph{theta} and the particle's weight.
+The constructor of a Particle object takes the world size as arguments, and generates random X- and Y-coordinates within the given world, along with a random orientation.
+
+The functions \emph{PostionNoise} and \emph{ThetaNoise} are functions for adding a Gaussian noise to the particle, in order to simulate motion uncertainties of the robot.
+
+\myFigure{ParticleFilter/partUML}{UML class diagram of the particle filter}{fig:partUML}{0.4}
+
+\noindent The ParticleFilter class it self, implements the actual functionality of the particle filter.
+The constructor calls the function \emph{GenerateParticleSet()}, which generate a particle set of $N$ particles. While doing so, the function utilized the Map function \emph{IsPointInSquare()} to avoid placing particles inside a world object.\\\\
+%
+\emph{MoveParticles()} takes a distance argument, which corresponds to how much the robot was told to move forward and moves the particles forward the same amount.
+This is done by calculating exactly how much in the X- and Y-direction the specific particle should move, according to its orientation.
+When the particle have been moved, the noise functions of the Particle class is called, to simulate the uncertainties.
+Finally the move function checks if a particle have been moved into a world object, if so, the particle is discarded and replaced by a new particle, with a completely random position and orientation.
+This feature was chosen to apply some form of particle redistribution.\\\\
+%
+The function \emph{Resample()} implements the resampling process described in chapter \ref{chp:partFilter}.
+This is done by setting each particles weight to the probability of particle being correct, given the particle's position and orientation compared to the measured distance at the given resampling time.
+These weights are then normalized before the actual resampling algorithm is applied.\\\\
+%
+In order to give the best approximation of the actual robot position the ParticleFilter provides the function \emph{getPosition()} which returns a Particle object, because the Particle object hold information about both X,Y-coordinates and orientation.
+The approximation of the robot position is implemented as the average position and orientation of all the particles in the set, not taking into account the particle's weight or any potential clusters.
+This was chosen for a fast and easy implementation.
+
+  
+
+

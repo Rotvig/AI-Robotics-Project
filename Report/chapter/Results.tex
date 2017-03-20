@@ -1,2 +1,16 @@
 \chapter{Results}
 \label{chp:res}
+
+This chapter describes the results which is achieved in this project. The results will be discussed in chapter \ref{chp:disc}.
+The finished sourcecode is on Github\footnote{\url{https://github.com/Rotvig/AI-Robotics-Project}}. 
+
+The goal within this project is to create a robot which could localize itself in a known world, and then calculate a route to the designated goal. 
+This has been achieved and the results will be elaborate in this chapter.
+
+\section{Field test}
+The robot is put under a field test to prove tree things. First that it can localize itself with the help of the sensors and the particle filter. Second that it can calculate a route to the designated goal. Third that it can steer itself with the help of the PID-Controller to the designated goal. The test world can be seen on figure \ref{fig:world}. 
+
+\myFigure{test_setup}{Test world.}{fig:world}{0.9}
+
+A video has been created of the test scenario\footnote{\url{https://youtu.be/vZQtQ0usVJw}}. The video shows the lego robot moving around in the test world. In the video the view is changing between the robot and the live particle filter on the computer. In the live particle filter the lego robots belief of its position is shown as a green square.
+At the beginning of the test execution all particle is randomly spread in the entire test world. By rotating the lego robot and scanning with the sonar sensor at the same time the lego robot finds its position rather precisely in the known test world. When the lego robot knows its position, it uses the A* algorithm to calculate the path to the designated goal. At first it continues to move 'Left' until it finds itself too close to the box, it then adjust it course by moving one step 'UP'. When the lego robot reaches x-coordinate 25 it begins to move 'DOWN. But the turn is not precise enough so it needs to adjust, and it results in the lego robot zigzagging to the designated target at coordinate (25,25). But the robot finishes at the designated goal.

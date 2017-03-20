@@ -8,7 +8,7 @@ The distance that the robot is travelling is a function of both the applied powe
 By experiments is has been defined that the robot is moving 2 cm per period of 250 Ms with a power of 25 applied to the motors.
 The last parameter \emph{Brake} stops the motor after timeout, if set to \emph{True}.
 
-\begin{lstlisting}[caption={The two NXT funtions used to control the motors.}, label=list:NXT_moveFuncs]
+\begin{lstlisting}[caption={The two EV3 funtions used to control the motors.}, label=list:NXT_moveFuncs]
 SetMotorPolarityAsync(OutputPort, Polarity);
 TurnMotorAtPowerForTimeAsync(OutputPort, Power, MoveMs, Brake);
 \end{lstlisting}
@@ -61,7 +61,7 @@ $$ dT = 0.250 $$
 
 \myFigure{Implementation/MotorControl/PID_Params}{Table of PID constants when using the Ziegler–Nichols method.}{fig:PID_Params}{0.7}
 
-\emph{$K_c$}, \emph{$P_c$} and \emph{$dT$} is used to calculate the PID parameters following the table in figure \ref{fig:PID_Params}\footnote{\url{http://www.inpharmix.com/jps/PID_Controller_For_Lego_Mindstorms_Robots.html}}.
+\emph{$K_c$}, \emph{$P_c$} and \emph{$dT$} is used to calculate the PID parameters following the table in figure \ref{fig:PID_Params}\footnote{\url{http://www.inpharmix.com/jps/PID_Controller_For_LEGO_Mindstorms_Robots.html}}.
 
 $$ Kp = 0.6 * K_c = 1.44 $$
 
@@ -71,7 +71,6 @@ $$ Ki = \frac{Kp*P_c}{8*dT} = 1.064 $$
 
 These 3 PID parameters are implemented in the software and tested in two movement cases; a 90 degree left turn seen in figure \ref{fig:PID_90DegreeTurn}, and a forward movement for 30 cm seen in figure \ref{fig:PID_Forward}.
 
-\todo{Make figure clearing}
 
 \mySubFigure{Implementation/MotorControl/PID_90DegreeTurnError}{Implementation/MotorControl/PID_90DegreeTurnMotors}
 {Graphs of PID regulation of a 90 degree turn. The \emph{gyroTargetValue} is set to 90 for the robot to do a 90 degree left turn.}

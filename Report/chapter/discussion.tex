@@ -8,7 +8,8 @@ In this chapter the results from chapter \ref{chp:res} will be discussed and eva
 %Problem with the measuements
 
 \section{Relevance}
-\section{Improvements and comments}
+
+
 
 \section{Hardware problems}
 Using the LEGO Mindstorms EV3 setup for the robot was a good decision in the sense that it was easy and quick to get started, but have also given some problems throughout the project.
@@ -25,3 +26,21 @@ Using the LEGO Mindstorms EV3 setup for the robot was a good decision in the sen
 	In cases where the code enters an exception, or by other means doesn't get the Bluetooth connection terminated correctly, the robot can get in a state where it is no longer possible establish a connection, and the robot requires a restart.
 	It is time consuming during test, to have to restart the robot all the time.
 \end{itemize}
+
+\section{Improvements and comments}
+
+To improve the lego robot and the debugging capabilities, some functionalities should be added or changed.
+One of those is the particle filters noise simulation (KIM SKRIV HER).
+
+A functionality which will help the debugging of the robot is plotting the route of the robot’s path, from the robot’s position to the goal. This can help to visualize the path the robot intends to use.
+
+To help the robot avoiding to drive into objects, the objects is theoretical enlarged. Instead of increasing the size of the objects, the lego robot itself could have a size.
+At the moment, only squares are supported in the world map. This can be improved by implementing other types of geometrical shapes.
+
+To control the robot’s rotation a PID-Controller is used together with a gyroscope. The PID gains can be optimized better to get a high-rise time, lower overshoot and a faster settling time.
+
+Furthermore the PID-Controller only adjusts the rotation of the lego robot, but it can also be added to the forward and backward motion. To achieve a more correct path.
+
+The lego robot’s design can be improved by adding an motor to the sonar sensor, so it rotates around itself, instead of having the whole robot rotating around itself. 
+
+Furthermore an LIDAR can be built instead of using a sonar, to improve the accuracy of the measurement.

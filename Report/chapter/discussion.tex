@@ -1,6 +1,6 @@
 \chapter{Discussion}
 \label{chp:disc}
-In this chapter the results from chapter \ref{chp:res} will be discussed and evaluated. And whether the product lives up to the expectations.
+In this chapter the results from chapter \ref{chp:res} will be discussed and evaluated.
 
 \section{Robot testing}
 %Name drawed image of particles
@@ -9,3 +9,19 @@ In this chapter the results from chapter \ref{chp:res} will be discussed and eva
 
 \section{Relevance}
 \section{Improvements and comments}
+
+\section{Hardware problems}
+Using the LEGO Mindstorms EV3 setup for the robot was a good decision in the sense that it was easy and quick to get started, but have also given some problems throughout the project.
+
+\begin{itemize}
+	\item The infrared sensor has proven to be too unstable to use in the field test.
+	The sensor gives good results in the unit tests, but the fact that the sensor relays on reflected light, means that the distance measurements is effected by shifting light conditions and different materials.
+	The field test has therefore been conducted only using the sonar sensor.
+	\item The motors rotation speed and toque are very effected by the amount of change on the batteries.
+	This is a problem in relation to the PID parameters, that is defined by testing the robot at a given battery charge.
+	When the robot moves and start to drain power over time, the motor characteristics change and the PID parameters starts to regulate more poorly.
+	This has some how been fixed by defining the PID parameters after a fully charged battery, and then always have at least half the battery charged.
+	\item The communication to the robot is done using Bluetooth, this is a fine solution when working.
+	In cases where the code enters an exception, or by other means doesn't get the Bluetooth connection terminated correctly, the robot can get in a state where it is no longer possible establish a connection, and the robot requires a restart.
+	It is time consuming during test, to have to restart the robot all the time.
+\end{itemize}

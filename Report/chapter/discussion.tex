@@ -2,14 +2,8 @@
 \label{chp:disc}
 In this chapter the results from chapter \ref{chp:res} will be discussed and evaluated.
 
-\section{Robot testing}
-%Name drawed image of particles
-%Test of sensor fusion
-%Problem with the measuements
-
-\section{Relevance}
-
-
+\section{Field test}
+The lego robot was was tested by placing the robot at a random start position in a known world. 
 
 \section{Hardware problems}
 Using the LEGO Mindstorms EV3 setup for the robot was a good decision in the sense that it was easy and quick to get started, but have also given some problems throughout the project.
@@ -30,7 +24,10 @@ Using the LEGO Mindstorms EV3 setup for the robot was a good decision in the sen
 \section{Improvements and comments}
 
 To improve the lego robot and the debugging capabilities, some functionalities should be added or changed.
+
 One of those is the particle filters noise simulation (KIM SKRIV HER).
+
+An improvement which can be added to the particle filter is the estimation of the robot's position. At the moment the position is calculated by the using the mean position of the particles. Instead of doing this clustering can be used, to achieve a more accurate estimation of the lego robot's position.
 
 A functionality which will help the debugging of the robot is plotting the route of the robot’s path, from the robot’s position to the goal. This can help to visualize the path the robot intends to use.
 

@@ -25,7 +25,8 @@ Using the LEGO Mindstorms EV3 setup for the robot was a good decision in the sen
 
 To improve the lego robot and the debugging capabilities, some functionalities should be added or changed.
 
-One of those is the particle filters noise simulation (KIM SKRIV HER).
+One of those is the particle filters noise simulation on forward movements, as the current implementation adds a single random value from a Gaussian distribution to both the X- and Y-coordinates.
+This addition doesn't consider the particle's orientation and which results in a circular Gaussian distribution for a forward motion, instead of an elliptic Gaussian that would better represent the uncertainties of the robots actual forward motion.
 
 An improvement which can be added to the particle filter is the estimation of the robot's position. At the moment the position is calculated by the using the mean position of the particles. Instead of doing this clustering can be used, to achieve a more accurate estimation of the lego robot's position.
 
